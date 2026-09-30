@@ -7,8 +7,8 @@ nothing.
 By **Dr. Rachid Zeghlache**.
 
 This is the **fast cut of the four-hour workshop**: the same four steps in the
-same order (Python → explore → first model → compare & challenge) and all 11
-animated clips, with 114 slides condensed to 51 and the long explanations moved
+same order (Python → explore → first model → compare & challenge), all 11
+animated clips and live Python in the slides, with 114 slides condensed to 54 and the long explanations moved
 into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-the-four-hour-version).
 
 **[▶ View the slides](https://YouvenZ.github.io/ml-workshop-2h/slides/)**
@@ -36,7 +36,7 @@ into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-t
 ```
 ├── index.qmd               landing page for the published site
 ├── _quarto.yml             project config (root, so ../assets/ resolves)
-├── slides/index.qmd        the deck — 51 slides, 11 clips, speaker notes
+├── slides/index.qmd        the deck — 54 slides, 11 clips, 3 live Python cells
 ├── slides/katex/           self-hosted KaTeX, so equations never need a CDN
 ├── notebooks/*.ipynb       BUILD OUTPUT — edit tools/build_notebooks.py
 ├── assets/

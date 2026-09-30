@@ -15,7 +15,7 @@
 | **Balance** | First hour Python for data · second hour applied ML |
 | **Datasets** | Palmer Penguins (taught), Titanic (final challenge) |
 | **Stack** | numpy · pandas · matplotlib / seaborn · scikit-learn |
-| **Deliverables** | 51-slide deck, 11 animated clips, 1 interactive, 9 static diagrams, 3 Colab notebooks + solutions |
+| **Deliverables** | 54-slide deck, 11 animated clips, 3 live Python cells, 1 interactive, 9 static diagrams, 3 Colab notebooks + solutions |
 
 ---
 
@@ -23,10 +23,10 @@
 
 | | 4 hours | 2 hours |
 |---|---|---|
-| Slides | 114, one idea per slide | 51, one *step* per slide |
+| Slides | 114, one idea per slide | 54, one *step* per slide |
 | Animated clips (Manim) | 11 | **all 11 kept** — each replaces the explanation slides around it |
 | Correlation playground | during the break | during the break (slide 26) |
-| In-slide live Python (Pyodide) | 3 cells | **none** — all typing happens in Colab |
+| In-slide live Python (Pyodide) | 3 cells | **3 cells**: change a value (7), vectorise & mask (14), **new:** pick your own K on real penguins (47) |
 | Exercise 1 | 6 min | 5 min |
 | Independent practice | 20 min, 4 questions | 8 min, questions 1–3 (Q4 is homework) |
 | Imputation | 5 slides + clip | 1 slide + clip |
@@ -77,15 +77,16 @@ Slide numbers are as shown in the deck's corner counter (the title is 1).
 | Clock | Block | Slides | Notebook |
 |---|---|---|---|
 | 0:00 – 0:05 | Welcome, open NB1, run cell 1 | 1–4 | NB1 cell 1 |
-| 0:05 – 0:30 | **Part 1 · Python for data** | 5–16 | NB1 Part 1 + Exercise 1 |
-| 0:30 – 0:55 | **Part 2 · Explore & visualise** | 17–27 | NB1 Part 2 + practice |
-| 0:55 – 1:00 | Break — playground on screen, open NB2 | 26–28 | NB2 cell 1 |
-| 1:00 – 1:30 | **Part 3 · Your first model** | 29–40 | NB2 Part 3 |
-| 1:30 – 2:00 | **Part 4 · Compare & challenge** | 41–51 | NB2 Part 4 + Titanic |
+| 0:05 – 0:30 | **Part 1 · Python for data** | 5–18 | NB1 Part 1 + Exercise 1 |
+| 0:30 – 0:55 | **Part 2 · Explore & visualise** | 19–29 | NB1 Part 2 + practice |
+| 0:55 – 1:00 | Break — playground on screen, open NB2 | 28–30 | NB2 cell 1 |
+| 1:00 – 1:30 | **Part 3 · Your first model** | 31–42 | NB2 Part 3 |
+| 1:30 – 2:00 | **Part 4 · Compare & challenge** | 43–54 | NB2 Part 4 + Titanic |
 
-Clip slides: 8 (for-loop), 11 (broadcasting), 20 (imputation), 21
-(split-apply-combine), 32 (train/test split), 33 (overfitting), 36 (decision
-boundary), 37 (logistic curve), 42 (KNN), 44 (effect of K), 45 (KNN distance).
+Live Python slides: 7, 14, 47 — ~90 seconds each; take one suggestion from the
+room and run it. Clips: 9 (for-loop), 12 (broadcasting), 22 (imputation), 23
+(split-apply-combine), 34 (train/test split), 35 (overfitting), 38 (decision
+boundary), 39 (logistic curve), 44 (KNN), 46 (effect of K), 48 (KNN distance).
 
 ---
 
@@ -97,11 +98,11 @@ load a CSV and filter rows.
 
 | Clock | Slide | Do |
 |---|---|---|
-| 0:05 | Values, names and types | Type 3 variables. `=` vs `==` in one sentence. |
+| 0:05 | Values, names and types → **live:** change a value | `=` vs `==` in one sentence; delete the quotes live and read the error. |
 | 0:07 | Lists by position, dicts by name | Zero-indexing is the only thing worth a pause. |
 | 0:10 | **Clip:** for-loop → loops, choices, functions | Let the clip explain the loop; type the loop and `size_label`. |
 | 0:13 | Why NumPy? Speed | Run `%timeit` live. Sixty seconds. |
-| 0:15 | **Clip:** broadcasting → one operation, every element | Masking is the bridge to pandas — say so. |
+| 0:15 | **Clip:** broadcasting → one operation, every element → **live:** masking | Masking is the bridge to pandas — say so. |
 | 0:17 | DataFrame anatomy + selecting | Single vs double brackets: flag it now. |
 | 0:20 | **Exercise 1** (5 min) | Circulate. If a third are stuck on task 1 at 3 min, do it on screen. |
 | 0:27 | Checkpoint | `df[df['body_mass_g'] > 4000].shape[0]` — a number. |
@@ -149,7 +150,7 @@ run the whole pipeline alone on unfamiliar data.
 
 | Clock | Slide | Do |
 |---|---|---|
-| 1:30 | **Clip:** KNN → K-Nearest Neighbors → **clips:** effect of K, distance | Vote of the K closest. K is a hyperparameter; 25 vs 250 000. |
+| 1:30 | **Clip:** KNN → K-Nearest Neighbors → **clip:** effect of K → **live:** pick your own K → **clip:** distance | Take K values from the room (1, 15, 250). Swap in `body_mass_g` to feel the scaling trap before the slide. |
 | 1:33 | The scaling trap | Run unscaled **first** in NB2, ask why it's worse, then scale: 0.82 → 0.99. |
 | 1:38 | Fit the scaler on train only | Same leakage rule as the imputer. |
 | 1:40 | **Titanic** (12 min) | Pairs. Steps 1–4 are the real assessment; step 5 is for fast finishers. |
@@ -163,6 +164,7 @@ run the whole pipeline alone on unfamiliar data.
 | Cut order | Drop this | Saves |
 |---|---|---|
 | 1st | The `%timeit` demo — just assert NumPy is faster. | 2 min |
+| 1½ | The two Part 1 live cells (keep the KNN one). | 3 min |
 | 2nd | "What `.fit()` learned" (keep the logistic clip, skip the equation slide). | 3 min |
 | 3rd | Titanic step 5 (Fare). | 3 min |
 | 4th | Run KNN scaled only; tell, don't show, the unscaled result. | 4 min |

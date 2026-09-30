@@ -2,7 +2,8 @@
 
 | Need | Tool |
 |---|---|
-| Slides | **Quarto → reveal.js** (`format: revealjs`), one `slides/index.qmd` |
+| Slides | **Quarto → reveal.js** (`format: live-revealjs`), one `slides/index.qmd` |
+| Live code | **quarto-live / Pyodide** — 3 runnable cells in the slides |
 | Student code | **Google Colab** — every line students type runs there |
 | Animations | **Manim CE** → 11 MP4 clips, played once per visit by `slides/video-once.html` |
 | Diagrams | **TikZ** → SVG (slides) and PNG (embedded in the notebooks) |
@@ -26,12 +27,24 @@ Each clip plays **once** when its slide arrives and stops on its last frame —
 a looping clip behind a speaker fights for the room's attention. Click it or
 press ↻ replay to run it again.
 
-## What the four-hour version has that this one does not
+## Live Python in the slides
 
-**quarto-live / Pyodide cells** in the slides. They fetch ~10 MB of
-WebAssembly and invite the room to play for minutes. In two hours every
-keystroke happens in Colab, so the deck stays a plain static reveal.js site.
-Because nothing executes at render time, CI needs only Quarto.
+Three `{pyodide}` cells (quarto-live, committed under `slides/_extensions/`)
+run real Python in the browser — no server:
+
+| Slide | Cell | Packages |
+|---|---|---|
+| 7 | change a value, read the error | none |
+| 14 | vectorise and mask a NumPy array | numpy (preloaded) |
+| 47 | **pick your own K** — KNN on the real penguins | pandas + scikit-learn (fetched on first import) |
+
+The penguins CSV is copied into the in-browser filesystem at start-up
+(`pyodide: resources:` in the deck header), so the cell reads
+`data/penguins.csv` without a network call from Python.
+
+> The first load downloads Python (~10 MB) and took ~2 minutes in testing;
+> scikit-learn adds ~1 minute on first import. Warm both before the room fills
+> — see PREFLIGHT.md. Nothing load-bearing lives in an in-slide cell.
 
 ## Pipeline
 

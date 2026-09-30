@@ -27,6 +27,7 @@ dependencies:
   - seaborn
   - scikit-learn         # also used inside two Manim scenes
   - scipy                # CubicSpline, for the overfitting clip
+  - jupyter              # Quarto's execution engine
   - nbformat             # notebook generation + validation
   - nbclient             # notebook execution checks
   - ipykernel

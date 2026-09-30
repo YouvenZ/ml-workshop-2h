@@ -4,7 +4,7 @@
 #   bash tools/setup.sh
 #
 # Installs, if missing: Quarto (user-local), the conda build environment,
-# the Inter typeface, and the Quarto countdown extension. Everything lands under
+# the Inter typeface, and the two Quarto extensions. Everything lands under
 # $HOME — no sudo, nothing touched outside your user account.
 #
 # Students need NONE of this. This is only for building the material.
@@ -75,6 +75,10 @@ fi
 
 # ------------------------------------------------------- Quarto extensions --
 # Committed to git, so this is only needed on a fresh clone that dropped them.
+if [ ! -d "$REPO/slides/_extensions/r-wasm/live" ]; then
+  say "Installing quarto-live"
+  (cd "$REPO/slides" && quarto add r-wasm/quarto-live --no-prompt)
+fi
 if [ ! -d "$REPO/slides/_extensions/gadenbuie/countdown" ]; then
   say "Installing quarto-countdown"
   # NB: the extension lives in the repo's quarto/ subdirectory, not at its root

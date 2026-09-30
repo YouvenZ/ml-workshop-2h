@@ -18,3 +18,11 @@ project:
 website:
   title: "Python & ML Workshop · 2 hours"
   site-url: "https://YouvenZ.github.io/ml-workshop-2h/"
+
+# Pyodide packages preloaded for the in-slide live cells. Keep this minimal —
+# every package adds to first-load time on lecture-hall wifi. scikit-learn is
+# NOT listed: the KNN cell imports it, and Pyodide fetches it on first run.
+pyodide:
+  packages:
+    - numpy
+    - pandas

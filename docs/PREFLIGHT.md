@@ -43,6 +43,11 @@ Everything here has bitten a live session somewhere.
 - [ ] NB1 and NB2 open in two more tabs, cell 1 already run.
 - [ ] Click through one clip slide and the correlation playground **on the
       deployed site**, on the projector laptop.
+- [ ] **Warm the live Python cells.** Open slide 7 on the deployed site and
+      wait for *Run Code* to turn green — the first load downloads Python into
+      the browser and took **~2 minutes** in testing. Then run slide 47 once
+      (it fetches scikit-learn, another ~1 minute). After that both are cached
+      and run in about a second.
 - [ ] Wifi checked from where the students will sit, not from the podium.
 - [ ] Laptop on mains power, notifications off, screen sleep disabled.
 - [ ] A pen. You will want to draw the train/test split on the slide
@@ -57,6 +62,7 @@ Everything here has bitten a live session somewhere.
 | A student's notebook is in a weird state | **Runtime → Restart and run all.** Teach it on slide 4, before anyone needs it. |
 | A student's NB1 is broken at 0:55 | Nothing. NB2 loads its own data in cell 1. Move them straight to NB2. |
 | A hosted dataset URL is down | Have the two backup CSVs ready to upload: in Colab, the folder icon → upload → `pd.read_csv('penguins.csv')`. |
+| A live Python cell is still loading | Keep talking and come back to it, or skip it — nothing load-bearing lives in an in-slide cell. The notebook has the same code. |
 | A clip won't autoplay | Click it. Clips play once per visit; clicking restarts them. |
 | You are running late | Use the cut list in [WORKSHOP-PLAN.md](WORKSHOP-PLAN.md#timing-triage--what-to-cut-in-order). Decide **now**, not at 1:45. |
 

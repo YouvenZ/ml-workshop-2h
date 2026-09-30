@@ -4,7 +4,7 @@ subtitle: "From zero to a working classifier in two hours"
 author: "Dr. Rachid Zeghlache"
 date: today
 format:
-  revealjs:
+  live-revealjs:
     theme: [default, theme/custom.scss]
     slide-number: c/t
     center: true              # vertically centre slide content
@@ -25,6 +25,12 @@ format:
     html-math-method:
       method: katex
       url: katex/
+engine: jupyter
+# Copied into the in-browser Python filesystem, so the live KNN cell reads the
+# same penguins as the notebooks without a network call from Python.
+pyodide:
+  resources:
+    - ../data/penguins.csv
 ---
 
 ## Where we're going {.center}
@@ -110,6 +116,39 @@ Restart & run all — nothing else about Colab matters today.
 
 ::: {.keypoint}
 `=` puts a value in a box. `==` asks a question.
+:::
+
+---
+
+## Try it — change a value {.smaller}
+
+::: {.columns}
+::: {.column width="40%"}
+Every line here is live. Change a number, change a word, press **Run**.
+
+::: {.fragment}
+Now delete the quotes around `'Adelie'` and run it again. Read the error —
+you will see that one a lot today.
+:::
+:::
+::: {.column width="60%"}
+```{pyodide}
+#| edit: true
+#| runbutton: true
+species     = 'Adelie'
+body_mass_g = 3750
+is_adult    = True
+
+print(species, 'weighs', body_mass_g, 'g')
+print(type(species), type(body_mass_g))
+```
+:::
+:::
+
+::: {.notes}
+Take one suggestion from the room and type it. Ninety seconds maximum — the
+real practice is in the notebook; this keeps the room awake and makes errors
+feel survivable early. First run downloads Python into the browser (~10 s).
 :::
 
 ---
@@ -231,6 +270,39 @@ a[a > 3700]      # [3750 3800]                — keep only the True ones
 
 ::: {.keypoint}
 That mask is exactly how you will filter a table.
+:::
+
+---
+
+## Try it — one operation, every element {.smaller}
+
+::: {.columns}
+::: {.column width="40%"}
+No loop anywhere. Change `* 2` to `+ 100`, or the threshold to `4000`.
+
+::: {.fragment}
+Print `masses > 3700` on its own to see the mask itself.
+:::
+:::
+::: {.column width="60%"}
+```{pyodide}
+#| edit: true
+#| runbutton: true
+import numpy as np
+
+masses = np.array([3750, 3800, 3250, 3450, 4100])
+
+print(masses * 2)
+print(masses.mean())
+print(masses[masses > 3700])
+print((masses > 3700).sum(), "above 3700")
+```
+:::
+:::
+
+::: {.notes}
+Sixty seconds. The mask is the bridge to pandas filtering on the next two
+slides — say so.
 :::
 
 ---
@@ -720,6 +792,51 @@ Let them try a few K values in NB2 while you move to the trap.
 ::: {.notes}
 K=1 is jagged and believes every bit of noise; very large K smooths away
 real structure. That is what a hyperparameter looks like.
+:::
+
+---
+
+## Try it — pick your own K {.smaller}
+
+::: {.columns}
+::: {.column width="40%"}
+Real penguins, real KNN. Change `K` and press **Run**.
+
+::: {.fragment}
+Try **1**, **15**, **100**, **250**. Where does it get *worse*, and why?
+:::
+
+::: {.fragment}
+Then swap `bill_length_mm` for `body_mass_g` — the scaling trap, before you
+see it.
+:::
+:::
+::: {.column width="60%"}
+```{pyodide}
+#| edit: true
+#| runbutton: true
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+df = pd.read_csv("data/penguins.csv").dropna()
+X = df[['bill_length_mm', 'flipper_length_mm']]
+y = df['species']
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+K = 5          # <- change me
+knn = KNeighborsClassifier(n_neighbors=K).fit(X_train, y_train)
+print(f"K = {K:<4} accuracy = {knn.score(X_test, y_test):.3f}")
+```
+:::
+:::
+
+::: {.notes}
+The first run fetches scikit-learn into the browser (a few seconds) — run it
+once before the session so it is cached. K=1 memorises noise; K near the
+number of training penguins just votes for the biggest species. Swapping in
+body_mass_g drops accuracy: that is the next slide's trap, felt first.
 :::
 
 ---

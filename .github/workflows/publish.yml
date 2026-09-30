@@ -52,9 +52,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      # The two-hour deck has no executable code cells, so Quarto needs no
-      # Jupyter here. Assets in assets/rendered/ are committed — CI has no
-      # LaTeX or Manim and does not need them — the clips are committed pre-rendered.
+      # The deck declares engine: jupyter. The in-slide cells are Pyodide and
+      # run in the browser, so nothing heavier than jupyter is needed here.
+      # Extensions are committed under slides/_extensions/, and the clips and
+      # diagrams under assets/rendered/, so CI needs neither LaTeX nor Manim.
+      - name: Install Python deps
+        run: pip install jupyter
+
       - name: Render site
         run: quarto render
 

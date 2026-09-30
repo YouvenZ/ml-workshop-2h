@@ -32,7 +32,7 @@ LaTeX. Details below.
 | **Inter** typeface | slides, diagrams and clips matching | setup script |
 | **LaTeX** with `lualatex` | rebuilding the 11 TikZ diagrams | **you install it** |
 | numpy · pandas · seaborn · scikit-learn · scipy | notebooks, and two clips | the conda env |
-| nbformat · nbclient · ipykernel | notebook generation and checks | the conda env |
+| jupyter · nbformat · nbclient | Quarto's engine, notebook checks | the conda env |
 
 > **LaTeX is optional.** The rendered `.svg` and `.png` diagrams are committed
 > to the repo. You only need LaTeX if you want to *change* a diagram. Without
@@ -72,8 +72,8 @@ bash tools/setup.sh
 ```
 
 That installs Quarto into `~/.local`, creates the `mlws2h` conda environment,
-installs the Inter typeface into `~/.local/share/fonts`, and adds the
-countdown Quarto extension if it is missing. Nothing goes outside your home directory and nothing
+installs the Inter typeface into `~/.local/share/fonts`, and adds the two
+Quarto extensions. Nothing goes outside your home directory and nothing
 needs `sudo`.
 
 Add this to your shell profile if it is not there already:
@@ -123,7 +123,7 @@ powershell -ExecutionPolicy Bypass -File .\tools\setup.ps1
 That installs Quarto (the portable `.zip`, into `%LOCALAPPDATA%\Programs\Quarto`,
 added to your **user** PATH — no admin rights), creates the `mlws2h` environment
 from `environment-windows.yml`, installs the Inter typeface for your user,
-and adds the countdown Quarto extension if it is missing.
+and adds the two Quarto extensions.
 
 ### 4. Build
 

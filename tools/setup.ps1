@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Installs, if missing: Quarto, the 'mlws2h' conda environment, the Inter
-    typeface, and the Quarto countdown extension. Everything lands under your user
+    typeface, and the two Quarto extensions. Everything lands under your user
     profile — no admin rights needed, nothing installed machine-wide.
 
     Students need NONE of this. This is only for building the material.
@@ -124,6 +124,9 @@ if ($haveInter) {
 # Committed to git, so this only matters on a clone that dropped them.
 Step 'Quarto extensions'
 Push-Location slides
+if (-not (Test-Path '_extensions\r-wasm\live')) {
+    quarto add r-wasm/quarto-live --no-prompt
+} else { Ok 'quarto-live present' }
 if (-not (Test-Path '_extensions\gadenbuie\countdown')) {
     # NB: the extension lives in the repo's quarto/ subdirectory, not its root
     quarto add gadenbuie/countdown/quarto --no-prompt
