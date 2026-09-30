@@ -41,6 +41,8 @@ Everything here has bitten a live session somewhere.
 - [ ] Slides open, presenter view working (**S** key).
 - [ ] **NB-SOLUTIONS open in a second tab**, already run top to bottom.
 - [ ] NB1 and NB2 open in two more tabs, cell 1 already run.
+- [ ] Click through one clip slide and the correlation playground **on the
+      deployed site**, on the projector laptop.
 - [ ] Wifi checked from where the students will sit, not from the podium.
 - [ ] Laptop on mains power, notifications off, screen sleep disabled.
 - [ ] A pen. You will want to draw the train/test split on the slide
@@ -55,6 +57,7 @@ Everything here has bitten a live session somewhere.
 | A student's notebook is in a weird state | **Runtime → Restart and run all.** Teach it on slide 4, before anyone needs it. |
 | A student's NB1 is broken at 0:55 | Nothing. NB2 loads its own data in cell 1. Move them straight to NB2. |
 | A hosted dataset URL is down | Have the two backup CSVs ready to upload: in Colab, the folder icon → upload → `pd.read_csv('penguins.csv')`. |
+| A clip won't autoplay | Click it. Clips play once per visit; clicking restarts them. |
 | You are running late | Use the cut list in [WORKSHOP-PLAN.md](WORKSHOP-PLAN.md#timing-triage--what-to-cut-in-order). Decide **now**, not at 1:45. |
 
 ---

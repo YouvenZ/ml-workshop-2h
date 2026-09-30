@@ -1,7 +1,7 @@
 ---
 title: "Python & Machine Learning"
 subtitle: "From zero to a working classifier in two hours"
-author: "Your Name"
+author: "Dr. Rachid Zeghlache"
 date: today
 format:
   revealjs:
@@ -11,12 +11,14 @@ format:
     chalkboard: true          # press B to draw on a slide
     preview-links: auto
     history: false
-    transition: none          # the fast version: no transitions to wait for
+    transition: slide
+    background-transition: fade
     code-line-numbers: true
     highlight-style: github
     width: 1280
     height: 720
-    footer: "Python & ML Workshop · 2 hours"
+    footer: "Dr. Rachid Zeghlache · Python & ML Workshop · 2 hours"
+    include-after-body: video-once.html
     # Self-hosted KaTeX. Quarto's default points at cdn.jsdelivr.net (and at
     # katex@latest, unpinned), so on a lecture-hall network that blocks or
     # throttles the CDN every equation slide degrades to raw \[ \] LaTeX.
@@ -143,6 +145,20 @@ the notebook.
 
 ---
 
+## What a loop actually does
+
+<div class="clip" style="width:78%">
+<video src="../assets/rendered/asset_03_for_loop.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+Point at the accumulator as it updates. The clip plays once and stops on its
+last frame; click it or hit replay to run it again. Then type the loop.
+:::
+
+---
+
 ## Loops, choices, functions {.smaller}
 
 ::: {.columns}
@@ -183,6 +199,20 @@ big = np.random.rand(1_000_000)
 ::: {.notes}
 Run the %timeit live in the notebook. Sixty seconds, and the "why not a
 list" question is gone for good.
+:::
+
+---
+
+## "Vectorised" means no loop
+
+<div class="clip" style="width:72%">
+<video src="../assets/rendered/asset_05_broadcasting.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+One operation, applied to every element, with no `for` in sight. Let it
+play, then the next slide shows the same thing as code.
 :::
 
 ---
@@ -307,6 +337,34 @@ The Titanic numbers are what they will produce themselves at 1:45.
 
 ---
 
+## What filling actually does
+
+<div class="clip" style="width:88%">
+<video src="../assets/rendered/asset_20_imputation.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+Real Titanic ages: 177 filled values pile into one bin, 106 → 283. Let the
+spike land before you say anything — they produce it themselves at 1:45.
+:::
+
+---
+
+## Split, apply, combine — in motion
+
+<div class="clip" style="width:76%">
+<video src="../assets/rendered/asset_08_split_apply_combine.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+Say the three words as they happen on screen, then read the groupby on the
+next slide.
+:::
+
+---
+
 ## Split, apply, combine {.smaller}
 
 ```python
@@ -381,6 +439,20 @@ checkpoint on the next slide, then break.
 
 ---
 
+## Correlation, felt before it's defined
+
+<iframe src="../assets/interactive/correlation-playground.html"
+        width="100%" height="460" frameborder="0"
+        style="border:0"></iframe>
+
+::: {.notes}
+Let two students drag points before you name the concept. Then hit the
+"curved" preset: an unmistakable pattern that r scores at zero. Leave this
+on screen during the break — students play with it unprompted.
+:::
+
+---
+
 ## Checkpoint {.center}
 
 Flipper length and body mass: **r = 0.87**.
@@ -396,6 +468,8 @@ No. Both are driven by species and overall size.
 ## Break — 5 minutes {background-color="#2A9D8F" .center}
 
 Open **NB2** and run cell 1 before you stand up.
+
+The correlation playground is one slide back — go and break it.
 
 ---
 
@@ -454,7 +528,34 @@ You don't grade a student on the questions they studied.
 
 ---
 
-## Underfit, good fit, overfit {.smaller}
+## The split, in motion
+
+<div class="clip" style="width:72%">
+<video src="../assets/rendered/asset_12b_train_test_split.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+The model never sees the orange rows until the exam. One sentence, move on.
+:::
+
+---
+
+## Underfit, good fit, overfit
+
+<div class="clip" style="width:92%">
+<video src="../assets/rendered/asset_13_overfitting.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+Ask which one they'd trust BEFORE the labels appear. Take two answers. The
+clip stops on the frame with all three curves — talk over that frame.
+:::
+
+---
+
+## Which would you trust? {.smaller}
 
 | | on the training data | on a penguin it has never seen |
 |---|---|---|
@@ -490,6 +591,34 @@ Every model you ever meet uses this same four-step shape.
 Walk the highlight with the arrow keys, typing along in NB2. Pause on .fit()
 — it is what the whole workshop has been building towards. random_state is
 reproducibility; test_size=0.2 holds back 20% for the exam.
+:::
+
+---
+
+## What fitting looks like
+
+<div class="clip" style="width:80%">
+<video src="../assets/rendered/asset_14_decision_boundary.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+The boundary moves, is wrong early, and settles. "fit() is this, repeated,
+until moving stops helping."
+:::
+
+---
+
+## What the model actually computes
+
+<div class="clip" style="width:82%">
+<video src="../assets/rendered/asset_22_logistic_curve.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+A weighted sum, then a squash into 0–1. No calculus. The next slide is the
+same two equations, still, for anyone who wants to copy them.
 :::
 
 ---
@@ -549,6 +678,20 @@ Not necessarily — the gap is the overfitting signal.
 
 ---
 
+## How KNN decides
+
+<div class="clip" style="width:78%">
+<video src="../assets/rendered/asset_16_knn.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+No equation. A new point lands, the circle grows until it has caught K
+neighbours, they vote. That is genuinely the whole algorithm.
+:::
+
+---
+
 ## K-Nearest Neighbors {.smaller}
 
 To classify a new penguin: find the **K** closest ones, take a vote.
@@ -563,6 +706,34 @@ $$d = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}$$
 ::: {.notes}
 K=1 is jagged and trusts noise; very large K smooths away real structure.
 Let them try a few K values in NB2 while you move to the trap.
+:::
+
+---
+
+## K is a choice you make
+
+<div class="clip" style="width:84%">
+<video src="../assets/rendered/asset_17_effect_of_k.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+K=1 is jagged and believes every bit of noise; very large K smooths away
+real structure. That is what a hyperparameter looks like.
+:::
+
+---
+
+## What "nearest" actually means
+
+<div class="clip" style="width:88%">
+<video src="../assets/rendered/asset_21_knn_distance.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
+
+::: {.notes}
+Walk the triangle, then the two squared terms. 25 versus 250 000 is the
+whole scaling lesson, arrived at arithmetically.
 :::
 
 ---
@@ -631,14 +802,60 @@ split, fit, predict, score — and always look at one it got wrong.
 
 ---
 
-## Three next steps {.center background-color="#2A9D8F"}
+## Keep going — three next steps {.smaller}
 
-1. **A course** — *[your recommendation]*
-2. **A dataset** — run this pipeline on something you care about
-3. **A community** — *[your recommendation]*
+::: {.columns}
+::: {.column width="33%"}
+### 📚 Learn
 
-Solutions notebook is now unlocked · content CC BY 4.0 · code MIT
+**[scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)**
+free, by Inria and the scikit-learn team — today's library, properly
+
+**[Kaggle Learn: Intro to ML](https://www.kaggle.com/learn/intro-to-machine-learning)**
+~3 hours, in the browser, certificate
+
+*Hands-On Machine Learning* — A. Géron
+([notebooks](https://github.com/ageron/handson-ml3))
+:::
+::: {.column width="33%"}
+### 🧪 Practise
+
+**[Titanic on Kaggle](https://www.kaggle.com/competitions/titanic)**
+submit today's model — you get a public score and a leaderboard rank tonight
+
+**[UCI ML Repository](https://archive.ics.uci.edu/)**
+600+ real datasets — pick one you care about and run split → fit → predict → score
+:::
+::: {.column width="33%"}
+### 🤝 Join
+
+**[Kaggle](https://www.kaggle.com/)** — competitions and notebooks to learn from
+
+**[Hugging Face Learn](https://huggingface.co/learn)** — the next step: deep learning and language models
+
+**[PyData meetups](https://www.meetup.com/pro/pydata/)** — people doing this near you
+:::
+:::
+
+::: {.fragment .keypoint}
+Your homework, if you want one: submit the Titanic model to Kaggle this week.
+:::
 
 ::: {.notes}
-Ask each student to name one thing they want to learn next.
+Three, not thirty. Then ask explicitly: "name one thing you want to learn
+next." Getting that said out loud is one of the success criteria. Release
+NB-SOLUTIONS now.
+:::
+
+---
+
+## Thank you {.center background-color="#1B2A4A"}
+
+**Dr. Rachid Zeghlache**
+
+Slides, notebooks and solutions — yours to keep:
+[github.com/YouvenZ/ml-workshop-2h](https://github.com/YouvenZ/ml-workshop-2h)
+
+::: {.whereami}
+content CC BY 4.0 · code MIT · questions welcome now
 :::

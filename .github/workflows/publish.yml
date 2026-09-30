@@ -54,9 +54,13 @@ jobs:
 
       # The two-hour deck has no executable code cells, so Quarto needs no
       # Jupyter here. Assets in assets/rendered/ are committed — CI has no
-      # LaTeX and does not need it.
+      # LaTeX or Manim and does not need them — the clips are committed pre-rendered.
       - name: Render site
         run: quarto render
+
+      # check_assets.py measures clip durations with ffprobe.
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
 
       - name: Check every asset is present and within budget
         run: python tools/check_assets.py

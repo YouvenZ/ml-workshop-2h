@@ -15,7 +15,7 @@ Full text: https://creativecommons.org/licenses/by/4.0/legalcode
 ================================================================
 CODE — MIT
 ================================================================
-Applies to: notebooks/ code cells,
+Applies to: notebooks/ code cells, assets/manim/scenes.py,
 assets/interactive/, and tools/.
 
 Copyright (c) 2026 the workshop authors

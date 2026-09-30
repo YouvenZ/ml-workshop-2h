@@ -80,7 +80,7 @@ if (-not $SkipAssets) {
     $forceArg = if ($Force) { @('--force') } else { @() }
     if ($Quick) {
         Invoke-Checked python (@('tools/build_assets.py', '--tikz') + $forceArg) 'diagram build'
-        Ok 'diagrams built'
+        Ok 'diagrams only (-Quick skipped the clips)'
     } else {
         Invoke-Checked python (@('tools/build_assets.py') + $forceArg) 'asset build'
         Step 'Checking asset sizes and durations'

@@ -53,7 +53,7 @@ else
 fi
 
 # ------------------------------------------------------------------- Inter --
-# The slides and the TikZ diagrams both specify Inter. If it
+# The slides, the TikZ diagrams and the Manim clips all specify Inter. If it
 # is missing everything still builds, but the three stop matching each other.
 if fc-list : family 2>/dev/null | grep -qi '^Inter$'; then
   say "Inter already installed"

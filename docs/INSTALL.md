@@ -2,8 +2,7 @@
 
 **Students need none of this.** They open a Colab link and install nothing.
 This page is for the machine that *builds* the workshop — the slides, the
-11 diagrams and the notebooks. (The two-hour version has no animated clips,
-so there is no Manim or ffmpeg to install.)
+11 diagrams, the 10 animated clips and the notebooks.
 
 ---
 
@@ -26,11 +25,13 @@ LaTeX. Details below.
 |---|---|---|
 | **conda** (Miniforge) | the `mlws2h` environment | you install it first |
 | **Python 3.12** | everything | the conda env |
+| **Manim CE** | the 10 animated clips | conda (Linux/macOS) · pip (Windows) |
+| **ffmpeg** | Manim's encoder | the conda env |
 | **poppler** (`pdftocairo`, `pdftoppm`) | PDF → SVG and PNG | the conda env |
 | **Quarto** | the slide deck and site | setup script |
-| **Inter** typeface | slides and diagrams matching | setup script |
+| **Inter** typeface | slides, diagrams and clips matching | setup script |
 | **LaTeX** with `lualatex` | rebuilding the 11 TikZ diagrams | **you install it** |
-| numpy · pandas · seaborn · scikit-learn | notebooks | the conda env |
+| numpy · pandas · seaborn · scikit-learn · scipy | notebooks, and two clips | the conda env |
 | nbformat · nbclient · ipykernel | notebook generation and checks | the conda env |
 
 > **LaTeX is optional.** The rendered `.svg` and `.png` diagrams are committed
@@ -145,6 +146,13 @@ or allow signed and local scripts for your user, once:
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
+### Why Windows has its own environment file
+
+`environment-windows.yml` exists because **conda-forge publishes no win-64
+build of Manim**. On Windows it is installed with pip instead; its compiled
+dependencies (`manimpango`, `pycairo`) do ship `win_amd64` wheels, so this is
+an ordinary wheel install, not a compile from source.
+
 ---
 
 ## What the build does
@@ -153,8 +161,8 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
 | Step | Command underneath | Fails the build when |
 |---|---|---|
-| 1. Assets | `tools/build_assets.py` | a diagram will not render |
-| 2. Asset check | `tools/check_assets.py` | a diagram the deck uses is missing |
+| 1. Assets | `tools/build_assets.py` | a diagram or clip will not render |
+| 2. Asset budget | `tools/check_assets.py` | a clip exceeds 4 MB or 15 s, or is missing |
 | 3. Notebooks | `tools/build_notebooks.py` | generation errors |
 | 4. Notebook run | `tools/check_notebooks.py` | **a hosted dataset URL is down** |
 | 5. Site | `quarto render` | the deck will not build |
@@ -169,16 +177,19 @@ moved is caught at your desk rather than at 0:03 in front of a room.
 |---|---|---|
 | Skip the assets | `--skip-assets` | `-SkipAssets` |
 | Rebuild every asset | `--force` | `-Force` |
-| Skip the notebook run and checks | `--quick` | `-Quick` |
+| Diagrams only, no checks | `--quick` | `-Quick` |
 | Serve when done | `--serve` | `-Serve` |
 
-`--skip-assets` is what you want while editing slides; the assets only
-change when you edit `assets/tikz/*.tex`.
+The clips are by far the slowest step (~1 minute for all ten). `--skip-assets`
+is what you want while editing slides; the assets only change when you edit
+`assets/tikz/*.tex` or `assets/manim/scenes.py`.
 
 ### Building assets directly
 
 ```bash
 python tools/build_assets.py --list            # what is out of date
+python tools/build_assets.py --tikz            # diagrams only
+python tools/build_assets.py --scene Imputation  # one clip
 python tools/build_assets.py --clean           # drop intermediates
 ```
 
@@ -194,7 +205,9 @@ is no `make` on the Windows path; use the script or `build.ps1`.
 |---|---|
 | `'lualatex' not found` | No LaTeX. Diagrams cannot be rebuilt; everything else still works. Install TeX Live or MiKTeX only if you need to edit one. |
 | `'pdftocairo' not found` | poppler missing from the env: `conda install -c conda-forge poppler` |
+| `'manim' not found` | Wrong environment. `conda activate mlws2h`. On Windows check the env was built from `environment-windows.yml`. |
 | `conda env 'mlws2h' not found` | Run the setup script for your platform. |
 | `conda activate` does nothing (Windows) | `conda init powershell`, then reopen PowerShell. |
 | Quarto renders but equations show as `\[ ... \]` | KaTeX is vendored in `slides/katex/`. Check that directory survived the clone. |
+| Clips render but look wrong after editing a scene | Timestamps are tracked per *file*, and all scenes live in one `scenes.py` — editing any scene marks all clips stale. That is conservative, not wrong. Use `--scene NAME` to rebuild just one. |
 | Fonts look wrong in the diagrams | Inter is missing. Re-run the setup script. Everything still builds; it just stops matching the slides. |

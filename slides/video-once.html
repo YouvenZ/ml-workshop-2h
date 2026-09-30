@@ -1,0 +1,51 @@
+<script>
+// Clips play ONCE per visit, not forever.
+//
+// An infinitely looping clip behind you while you talk is a running fight for
+// the room's attention. These play through when the slide arrives, stop, and
+// then sit on their final frame — which is the frame the whole clip was built
+// to land on. Coming back to the slide replays from the start, and the replay
+// button (or clicking the video) restarts it on demand.
+(function () {
+  function ready(fn) {
+    if (typeof Reveal !== 'undefined' && Reveal.isReady && Reveal.isReady()) fn();
+    else setTimeout(function () { ready(fn); }, 150);
+  }
+
+  ready(function () {
+    var clips = function () {
+      return Array.prototype.slice.call(document.querySelectorAll('.reveal .clip video'));
+    };
+
+    function restart(v) {
+      try { v.currentTime = 0; } catch (e) {}
+      // Autoplay can still be refused (some browsers, some policies). The
+      // catch keeps that silent — clicking the clip always works.
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+
+    function onSlideChange() {
+      clips().forEach(function (v) { v.pause(); });
+      var slide = Reveal.getCurrentSlide();
+      if (!slide) return;
+      slide.querySelectorAll('.clip video').forEach(restart);
+    }
+
+    clips().forEach(function (v) {
+      var wrap = v.closest('.clip');
+      v.addEventListener('ended', function () { wrap.classList.add('done'); });
+      v.addEventListener('play', function () { wrap.classList.remove('done'); });
+      v.addEventListener('click', function () { restart(v); });
+      var btn = wrap.querySelector('.replay');
+      if (btn) btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        restart(v);
+      });
+    });
+
+    Reveal.on('slidechanged', onSlideChange);
+    onSlideChange();
+  });
+})();
+</script>

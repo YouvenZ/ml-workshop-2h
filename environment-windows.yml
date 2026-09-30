@@ -3,22 +3,36 @@
 #   conda env create -f environment-windows.yml
 #   conda activate mlws2h
 #
-# Identical to environment.yml; kept as a separate file so the setup scripts
-# stay symmetrical with the four-hour version. poppler is listed explicitly:
-# on Windows nothing else provides pdftocairo/pdftoppm, and the diagram build
-# needs both.
+# Two differences from environment.yml, both forced by what conda-forge
+# actually ships:
+#
+#   1. manim has NO win-64 conda build, so it comes from pip. Its compiled
+#      dependencies (manimpango, pycairo) do publish win_amd64 wheels, so
+#      this is a normal wheel install and not a compile-from-source.
+#
+#   2. poppler is listed explicitly. On Linux pdftocairo/pdftoppm usually
+#      come with the system; on Windows nothing provides them, and the
+#      diagram build needs both.
+#
+# Students need none of this — they use Colab. This is for building the
+# material.
 name: mlws2h
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
+  - python=3.12          # manim's stack lags new Python releases; 3.13+ breaks
   - numpy
   - pandas
   - matplotlib
   - seaborn
-  - scikit-learn
-  - nbformat
-  - nbclient
+  - scikit-learn         # also used inside two Manim scenes
+  - scipy                # CubicSpline, for the overfitting clip
+  - nbformat             # notebook generation + validation
+  - nbclient             # notebook execution checks
   - ipykernel
   - pyyaml
-  - poppler
+  - ffmpeg               # Manim encodes through this
+  - poppler              # pdftocairo + pdftoppm, for the diagrams
+  - pip
+  - pip:
+      - manim>=0.19

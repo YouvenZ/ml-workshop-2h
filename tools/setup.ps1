@@ -89,7 +89,7 @@ conda activate $EnvName
 Ok "environment ready: $(python --version)"
 
 # --------------------------------------------------------------- Inter ----
-# The slides and the TikZ diagrams both specify Inter. If it
+# The slides, the TikZ diagrams and the Manim clips all specify Inter. If it
 # is missing everything still builds, but the three stop matching.
 Step 'Checking the Inter typeface'
 $fontDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
@@ -104,7 +104,7 @@ if ($haveInter) {
     Expand-Archive -Path $zip -DestinationPath $tmp -Force
     New-Item -ItemType Directory -Force -Path $fontDir | Out-Null
 
-    # Static upright weights only: some renderers pick weights far
+    # Static upright weights only: Pango (which Manim uses) picks weights far
     # more reliably from static faces than from a variable font.
     $faces = Get-ChildItem (Join-Path $tmp 'extras\otf') -Filter 'Inter-*.otf' |
              Where-Object { $_.Name -notmatch 'Italic' }

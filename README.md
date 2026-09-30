@@ -4,9 +4,11 @@ A 2-hour, zero-prerequisite workshop taking CS/STEM university students from
 no Python to a trained, evaluated classifier. Browser only — students install
 nothing.
 
+By **Dr. Rachid Zeghlache**.
+
 This is the **fast cut of the four-hour workshop**: the same four steps in the
-same order (Python → explore → first model → compare & challenge), with the
-animations removed, 114 slides condensed to 38, and the explanations moved
+same order (Python → explore → first model → compare & challenge) and all 11
+animated clips, with 114 slides condensed to 51 and the long explanations moved
 into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-the-four-hour-version).
 
 **[▶ View the slides](https://YouvenZ.github.io/ml-workshop-2h/slides/)**
@@ -34,12 +36,13 @@ into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-t
 ```
 ├── index.qmd               landing page for the published site
 ├── _quarto.yml             project config (root, so ../assets/ resolves)
-├── slides/index.qmd        the deck — 38 slides, speaker notes on the key ones
+├── slides/index.qmd        the deck — 51 slides, 11 clips, speaker notes
 ├── slides/katex/           self-hosted KaTeX, so equations never need a CDN
 ├── notebooks/*.ipynb       BUILD OUTPUT — edit tools/build_notebooks.py
 ├── assets/
 │   ├── tikz/*.tex          11 static diagrams (SVG for slides, PNG for notebooks)
-│   ├── interactive/        the correlation playground (optional, linked from the site)
+│   ├── manim/scenes.py     11 animated clips, one file
+│   ├── interactive/        the correlation playground (slide 26, and the break)
 │   └── rendered/           committed build output the slides point at
 ├── data/                   backup CSVs, in case a hosted URL is down
 └── tools/                  build + verification scripts
@@ -80,4 +83,4 @@ One-time setup:
 ## License
 
 Content (plan, slides, diagrams): **CC BY 4.0**
-Code (notebooks, tools): **MIT**
+Code (notebooks, Manim scripts, tools): **MIT**

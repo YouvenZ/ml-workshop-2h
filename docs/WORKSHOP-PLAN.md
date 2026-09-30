@@ -1,9 +1,11 @@
 # Python & Machine Learning Workshop — 2-Hour Plan
 
 > The fast cut of the four-hour workshop. **Same four steps, same order, same
-> notebooks** — Python → explore → first model → compare & challenge — with
-> the animations removed and the explanations moved off the slides and into
-> the notebooks.
+> notebooks, same animations** — Python → explore → first model → compare &
+> challenge — with the long explanations moved off the slides and into the
+> notebooks. The clips do the explaining now: each one replaces a minute of talk.
+>
+> Presenter: **Dr. Rachid Zeghlache**
 
 | | |
 |---|---|
@@ -13,7 +15,7 @@
 | **Balance** | First hour Python for data · second hour applied ML |
 | **Datasets** | Palmer Penguins (taught), Titanic (final challenge) |
 | **Stack** | numpy · pandas · matplotlib / seaborn · scikit-learn |
-| **Deliverables** | 38-slide deck, 3 Colab notebooks + solutions, 9 static diagrams |
+| **Deliverables** | 51-slide deck, 11 animated clips, 1 interactive, 9 static diagrams, 3 Colab notebooks + solutions |
 
 ---
 
@@ -21,15 +23,15 @@
 
 | | 4 hours | 2 hours |
 |---|---|---|
-| Slides | 114, one idea per slide | 38, one *step* per slide |
-| Animated clips (Manim) | 11 | **none** — replaced by the static diagram or a table |
+| Slides | 114, one idea per slide | 51, one *step* per slide |
+| Animated clips (Manim) | 11 | **all 11 kept** — each replaces the explanation slides around it |
+| Correlation playground | during the break | during the break (slide 26) |
 | In-slide live Python (Pyodide) | 3 cells | **none** — all typing happens in Colab |
-| Slide transitions | slide / fade | none |
 | Exercise 1 | 6 min | 5 min |
 | Independent practice | 20 min, 4 questions | 8 min, questions 1–3 (Q4 is homework) |
-| Imputation | 5 slides + clip | 1 slide, with the Titanic numbers |
-| Logistic regression maths | clip + 3 slides | 1 slide, both equations |
-| KNN | 2 clips + 5 slides | 1 slide + the scaling trap |
+| Imputation | 5 slides + clip | 1 slide + clip |
+| Logistic regression maths | clip + 3 slides | clip + 1 slide, both equations |
+| KNN | 3 clips + 5 slides | 3 clips + 1 slide + the scaling trap |
 | Pretrained image demo | 12 min | **cut** (removed from NB2) |
 | Titanic challenge | 20 min | 12 min |
 | Break | 15 min | 5 min |
@@ -39,8 +41,11 @@ the four-hour version meets the same steps in the same order, with more room.
 
 ### The fast-version rule
 
-> Show the idea, type the code, move on. If the room needs an explanation,
-> it lives in the notebook markdown, not on a slide.
+> Let the clip show the idea, type the code, move on. If the room needs more
+> explanation, it lives in the notebook markdown, not on a slide.
+>
+> Clips play **once** when their slide arrives and stop on the final frame —
+> the frame you talk over. Click a clip (or ↻ replay) to run it again.
 
 The notebooks were already written to stand alone, so a student who wants
 the "why" finds it one scroll below the cell they just ran.
@@ -72,11 +77,15 @@ Slide numbers are as shown in the deck's corner counter (the title is 1).
 | Clock | Block | Slides | Notebook |
 |---|---|---|---|
 | 0:00 – 0:05 | Welcome, open NB1, run cell 1 | 1–4 | NB1 cell 1 |
-| 0:05 – 0:30 | **Part 1 · Python for data** | 5–14 | NB1 Part 1 + Exercise 1 |
-| 0:30 – 0:55 | **Part 2 · Explore & visualise** | 15–22 | NB1 Part 2 + practice |
-| 0:55 – 1:00 | Break — open NB2, run cell 1 | 23 | NB2 cell 1 |
-| 1:00 – 1:30 | **Part 3 · Your first model** | 24–31 | NB2 Part 3 |
-| 1:30 – 2:00 | **Part 4 · Compare & challenge** | 32–38 | NB2 Part 4 + Titanic |
+| 0:05 – 0:30 | **Part 1 · Python for data** | 5–16 | NB1 Part 1 + Exercise 1 |
+| 0:30 – 0:55 | **Part 2 · Explore & visualise** | 17–27 | NB1 Part 2 + practice |
+| 0:55 – 1:00 | Break — playground on screen, open NB2 | 26–28 | NB2 cell 1 |
+| 1:00 – 1:30 | **Part 3 · Your first model** | 29–40 | NB2 Part 3 |
+| 1:30 – 2:00 | **Part 4 · Compare & challenge** | 41–51 | NB2 Part 4 + Titanic |
+
+Clip slides: 8 (for-loop), 11 (broadcasting), 20 (imputation), 21
+(split-apply-combine), 32 (train/test split), 33 (overfitting), 36 (decision
+boundary), 37 (logistic curve), 42 (KNN), 44 (effect of K), 45 (KNN distance).
 
 ---
 
@@ -90,9 +99,9 @@ load a CSV and filter rows.
 |---|---|---|
 | 0:05 | Values, names and types | Type 3 variables. `=` vs `==` in one sentence. |
 | 0:07 | Lists by position, dicts by name | Zero-indexing is the only thing worth a pause. |
-| 0:10 | Loops, choices, functions | Type the loop and `size_label`, don't dissect them. |
+| 0:10 | **Clip:** for-loop → loops, choices, functions | Let the clip explain the loop; type the loop and `size_label`. |
 | 0:13 | Why NumPy? Speed | Run `%timeit` live. Sixty seconds. |
-| 0:15 | One operation, every element | Masking is the bridge to pandas — say so. |
+| 0:15 | **Clip:** broadcasting → one operation, every element | Masking is the bridge to pandas — say so. |
 | 0:17 | DataFrame anatomy + selecting | Single vs double brackets: flag it now. |
 | 0:20 | **Exercise 1** (5 min) | Circulate. If a third are stuck on task 1 at 3 min, do it on screen. |
 | 0:27 | Checkpoint | `df[df['body_mass_g'] > 4000].shape[0]` — a number. |
@@ -105,12 +114,13 @@ load a CSV and filter rows.
 | Clock | Slide | Do |
 |---|---|---|
 | 0:30 | The first three questions | Run all three in NB1. |
-| 0:33 | Missing values are a decision | Ask what `dropna` loses **before** running it. |
-| 0:36 | Split, apply, combine | One `groupby`, change `.mean()` to `.max()`. |
+| 0:33 | Missing values + **clip:** imputation | Ask what `dropna` loses **before** running it; let the 106 → 283 spike land. |
+| 0:36 | **Clip:** split-apply-combine → `groupby` | One `groupby`, change `.mean()` to `.max()`. |
 | 0:38 | Charts: label them | Histogram, then the plain scatter. |
 | 0:40 | **The hinge** | Add `hue='species'`. Say: *"those groups are what a classifier learns to draw a line between."* **Never cut.** |
 | 0:43 | **Practice** (8 min) | Questions 1–3, pairs. Q4 is homework. |
-| 0:52 | Checkpoint | Correlation is not causation — 60 seconds. |
+| 0:51 | Correlation playground | Two students drag points; hit the *curved* preset. |
+| 0:53 | Checkpoint | Correlation is not causation — 60 seconds. |
 
 ## Break · 0:55 – 1:00
 
@@ -125,10 +135,10 @@ predict and score a classifier; read a confusion matrix.
 | Clock | Slide | Do |
 |---|---|---|
 | 1:00 | Machine learning in one slide | "Who writes the `if` statement?" + supervised vs unsupervised. |
-| 1:03 | Features, labels, and the split | *You don't grade a student on the questions they studied.* |
-| 1:06 | Underfit / good / overfit | The table. Ask which they'd trust. |
+| 1:03 | Features, labels + **clip:** the split | *You don't grade a student on the questions they studied.* |
+| 1:06 | **Clip:** overfitting → which would you trust? | Ask which they'd trust **before** the labels appear. |
 | 1:09 | **split → fit → predict → score** | Type all four in NB2 with the arrow-key highlight. Pause on `.fit()`. **Never cut.** |
-| 1:17 | What `.fit()` learned | Both equations, one slide. Point at `predict_proba`. |
+| 1:16 | **Clips:** decision boundary, logistic curve → what `.fit()` learned | Point at `predict_proba`. |
 | 1:21 | 97% of what? | Confusion matrix, then pull up one wrong penguin. |
 | 1:27 | Checkpoint | 97% test, 100% train — the gap is the overfitting signal. |
 
@@ -139,12 +149,12 @@ run the whole pipeline alone on unfamiliar data.
 
 | Clock | Slide | Do |
 |---|---|---|
-| 1:30 | K-Nearest Neighbors | Vote of the K closest. K is a hyperparameter. |
+| 1:30 | **Clip:** KNN → K-Nearest Neighbors → **clips:** effect of K, distance | Vote of the K closest. K is a hyperparameter; 25 vs 250 000. |
 | 1:33 | The scaling trap | Run unscaled **first** in NB2, ask why it's worse, then scale: 0.82 → 0.99. |
 | 1:38 | Fit the scaler on train only | Same leakage rule as the imputer. |
 | 1:40 | **Titanic** (12 min) | Pairs. Steps 1–4 are the real assessment; step 5 is for fast finishers. |
 | 1:53 | Baseline question | "What does always guessing *did not survive* score?" — 0.59. |
-| 1:55 | What you built + next steps | Narrate the pipeline once. Release NB-SOLUTIONS. |
+| 1:55 | What you built → next steps → thank you | Narrate the pipeline once. Homework: submit Titanic to Kaggle. Release NB-SOLUTIONS. |
 
 ---
 
@@ -153,7 +163,7 @@ run the whole pipeline alone on unfamiliar data.
 | Cut order | Drop this | Saves |
 |---|---|---|
 | 1st | The `%timeit` demo — just assert NumPy is faster. | 2 min |
-| 2nd | "What `.fit()` learned" (equations). | 4 min |
+| 2nd | "What `.fit()` learned" (keep the logistic clip, skip the equation slide). | 3 min |
 | 3rd | Titanic step 5 (Fare). | 3 min |
 | 4th | Run KNN scaled only; tell, don't show, the unscaled result. | 4 min |
 | **Never cut** | Exercise 1, the hue scatter, split/fit/predict/score, Titanic steps 1–4. | — |
@@ -178,11 +188,15 @@ run the whole pipeline alone on unfamiliar data.
 
 ## Visual assets used
 
-9 static TikZ diagrams from the four-hour set, as SVG in the slides and PNG in
-the notebooks: 01 variable boxes, 04 list vs array, 06 DataFrame anatomy,
-09 good chart, 11 supervised vs unsupervised, 12 train/test split, 15
-confusion matrix, 18 scaling, 19 pipeline. Diagrams 02 and 07 appear in the
-notebooks only. No clips.
+All 22 assets of the four-hour set are in the repo:
+
+- **11 Manim clips** (`assets/manim/scenes.py` → `assets/rendered/*.mp4`, 1280×720,
+  ≤15 s, ≤4 MB each): 03 for-loop, 05 broadcasting, 08 split-apply-combine,
+  12b train/test split, 13 overfitting, 14 decision boundary, 16 KNN, 17 effect
+  of K, 20 imputation, 21 KNN distance, 22 logistic curve.
+- **9 TikZ diagrams** on the slides (01, 04, 06, 09, 11, 12, 15, 18, 19) plus 02
+  and 07 in the notebooks only. The pipeline diagram (19) is labelled Part 1–4.
+- **1 interactive**: the correlation playground.
 
 ---
 

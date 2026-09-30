@@ -1,6 +1,6 @@
 /*-- scss:defaults --*/
 
-// The TikZ diagrams have Inter baked into them.
+// The TikZ diagrams and the Manim clips have Inter baked into them.
 // Without this import the slides are the only part of the system that
 // falls back to Arial, and the mismatch is visible on every slide that
 // puts a caption next to a diagram.
@@ -93,6 +93,57 @@ $code-block-bg: #F2F3F5;
 .reveal .footer {
   color: rgba($navy, 0.55);
   font-size: 0.5em;
+}
+
+// ---------------------------------------------------------------------
+// Clips
+// ---------------------------------------------------------------------
+// Videos play once and stop on their final frame (see video-once.html).
+// No `controls` attribute: a black control bar under every clip is visual
+// noise, and the replay affordance below covers the one case controls were
+// there for.
+.reveal .clip {
+  position: relative;
+  margin: 0 auto;
+  line-height: 0;
+}
+
+.reveal .clip video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 62vh;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 16px rgba(27, 42, 74, 0.14);
+  cursor: pointer;
+}
+
+.reveal .clip .replay {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  color: $navy;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid $gray;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+// Hidden while it plays; offered on hover, and announced once it finishes.
+.reveal .clip:hover .replay,
+.reveal .clip.done .replay { opacity: 1; }
+
+.reveal .clip.done .replay {
+  border-color: $teal;
+  color: $teal;
 }
 
 // ---------------------------------------------------------------------

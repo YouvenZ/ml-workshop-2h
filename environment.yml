@@ -4,22 +4,28 @@
 #   conda activate mlws2h
 #
 # Students need none of this; they use Colab. This is for rendering the
-# diagrams, generating and checking the notebooks, and the slides.
-# The two-hour version has no Manim clips, so no manim / ffmpeg here.
+# diagrams, the animated clips and the slides.
 #
-# On WINDOWS use environment-windows.yml instead.
+# Python is pinned to 3.12 deliberately: Manim's dependency stack (pycairo,
+# pangocffi, skia) lags new Python releases, and 3.13+ breaks the install.
+#
+# On WINDOWS use environment-windows.yml instead — conda-forge has no win-64
+# build of manim, so it has to come from pip there.
 name: mlws2h
 channels:
   - conda-forge
 dependencies:
   - python=3.12
+  - manim>=0.19          # the 7 animated clips
   - numpy
   - pandas
   - matplotlib
   - seaborn
-  - scikit-learn
+  - scikit-learn         # also used inside two Manim scenes
+  - scipy                # CubicSpline, for the overfitting clip
   - nbformat             # notebook generation + validation
   - nbclient             # notebook execution checks
   - ipykernel
   - pyyaml
+  - ffmpeg               # Manim encodes through this
   - poppler              # pdftocairo + pdftoppm, for the diagrams

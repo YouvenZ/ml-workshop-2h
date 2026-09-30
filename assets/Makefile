@@ -1,9 +1,10 @@
 # Convenience wrapper for Linux and macOS.
 #
 #   make -C assets          build every out-of-date asset
-#   make -C assets tikz     the 11 diagrams (same as all)
+#   make -C assets tikz     the 11 diagrams only
+#   make -C assets manim    the 10 clips only
 #   make -C assets force    rebuild everything
-#   make -C assets check    every referenced diagram exists
+#   make -C assets check    sizes and durations against the asset spec
 #   make -C assets clean    remove build intermediates (not rendered/)
 #
 # The build itself lives in tools/build_assets.py, which is the single
@@ -16,12 +17,15 @@
 PY := python
 BUILD := ../tools/build_assets.py
 
-.PHONY: all tikz force check clean list
+.PHONY: all tikz manim force check clean list
 all:
 	$(PY) $(BUILD)
 
 tikz:
 	$(PY) $(BUILD) --tikz
+
+manim:
+	$(PY) $(BUILD) --manim
 
 force:
 	$(PY) $(BUILD) --force

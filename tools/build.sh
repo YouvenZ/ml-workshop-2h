@@ -5,7 +5,7 @@
 #   bash tools/build.sh --serve         ...then serve it on :8777
 #   bash tools/build.sh --skip-assets   site only (assets already built)
 #   bash tools/build.sh --force         rebuild every asset from scratch
-#   bash tools/build.sh --quick         skip the notebook execution and checks
+#   bash tools/build.sh --quick         skip Manim (slowest step) and checks
 #
 # Windows: use tools\build.ps1 instead — same steps, same order.
 set -uo pipefail
@@ -52,7 +52,7 @@ if [ "$SKIP_ASSETS" -eq 0 ]; then
   step "Building visual assets"
   if [ "$QUICK" -eq 1 ]; then
     python tools/build_assets.py --tikz $FORCE || die "diagram build"
-    ok "diagrams built"
+    ok "diagrams only (--quick skipped the clips)"
   else
     python tools/build_assets.py $FORCE || die "asset build"
   fi

@@ -3,6 +3,11 @@
 .quarto/
 *_files/
 
+# Manim build output — only assets/rendered/ is committed
+assets/media/
+assets/manim/media/
+media/
+
 # LaTeX intermediates (the rendered SVGs ARE committed)
 *.aux
 *.log
