@@ -14,7 +14,7 @@ import json
 import pathlib
 
 # --- Edit these two lines after you create the GitHub repo -----------------
-GH_USER = "USER"
+GH_USER = "YouvenZ"
 GH_REPO = "ml-workshop-2h"
 # ---------------------------------------------------------------------------
 

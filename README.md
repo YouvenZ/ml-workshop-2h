@@ -9,16 +9,16 @@ same order (Python → explore → first model → compare & challenge), with th
 animations removed, 114 slides condensed to 38, and the explanations moved
 into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-the-four-hour-version).
 
-**[▶ View the slides](https://USER.github.io/ml-workshop-2h/slides/)**
+**[▶ View the slides](https://YouvenZ.github.io/ml-workshop-2h/slides/)**
 
 ## Notebooks
 
 | Notebook | Covers | |
 |---|---|---|
-| NB0 — Warm-up | 20-min pre-work, sent T−3 days — **expected** in the 2h format | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB0-warmup.ipynb) |
-| NB1 — Python & Data | 0:00 – 0:55 | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB1-python-data.ipynb) |
-| NB2 — Machine Learning | 1:00 – 2:00 | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB2-machine-learning.ipynb) |
-| NB-SOLUTIONS | Released at the end | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB-SOLUTIONS.ipynb) |
+| NB0 — Warm-up | 20-min pre-work, sent T−3 days — **expected** in the 2h format | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB0-warmup.ipynb) |
+| NB1 — Python & Data | 0:00 – 0:55 | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB1-python-data.ipynb) |
+| NB2 — Machine Learning | 1:00 – 2:00 | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB2-machine-learning.ipynb) |
+| NB-SOLUTIONS | Released at the end | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB-SOLUTIONS.ipynb) |
 
 > **NB2 loads its own clean data in cell 1.** A student whose NB1 is broken at
 > 0:55 still starts the ML hour on time with everyone else.
@@ -68,14 +68,14 @@ One-time setup:
 
 1. Create an empty **public** repo on GitHub named `ml-workshop-2h`, then:
    ```bash
-   git remote add origin git@github.com:USER/ml-workshop-2h.git
+   git remote add origin git@github.com:YouvenZ/ml-workshop-2h.git
    git push -u origin main
    ```
 2. On GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. Replace `USER` with your GitHub username in `tools/build_notebooks.py`
-   (`GH_USER`, then re-run it), `README.md`, `index.qmd` and `_quarto.yml`
-   (`site-url`). Commit and push — the site appears at
-   `https://USER.github.io/ml-workshop-2h/`.
+3. The site appears at `https://YouvenZ.github.io/ml-workshop-2h/`.
+
+**Forking it to another account?** Replace `YouvenZ` in `tools/build_notebooks.py`
+(`GH_USER`, then re-run it), `README.md`, `index.qmd` and `_quarto.yml` (`site-url`).
 
 ## License
 
