@@ -1,0 +1,25 @@
+# Authoring environment — the machine that BUILDS the workshop.
+#
+#   conda env create -f environment.yml
+#   conda activate mlws2h
+#
+# Students need none of this; they use Colab. This is for rendering the
+# diagrams, generating and checking the notebooks, and the slides.
+# The two-hour version has no Manim clips, so no manim / ffmpeg here.
+#
+# On WINDOWS use environment-windows.yml instead.
+name: mlws2h
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - nbformat             # notebook generation + validation
+  - nbclient             # notebook execution checks
+  - ipykernel
+  - pyyaml
+  - poppler              # pdftocairo + pdftoppm, for the diagrams

@@ -1,0 +1,47 @@
+% Asset 12 — one bar of data splitting 80/20, with the analogy that does
+% the actual teaching work captioned underneath.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}
+
+% the full dataset as one bar
+\node[capt] at (0,2.85) {\ttfamily df \; --- \; 333 penguins};
+\foreach \i in {0,...,19} {
+  \node[cell, gray, minimum width=6.6mm, minimum height=7mm]
+        (F\i) at ({-6.4 + \i*0.68}, 2.1) {};
+}
+
+\draw[arr] (0,1.5) -- (0,0.9);
+\node[mono, right=2mm] at (0.15,1.2) {train\_test\_split(X, y, test\_size=0.2)};
+
+% the split
+\foreach \i in {0,...,15} {
+  \node[cell, blue, minimum width=6.6mm, minimum height=7mm]
+        (T\i) at ({-6.6 + \i*0.68}, 0.3) {};
+}
+\foreach \i in {0,...,3} {
+  \node[cell, orange, minimum width=6.6mm, minimum height=7mm]
+        (S\i) at ({1.9 + \i*0.68}, 0.3) {};
+}
+
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, draw=cblue, line width=1pt]
+      ($(T0.south west)+(0,-2mm)$) -- ($(T15.south east)+(0,-2mm)$);
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, draw=corange, line width=1pt]
+      ($(S0.south west)+(0,-2mm)$) -- ($(S3.south east)+(0,-2mm)$);
+
+\node[capt, text=cblue]   at (-3.5,-0.95) {\textbf{train} \; 80\%};
+\node[capt, text=corange] at ( 2.9,-0.95) {\textbf{test} \; 20\%};
+
+\node[capt, align=center] at (-3.5,-1.75)
+     {the model \textbf{sees} these\\\scriptsize and learns from them};
+\node[capt, align=center] at (2.9,-1.75)
+     {the model \textbf{never} sees these\\\scriptsize until we score it};
+
+% the analogy, which is what actually lands
+\node[draw=corange, rounded corners=3pt, fill=corange!10, inner sep=6pt,
+      text=navy, font=\small\itshape, align=center] at (0,-3.2)
+     {``You don't grade a student on the exact questions they studied.''};
+
+\end{tikzpicture}
+\end{document}

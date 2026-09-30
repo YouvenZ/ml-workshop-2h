@@ -1,0 +1,32 @@
+% Asset 1 — assignment as labelled boxes holding values.
+% Kills the "= means equality" misread before it forms.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}[node distance=6mm]
+
+\node[ttl] (t) at (0,2.9) {\large \texttt{species = 'Adelie'}};
+\node[note] at (0,2.35) {read it as ``put \textsl{Adelie} into the box named \textsl{species}''};
+
+% the three boxes
+\node[cell, blue, minimum width=34mm, minimum height=13mm] (b1) at (-4.2,0) {\ttfamily 'Adelie'};
+\node[cell, blue, minimum width=34mm, minimum height=13mm] (b2) at (0,0)    {\ttfamily 3750};
+\node[cell, blue, minimum width=34mm, minimum height=13mm] (b3) at (4.2,0)  {\ttfamily True};
+
+% name tags above each box
+\node[capt, above=3mm of b1] (n1) {\ttfamily species};
+\node[capt, above=3mm of b2] (n2) {\ttfamily body\_mass\_g};
+\node[capt, above=3mm of b3] (n3) {\ttfamily is\_adult};
+
+% type tags below
+\node[capt, below=3mm of b1] {\textcolor{cteal}{str}};
+\node[capt, below=3mm of b2] {\textcolor{cteal}{int}};
+\node[capt, below=3mm of b3] {\textcolor{cteal}{bool}};
+
+% the crossed-out misreading
+\node[capt] (wrong) at (0,-2.5) {%
+  \textcolor{corange}{\bfseries not} ``species \textsl{is equal to} 'Adelie'\,'' \;---\;
+  that question is \texttt{==}};
+
+\end{tikzpicture}
+\end{document}

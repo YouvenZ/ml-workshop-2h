@@ -1,0 +1,61 @@
+% Asset 18 — why a distance-based model needs scaled features.
+% Pairs with the live unscaled-then-scaled KNN demo in Hour 4.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}
+
+% ================= BEFORE =================
+\node[ttl] at (-4.3,4.2) {before scaling};
+\node[note, align=center] at (-4.3,3.6)
+     {mass runs to \textsl{thousands}, bill to \textsl{tens}\\so distance is basically mass alone};
+
+\draw[navy, line width=1.1pt] (-7.2,0.2) -- (-7.2,3.0);
+\draw[navy, line width=1.1pt] (-7.2,0.2) -- (-1.4,0.2);
+\node[capt, rotate=90] at (-7.75,1.6) {body mass (g)};
+\node[capt] at (-4.3,-0.35) {bill length (mm)};
+\node[font=\scriptsize, text=navy, left] at (-7.3,3.0) {6000};
+\node[font=\scriptsize, text=navy, left] at (-7.3,0.2) {2500};
+\node[font=\scriptsize, text=navy, below] at (-7.2,0.1) {32};
+\node[font=\scriptsize, text=navy, below] at (-1.4,0.1) {60};
+
+% points squashed into a vertical band — the whole point
+\foreach \x/\y in {-5.0/0.6, -4.8/1.0, -5.2/0.8, -4.9/1.4, -5.1/1.2, -4.7/0.7}
+  \fill[cblue] (\x,\y) circle (0.09);
+\foreach \x/\y in {-4.6/2.2, -4.9/2.5, -4.5/2.0, -4.8/2.7, -4.4/2.4}
+  \fill[cteal] (\x,\y) circle (0.09);
+
+\draw[corange, line width=1.2pt, dashed] (-5.55,0.25) rectangle (-4.05,2.9);
+\node[capt, text=corange, align=center] at (-2.6,1.6)
+     {all the spread\\is \textbf{vertical}};
+\draw[arrorange] (-3.3,1.6) -- (-4.0,1.6);
+
+% divider
+\draw[cgray!140, line width=1pt] (0,-1.2) -- (0,4.5);
+
+% ================= AFTER =================
+\node[ttl] at (4.3,4.2) {after \texttt{StandardScaler}};
+\node[note, align=center] at (4.3,3.6)
+     {both features centred at 0 with spread 1\\so both get an equal vote};
+
+\draw[navy, line width=1.1pt] (1.4,0.2) -- (1.4,3.0);
+\draw[navy, line width=1.1pt] (1.4,0.2) -- (7.2,0.2);
+\node[capt, rotate=90] at (0.85,1.6) {mass (scaled)};
+\node[capt] at (4.3,-0.35) {bill length (scaled)};
+\node[font=\scriptsize, text=navy, left] at (1.3,3.0) {+2};
+\node[font=\scriptsize, text=navy, left] at (1.3,0.2) {-2};
+\node[font=\scriptsize, text=navy, below] at (1.4,0.1) {-2};
+\node[font=\scriptsize, text=navy, below] at (7.2,0.1) {+2};
+
+% points now spread in both directions
+\foreach \x/\y in {2.3/0.8, 2.9/1.2, 2.5/0.6, 3.2/1.5, 2.7/1.0, 3.4/0.9}
+  \fill[cblue] (\x,\y) circle (0.09);
+\foreach \x/\y in {5.0/2.2, 5.6/2.5, 5.2/1.9, 5.9/2.6, 6.2/2.1}
+  \fill[cteal] (\x,\y) circle (0.09);
+
+\draw[cteal, line width=1.2pt, dashed] (2.1,0.4) rectangle (6.5,2.8);
+\node[capt, text=cteal, align=center] at (4.3,-1.0)
+     {now ``closest'' means what we meant by it};
+
+\end{tikzpicture}
+\end{document}

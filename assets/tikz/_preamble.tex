@@ -1,0 +1,63 @@
+% Shared preamble for every TikZ diagram in the workshop.
+% Included by each asset file with \input{_preamble}.
+%
+% Compiled with lualatex so the diagrams use the SAME Inter typeface as the
+% slides and the Manim clips. Falls back to the default sans if Inter is not
+% installed, so a missing font degrades rather than fails.
+\usepackage{iftex}
+\ifLuaTeX
+  \usepackage{fontspec}
+  \IfFontExistsTF{Inter}{%
+    \setsansfont{Inter}[
+      UprightFont = *-Regular,
+      BoldFont    = *-Bold,
+      ItalicFont  = *-Italic,
+      Extension   = .otf,
+    ]%
+  }{}
+\fi
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,backgrounds,calc,
+                matrix,decorations.pathreplacing,patterns}
+
+% --- the shared palette. Blue always means the same thing. ---------------
+\definecolor{navy}{HTML}{1B2A4A}     % structure
+\definecolor{cblue}{HTML}{2E5CA8}    % class A / train
+\definecolor{corange}{HTML}{E07A2C}  % class B / test
+\definecolor{cteal}{HTML}{2A9D8F}    % accent
+\definecolor{cgray}{HTML}{D9DCE1}    % inactive
+
+\tikzset{
+  every picture/.style={line width=0.9pt},
+  % a plain labelled container
+  box/.style={
+    draw=navy, rounded corners=3pt, fill=white,
+    minimum width=26mm, minimum height=11mm, align=center,
+    text=navy, font=\small
+  },
+  % a cell in a grid / array / dataframe
+  cell/.style={
+    draw=navy, fill=white, minimum width=13mm, minimum height=9mm,
+    align=center, text=navy, font=\small, inner sep=1pt
+  },
+  hdr/.style={cell, fill=navy, text=white, font=\scriptsize\bfseries},
+  blue/.style={draw=cblue, fill=cblue!12, text=navy},
+  orange/.style={draw=corange, fill=corange!14, text=navy},
+  teal/.style={draw=cteal, fill=cteal!12, text=navy},
+  gray/.style={draw=cgray!140, fill=cgray!35, text=navy},
+  % arrows
+  arr/.style={-{Stealth[length=3mm,width=2.2mm]}, draw=navy, line width=1pt},
+  arrblue/.style={arr, draw=cblue},
+  arrorange/.style={arr, draw=corange},
+  % text
+  capt/.style={text=navy, font=\footnotesize, align=center},
+  % fill=white so an annotation that sits on a connector masks it
+  % rather than being crossed out by it
+  note/.style={text=navy!70, font=\scriptsize\itshape, align=center,
+                fill=white, inner sep=2pt},
+  ttl/.style={text=navy, font=\bfseries, align=center},
+  mono/.style={text=cblue, font=\small\ttfamily},
+}

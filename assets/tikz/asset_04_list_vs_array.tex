@@ -1,0 +1,55 @@
+% Asset 4 — why a NumPy array is faster than a list.
+% Scattered boxes with pointers vs one contiguous block.
+% Pairs with the %timeit demo in NB1.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}
+
+% ================= PYTHON LIST =================
+\node[ttl] at (-4.4,3.5) {Python list};
+\node[note] at (-4.4,3.0) {a list of \textsl{pointers} to objects scattered in memory};
+
+% the list itself: a row of pointer slots
+\foreach \i in {0,1,2,3} {
+  \node[cell, gray, minimum width=11mm, minimum height=8mm]
+        (P\i) at ({-6.6 + \i*1.25}, 1.75) {$\bullet$};
+}
+\node[capt] at (-4.4,2.35) {\ttfamily masses};
+
+% scattered objects, deliberately at irregular positions
+\node[cell, blue, minimum width=14mm] (O0) at (-7.3,-0.4)  {\ttfamily 3750};
+\node[cell, blue, minimum width=14mm] (O1) at (-4.9,-1.5) {\ttfamily 3800};
+\node[cell, blue, minimum width=14mm] (O2) at (-6.4,-2.6) {\ttfamily 3250};
+\node[cell, blue, minimum width=14mm] (O3) at (-2.9,-0.7) {\ttfamily 3450};
+
+\foreach \i in {0,1,2,3} {
+  \draw[arr, draw=navy!55, dashed] (P\i.south) -- (O\i.north);
+}
+\node[capt, text=corange] at (-4.4,-3.6)
+     {every element is a \textsl{chase} to somewhere else in memory};
+
+% divider
+\draw[cgray!140, line width=1pt] (-0.35,-4.0) -- (-0.35,3.8);
+
+% ================= NUMPY ARRAY =================
+\node[ttl] at (4.4,3.5) {NumPy array};
+\node[note] at (4.4,3.0) {one contiguous block of raw numbers};
+
+\foreach \v/\i in {3750/0, 3800/1, 3250/2, 3450/3} {
+  \node[cell, teal, minimum width=15mm, minimum height=9mm]
+        (A\i) at ({2.15 + \i*1.5}, 1.75) {\ttfamily \v};
+}
+\node[capt] at (4.4,2.55) {\ttfamily a};
+
+% brace showing contiguity
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, draw=cteal, line width=1pt]
+      ($(A0.south west)+(0,-2mm)$) -- ($(A3.south east)+(0,-2mm)$);
+\node[capt, text=cteal] at (4.4,0.55) {one block, no gaps};
+
+\node[capt, align=center] at (4.4,-1.6)
+     {the CPU reads it in a straight line\\and applies one operation to all of it};
+\node[capt, text=cteal] at (4.4,-3.6) {typically \textbf{50--250$\times$} faster};
+
+\end{tikzpicture}
+\end{document}

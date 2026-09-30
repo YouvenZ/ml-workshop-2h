@@ -1,0 +1,67 @@
+% Asset 9 — the room's chart checklist, as an annotated chart.
+% Exists so that "label your axes" is a visible standard rather than a nag.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm]
+
+% ---- the chart itself ----
+\def\ox{0} \def\oy{0} \def\w{8} \def\h{5}
+\draw[navy, line width=1.1pt] (\ox,\oy) -- (\ox,\oy+\h);   % y axis
+\draw[navy, line width=1.1pt] (\ox,\oy) -- (\ox+\w,\oy);   % x axis
+
+% ticks
+\foreach \i in {0,1,2,3,4} {
+  \draw[navy] (\ox+\i*2,\oy) -- (\ox+\i*2,\oy-0.14);
+  \node[font=\scriptsize, text=navy, below] at (\ox+\i*2,\oy-0.14)
+       {\the\numexpr 170+\i*15\relax};
+}
+\foreach \i in {0,1,2,3,4} {
+  \draw[navy] (\ox,\oy+\i*1.25) -- (\ox-0.14,\oy+\i*1.25);
+  \node[font=\scriptsize, text=navy, left] at (\ox-0.16,\oy+\i*1.25)
+       {\the\numexpr 2500+\i*1000\relax};
+}
+
+% three clusters of points
+\foreach \x/\y in {0.7/0.9, 1.1/1.2, 1.5/1.0, 1.9/1.5, 1.3/1.7, 2.2/1.3, 0.9/1.4}
+  \fill[cblue] (\ox+\x,\oy+\y) circle (0.085);
+\foreach \x/\y in {2.6/1.6, 3.0/1.9, 3.4/1.7, 2.9/2.2, 3.3/2.4, 3.7/2.0}
+  \fill[corange] (\ox+\x,\oy+\y) circle (0.085);
+\foreach \x/\y in {5.0/3.3, 5.5/3.6, 5.9/3.4, 5.3/3.9, 6.2/3.8, 6.6/4.1, 5.8/4.3}
+  \fill[cteal] (\ox+\x,\oy+\y) circle (0.085);
+
+% ---- the four things that make it readable ----
+\node[ttl, text=navy] (title) at (\ox+\w/2, \oy+\h+0.75)
+     {Heavier penguins have longer flippers};
+\node[capt] (xlab) at (\ox+\w/2, \oy-0.95) {flipper length \textbf{(mm)}};
+\node[capt, rotate=90] (ylab) at (\ox-1.35, \oy+\h/2) {body mass \textbf{(g)}};
+
+% legend
+\node[draw=cgray!150, rounded corners=2pt, fill=white, inner sep=3pt,
+      anchor=north west, font=\scriptsize, text=navy] (leg)
+      at (\ox+0.25, \oy+\h-0.15) {%
+  \begin{tabular}{@{}ll@{}}
+    \textcolor{cblue}{$\bullet$}   & Adelie \\
+    \textcolor{corange}{$\bullet$} & Chinstrap \\
+    \textcolor{cteal}{$\bullet$}   & Gentoo \\
+  \end{tabular}};
+
+% ---- annotations ----
+\node[capt, text=corange, align=left] (a1) at (\ox+\w+2.6, \oy+\h+0.75)
+     {\textbf{1. a title}\\\scriptsize says the \textsl{finding}, not ``scatter plot''};
+\draw[arrorange] (a1.west) -- (title.east);
+
+\node[capt, text=corange, align=left] (a2) at (\ox+\w+2.6, \oy-0.95)
+     {\textbf{2. axis labels}\\\scriptsize \textbf{with units}};
+\draw[arrorange] (a2.west) -- (xlab.east);
+
+\node[capt, text=corange, align=left] (a3) at (\ox-3.2, \oy+\h-0.6)
+     {\textbf{3. a legend}\\\scriptsize whenever colour means something};
+\draw[arrorange] (a3.east) -- (leg.west);
+
+\node[capt, text=corange, align=left] (a4) at (\ox-3.2, \oy+0.9)
+     {\textbf{4. readable ticks}\\\scriptsize few, round numbers};
+\draw[arrorange] (a4.east) -- (\ox-0.9, \oy+1.25);
+
+\end{tikzpicture}
+\end{document}

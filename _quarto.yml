@@ -1,0 +1,20 @@
+# Project root is the repo root, not slides/, so that ../assets/... paths in
+# the deck resolve and the rendered site carries the diagrams with it. With
+# _quarto.yml inside slides/, everything under assets/ is outside the project
+# and silently fails to publish.
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - slides/index.qmd
+  resources:
+    - assets/rendered/**
+    - slides/katex/**
+    - assets/interactive/**
+    - notebooks/**
+    - data/**
+
+website:
+  title: "Python & ML Workshop · 2 hours"
+  site-url: "https://USER.github.io/ml-workshop-2h/"

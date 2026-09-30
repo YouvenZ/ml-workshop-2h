@@ -1,0 +1,37 @@
+% Asset 2 — list vs dict anatomy, side by side.
+% Index arrows under the list, key->value arrows for the dict.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}
+
+% ---------------- LIST ----------------
+\node[ttl] at (-4.6,3.2) {list — found by \textcolor{cblue}{position}};
+\node[mono] at (-4.6,2.6) {masses = [3750, 3800, 3250, 3450]};
+
+\foreach \v/\i in {3750/0, 3800/1, 3250/2, 3450/3} {
+  \node[cell, blue, minimum width=15mm] (L\i) at ({-7.1 + \i*1.62}, 1.3) {\ttfamily \v};
+  \node[capt, below=2.5mm of L\i] (i\i) {\textcolor{cblue}{\ttfamily \i}};
+  \draw[arrblue] ($(i\i.north)+(0,0.5mm)$) -- ($(L\i.south)-(0,0.5mm)$);
+}
+\node[capt] at (-4.6,-0.55) {index};
+\node[mono] at (-4.6,-1.35) {masses[1]  $\rightarrow$  3800};
+
+% divider
+\draw[cgray!140, line width=1pt] (-0.35,-2.5) -- (-0.35,3.4);
+
+% ---------------- DICT ----------------
+\node[ttl] at (4.3,3.2) {dict — found by \textcolor{corange}{name}};
+\node[mono] at (4.3,2.6) {penguin = \{'species': 'Adelie', ...\}};
+
+\foreach \k/\v/\i in {species/'Adelie'/0, mass/3750/1, island/'Torgersen'/2} {
+  \node[cell, orange, minimum width=20mm] (K\i) at (1.85, {1.6 - \i*1.05}) {\ttfamily '\k'};
+  \node[cell, minimum width=26mm]         (V\i) at (5.9,  {1.6 - \i*1.05}) {\ttfamily \v};
+  \draw[arrorange] (K\i.east) -- (V\i.west);
+}
+\node[capt] at (1.85,-1.45) {key};
+\node[capt] at (5.9,-1.45) {value};
+\node[mono] at (4.3,-2.15) {penguin['mass']  $\rightarrow$  3750};
+
+\end{tikzpicture}
+\end{document}

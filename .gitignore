@@ -1,0 +1,24 @@
+# Quarto build output
+/_site/
+.quarto/
+*_files/
+
+# LaTeX intermediates (the rendered SVGs ARE committed)
+*.aux
+*.log
+*.out
+*.synctex.gz
+assets/tikz/*.pdf
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+# NOTE: slides/_extensions/ is deliberately NOT ignored. Committing the
+# Quarto extension keeps CI from having to fetch them on every build, and
+# pins the exact versions the deck was authored against.
+
+/.quarto/
+**/*.quarto_ipynb

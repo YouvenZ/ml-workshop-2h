@@ -1,0 +1,46 @@
+% Asset 15 — the confusion matrix in plain English about penguins.
+% Deliberately binary ("is it a Gentoo?") so it is a 2x2 the room can hold
+% in their head. The abstract TP/FP/FN/TN names are given LAST, as a
+% footnote, because the plain-English cell text is the thing that teaches.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}[x=42mm, y=24mm]
+
+\node[ttl] at (0.5,1.95) {\large The model's question: \textsl{is this penguin a Gentoo?}};
+
+% column headers (what the model said)
+\node[capt, text=cblue] at (0,1.35) {\textbf{predicted}\\\textbf{Gentoo}};
+\node[capt, text=cblue] at (1,1.35) {\textbf{predicted}\\\textbf{not Gentoo}};
+\node[capt, text=cblue, font=\small\bfseries] at (0.5,1.75) {what the model said};
+
+% row headers (the truth)
+\node[capt, text=corange, align=right] at (-0.72,0.5)  {\textbf{really}\\\textbf{a Gentoo}};
+\node[capt, text=corange, align=right] at (-0.72,-0.5) {\textbf{really not}\\\textbf{a Gentoo}};
+\node[capt, text=corange, font=\small\bfseries, rotate=90] at (-1.25,0) {the truth};
+
+% the four cells
+\node[cell, teal,   minimum width=40mm, minimum height=22mm, align=center] at (0,0.5)
+     {\textbf{117}\\[2pt]\scriptsize Gentoos it \textbf{correctly}\\\scriptsize called Gentoos};
+\node[cell, orange, minimum width=40mm, minimum height=22mm, align=center] at (1,0.5)
+     {\textbf{2}\\[2pt]\scriptsize Gentoos it \textbf{missed}\\\scriptsize --- called them something else};
+\node[cell, orange, minimum width=40mm, minimum height=22mm, align=center] at (0,-0.5)
+     {\textbf{12}\\[2pt]\scriptsize other penguins it\\\scriptsize \textbf{wrongly} called Gentoo};
+\node[cell, teal,   minimum width=40mm, minimum height=22mm, align=center] at (1,-0.5)
+     {\textbf{202}\\[2pt]\scriptsize correctly said\\\scriptsize ``not a Gentoo''};
+
+% the reading rule
+\node[capt, align=center] at (0.5,-1.35)
+     {\textcolor{cteal}{\textbf{the diagonal is where it was right}} \quad---\quad
+      \textcolor{corange}{\textbf{everything off it is a mistake}}};
+
+\node[note, align=center] at (0.5,-1.95)
+     {accuracy = (117 + 202) / 333 = 95.8\% \quad --- \quad
+      one number that hides \textsl{which} kind of mistake it makes};
+
+\node[note, align=center] at (0.5,-2.6)
+     {(the textbook names for these four cells are true positive, false negative,\\
+      false positive and true negative --- the penguins matter more than the names)};
+
+\end{tikzpicture}
+\end{document}

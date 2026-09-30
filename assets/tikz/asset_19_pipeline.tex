@@ -1,0 +1,44 @@
+% Asset 19 — the closing slide. Narrated once, end to end, at 4:10.
+% Students should recognise every box; that recognition IS the payoff.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}
+
+\def\bw{25mm}
+\node[box, gray,   minimum width=\bw, minimum height=14mm] (raw)   at (0,0)     {\textbf{raw data}};
+\node[box, blue,   minimum width=\bw, minimum height=14mm] (clean) at (3.3,0)   {\textbf{clean}};
+\node[box, blue,   minimum width=\bw, minimum height=14mm] (split) at (6.6,0)   {\textbf{split}};
+\node[box, teal,   minimum width=\bw, minimum height=14mm] (train) at (9.9,0)   {\textbf{train}};
+\node[box, orange, minimum width=\bw, minimum height=14mm] (eval)  at (13.2,0)  {\textbf{evaluate}};
+\node[box, orange, minimum width=\bw, minimum height=14mm] (pred)  at (16.5,0)  {\textbf{predict}};
+
+\foreach \a/\b in {raw/clean, clean/split, split/train, train/eval, eval/pred}
+  \draw[arr] (\a) -- (\b);
+
+% the line of code that does each step
+\node[mono, below=7mm of raw,   align=center] {read\_csv};
+\node[mono, below=7mm of clean, align=center] {dropna};
+\node[mono, below=7mm of split, align=center] {train\_test\_split};
+\node[mono, below=7mm of train, align=center] {.fit};
+\node[mono, below=7mm of eval,  align=center] {accuracy\_score\\confusion\_matrix};
+\node[mono, below=7mm of pred,  align=center] {.predict};
+
+% which hour each step came from
+\node[note, above=7mm of raw]   {Part 1};
+\node[note, above=7mm of clean] {Part 2};
+\node[note, above=7mm of train] {Part 3};
+\node[note, above=7mm of pred]  {Part 4};
+
+% the honest feedback loop
+\draw[arr, draw=navy!45, dashed]
+      ($(eval.south)+(0,-16mm)$) to[out=270, in=270, looseness=0.35]
+      ($(clean.south)+(0,-16mm)$);
+\node[note] at (8.25,-3.4) {what you learn from evaluating sends you back};
+
+\node[draw=cteal, rounded corners=3pt, fill=cteal!10, inner sep=6pt,
+      text=navy, font=\small, align=center] at (8.25,2.6)
+     {you recognise \textbf{every box} --- that's the point};
+
+\end{tikzpicture}
+\end{document}

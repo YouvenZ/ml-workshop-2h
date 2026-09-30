@@ -1,0 +1,150 @@
+/*-- scss:defaults --*/
+
+// The TikZ diagrams have Inter baked into them.
+// Without this import the slides are the only part of the system that
+// falls back to Arial, and the mismatch is visible on every slide that
+// puts a caption next to a diagram.
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+
+// Palette — identical to the asset production spec so slides and
+// diagrams read as one system. Blue always means the same thing.
+$navy:   #1B2A4A;
+$blue:   #2E5CA8;
+$orange: #E07A2C;
+$teal:   #2A9D8F;
+$gray:   #D9DCE1;
+
+$body-bg:          #FFFFFF;
+$body-color:       #24292F;
+$link-color:       $blue;
+$selection-bg:     rgba($orange, 0.3);
+
+$font-family-sans-serif: "Inter", "Helvetica Neue", Arial, sans-serif;
+$presentation-font-size-root: 34px;   // back row of a lecture hall
+$presentation-h1-font-size: 1.9em;
+$presentation-h2-font-size: 1.4em;
+$presentation-heading-color: $navy;
+$presentation-heading-font-weight: 700;
+
+$code-block-font-size: 0.72em;
+$code-block-bg: #F2F3F5;
+
+/*-- scss:rules --*/
+
+.reveal .slide-background[data-background-color="#1B2A4A"] + .slides,
+.reveal section[data-background-color="#1B2A4A"] h1,
+.reveal section[data-background-color="#1B2A4A"] h2 {
+  color: #FFFFFF;
+}
+
+// Section-divider slides: big, centred, no clutter
+.reveal .center h1 {
+  text-align: center;
+}
+
+// Code blocks get a left rule in brand blue, matching the printed plan
+.reveal pre code {
+  border-left: 4px solid $blue;
+  padding-left: 1em;
+  border-radius: 2px;
+  line-height: 1.35;
+}
+
+// Make blockquotes read as "the thing to remember"
+.reveal blockquote {
+  border-left: 4px solid $orange;
+  background: rgba($orange, 0.07);
+  padding: 0.6em 1em;
+  font-style: normal;
+  width: 100%;
+}
+
+// Tables: readable at distance, no heavy borders
+.reveal table {
+  font-size: 0.8em;
+  th { background: $navy; color: #fff; }
+  tr:nth-child(even) { background: rgba($gray, 0.35); }
+}
+
+// Live Pyodide cells — make the run button obvious from the back row.
+// The class is `exercise-editor-btn-run-code`; quarto-live's older
+// `qwebr-button-run` no longer exists, so styling that did nothing.
+.reveal .exercise-editor-btn-run-code {
+  background: $teal !important;
+  border-color: $teal !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+// The editor itself needs a floor on its font size or it renders at the
+// host page's size, which is unreadable past the third row.
+.reveal .exercise-cell .cm-editor {
+  font-size: 0.62em;
+}
+
+// Videos and diagrams should never overflow a slide
+.reveal video,
+.reveal img {
+  max-height: 68vh;
+  object-fit: contain;
+}
+
+.reveal .footer {
+  color: rgba($navy, 0.55);
+  font-size: 0.5em;
+}
+
+// ---------------------------------------------------------------------
+// Teaching patterns used by the expanded deck
+// ---------------------------------------------------------------------
+
+// "Anatomy" tables: naming each part of a line of syntax. Left-aligned and
+// monospaced in the first column so the code parts line up as a column.
+.reveal table.anatomy {
+  font-size: 0.68em;
+  th { background: $navy; color: #fff; }
+  td:first-child {
+    font-family: ui-monospace, "DejaVu Sans Mono", monospace;
+    color: $blue;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+}
+
+// One short sentence that is the whole point of a slide.
+.reveal .keypoint {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: $navy;
+  text-align: center;
+  border-top: 3px solid $orange;
+  border-bottom: 3px solid $orange;
+  padding: 0.5em 0.2em;
+  margin: 0.6em auto;
+  max-width: 88%;
+}
+
+// A wrong-vs-right pair. Red-free: the palette's orange carries "watch out",
+// teal carries "this is the one", and the ✗ / ✓ carry it without colour.
+.reveal .wrong, .reveal .right {
+  border-radius: 5px;
+  padding: 0.15em 0.6em;
+  border-left: 4px solid;
+}
+.reveal .wrong { border-color: $orange; background: rgba($orange, 0.09); }
+.reveal .right { border-color: $teal;   background: rgba($teal, 0.09); }
+
+// Side-by-side prose + live cell: keep the editor from crowding the text.
+.reveal .columns .exercise-cell { margin-top: 0.2em; }
+
+// Smaller, quieter footer note for "where we are" orientation.
+.reveal .whereami {
+  font-size: 0.55em;
+  color: rgba($navy, 0.5);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+// The part dividers sit on navy; reveal tags them .has-dark-background.
+.reveal .has-dark-background .whereami { color: rgba(#fff, 0.7); }

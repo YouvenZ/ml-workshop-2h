@@ -1,0 +1,35 @@
+---
+title: "Python & Machine Learning"
+subtitle: "A two-hour workshop, browser only"
+format:
+  html:
+    theme: cosmo
+    toc: false
+---
+
+## [▶ Open the slides](slides/index.html)
+
+From no Python at all to a trained, evaluated classifier in two hours.
+Nothing to install — everything runs in Google Colab.
+
+This is the fast cut of the four-hour workshop: the same four steps
+(Python → explore → first model → compare & challenge), without the
+animations and with the explanations moved into the notebooks.
+
+## Notebooks
+
+| | Notebook | Covers |
+|---|---|---|
+| [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB0-warmup.ipynb) | **NB0 — Warm-up** | 20-min pre-work — strongly recommended for the 2-hour format |
+| [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB1-python-data.ipynb) | **NB1 — Python & Data** | 0:00 – 0:55 |
+| [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB2-machine-learning.ipynb) | **NB2 — Machine Learning** | 1:00 – 2:00 |
+| [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/USER/ml-workshop-2h/blob/main/notebooks/NB-SOLUTIONS.ipynb) | **NB-SOLUTIONS** | released after the session |
+
+## Also here
+
+- [Correlation playground](assets/interactive/correlation-playground.html) — drag points, watch *r* (optional, for after the session)
+- [Full workshop plan](https://github.com/USER/ml-workshop-2h/blob/main/docs/WORKSHOP-PLAN.md) — minute by minute
+
+::: {.callout-note}
+Content is CC BY 4.0, code is MIT. Reuse it, adapt it, teach it.
+:::

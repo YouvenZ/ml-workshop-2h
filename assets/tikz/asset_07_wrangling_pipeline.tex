@@ -1,0 +1,29 @@
+% Asset 7 — the Hour 2 framing diagram. Shown once at 1:00 and then
+% referred back to whenever someone asks "where are we?".
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}[node distance=9mm]
+
+\node[box, gray,   minimum width=30mm, minimum height=15mm] (raw)   at (0,0)    {\textbf{raw}\\\scriptsize the CSV as it arrives};
+\node[box, blue,   minimum width=30mm, minimum height=15mm] (clean) at (4.1,0)  {\textbf{clean}\\\scriptsize missing values handled};
+\node[box, teal,   minimum width=30mm, minimum height=15mm] (expl)  at (8.2,0)  {\textbf{explore}\\\scriptsize describe, groupby};
+\node[box, orange, minimum width=30mm, minimum height=15mm] (vis)   at (12.3,0) {\textbf{visualise}\\\scriptsize the chart that shows it};
+
+\draw[arr] (raw)   -- (clean);
+\draw[arr] (clean) -- (expl);
+\draw[arr] (expl)  -- (vis);
+
+\node[mono, below=6mm of raw]   {read\_csv};
+\node[mono, below=6mm of clean] {isna, dropna};
+\node[mono, below=6mm of expl]  {groupby};
+\node[mono, below=6mm of vis]   {scatterplot};
+
+% the loop back — exploration is not linear
+\draw[arr, draw=navy!45, dashed]
+      ($(vis.north)+(0,1mm)$) to[out=90, in=90, looseness=0.55]
+      ($(clean.north)+(0,1mm)$);
+\node[note] at (8.2,1.9) {you will go round this loop more than once};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,57 @@
+% Asset 6 — DataFrame anatomy. Referenced repeatedly all workshop,
+% so every label here must match the vocabulary used in the notebooks.
+\documentclass[border=10pt]{standalone}
+\input{_preamble}
+\begin{document}
+\begin{tikzpicture}[x=25mm, y=10mm]
+
+% column headers
+\foreach \c/\j in {species/0, island/1, {bill\_length\_mm}/2, {body\_mass\_g}/3} {
+  \node[hdr, minimum width=23mm] (H\j) at (\j,0) {\ttfamily \c};
+}
+% index header
+\node[cell, gray, minimum width=11mm] (HI) at (-0.62,0) {};
+
+% rows
+\foreach \a/\b/\c/\d/\i in {%
+   Adelie/Torgersen/39.1/3750/1,
+   Adelie/Torgersen/39.5/3800/2,
+   Gentoo/Biscoe/46.1/4500/3,
+   Chinstrap/Dream/46.5/3500/4} {
+  \node[cell, gray, minimum width=11mm] (I\i) at (-0.62,-\i) {\ttfamily \the\numexpr\i-1\relax};
+  \node[cell, minimum width=23mm] (C\i x0) at (0,-\i) {\ttfamily \a};
+  \node[cell, minimum width=23mm] (C\i x1) at (1,-\i) {\ttfamily \b};
+  \node[cell, minimum width=23mm] (C\i x2) at (2,-\i) {\ttfamily \c};
+  \node[cell, minimum width=23mm] (C\i x3) at (3,-\i) {\ttfamily \d};
+}
+
+% highlight one row
+\begin{scope}[on background layer]
+  \node[fill=corange!16, fit=(C2x0)(C2x3), inner sep=0pt] (rowhl) {};
+\end{scope}
+\draw[corange, line width=1.2pt, rounded corners=2pt]
+      ($(C2x0.north west)$) rectangle ($(C2x3.south east)$);
+
+% highlight one column
+\draw[cblue, line width=1.2pt, rounded corners=2pt]
+      ($(H3.north west)$) rectangle ($(C4x3.south east)$);
+
+% highlight one cell
+\draw[cteal, line width=1.4pt, rounded corners=2pt]
+      ($(C3x2.north west)$) rectangle ($(C3x2.south east)$);
+
+% ---- labels ----
+\node[capt, text=navy, left=6mm of HI, align=right] {\textbf{columns}\\\scriptsize the names};
+\node[capt, text=navy!75, below left=1mm and 6mm of I4, align=right]
+     {\textbf{index}\\\scriptsize the row labels};
+
+\node[capt, text=corange, right=5mm of C2x3, align=left]
+     {\textbf{a row}\\\scriptsize one penguin};
+\node[capt, text=cblue, above right=2mm and 5mm of H3, align=left]
+     {\textbf{a column} = a Series\\\scriptsize \ttfamily df['body\_mass\_g']};
+\node[capt, text=cteal, below=8mm of C4x2, align=center]
+     {\textbf{a cell}\\\scriptsize one value};
+\draw[arr, draw=cteal] ($(C4x2.south)+(0,-7mm)$) -- (C3x2.south);
+
+\end{tikzpicture}
+\end{document}
