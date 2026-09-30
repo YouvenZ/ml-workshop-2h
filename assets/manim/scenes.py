@@ -240,7 +240,15 @@ class Lesson(Scene):
         new = self._caption(text, color)
         cap_anims = [FadeIn(new, shift=UP * 0.12)]
         if self.caption is not None:
-            cap_anims.append(FadeOut(self.caption, shift=UP * 0.12))
+            # Hand-off, not a crossfade: the old caption is gone in the first
+            # quarter, the new one arrives over the rest. Two sentences
+            # overlapping in the same spot read as neither. Same run time.
+            cap_anims = [
+                FadeOut(self.caption, shift=UP * 0.12,
+                        rate_func=lambda t: smooth(min(1.0, t * 4))),
+                FadeIn(new, shift=UP * 0.12,
+                       rate_func=lambda t: smooth(max(0.0, (t - 0.25) / 0.75))),
+            ]
         rt = run_time if run_time is not None else (1.0 if anims else 0.45)
         self.play(*cap_anims, *anims, run_time=rt)
         self.caption = new
