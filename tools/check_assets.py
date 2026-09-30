@@ -4,7 +4,7 @@ Check every rendered asset against the spec in docs/WORKSHOP-PLAN.md.
 
     make -C assets check      (or: python tools/check_assets.py)
 
-Caps enforced: clips <= 15 s and <= 4 MB, 1280x720; the whole rendered/
+Caps enforced: clips <= 30 s and <= 4 MB, 1280x720; the whole rendered/
 directory well under the repo budget. Exits non-zero on a violation so it
 can gate a release. A deck that stalls mid-session because one clip is 40 MB
 is a failure mode worth catching in CI rather than in a lecture hall.
@@ -19,7 +19,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 RENDERED = ROOT / "assets" / "rendered"
 
 MAX_CLIP_MB = 4.0
-MAX_CLIP_SEC = 15.0
+MAX_CLIP_SEC = 30.0     # self-contained micro-lessons need reading time
 EXPECT_SIZE = (1280, 720)
 MAX_TOTAL_MB = 60.0
 

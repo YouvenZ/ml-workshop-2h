@@ -14,8 +14,13 @@
 
 ## Clips
 
-The clips are the four-hour set, unchanged: 1280×720, ≤15 s, ≤4 MB,
-~4.5 MB for all eleven. They are committed pre-rendered in `assets/rendered/`,
+Eleven self-contained micro-lessons, rewritten for the two-hour deck:
+1280×720 @30fps, ≤30 s, ≤4 MB (~12 MB for all eleven). Every scene subclasses
+`Lesson` in `assets/manim/scenes.py`, which gives them one grammar — a
+question as the title, `say()` captions held long enough to read, and a
+`takeaway()` box as the final frame. All on-screen numbers are computed from
+`data/` at render time, not typed in. On the slide, the clip fills the whole
+slide (`{.clip-slide}` hides the slide heading — the clip carries its own). They are committed pre-rendered in `assets/rendered/`,
 so neither CI nor a presenter needs Manim. `tools/check_assets.py` enforces the
 size and duration budget. Rebuild one with:
 

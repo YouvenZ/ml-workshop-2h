@@ -44,8 +44,11 @@ the four-hour version meets the same steps in the same order, with more room.
 > Let the clip show the idea, type the code, move on. If the room needs more
 > explanation, it lives in the notebook markdown, not on a slide.
 >
-> Clips play **once** when their slide arrives and stop on the final frame —
-> the frame you talk over. Click a clip (or ↻ replay) to run it again.
+> Clips play **once** when their slide arrives and stop on their TAKEAWAY
+> frame. **Don't talk over a clip** — every one explains itself in 19–29 s.
+> When it stops, ask the one question in its speaker notes, then move on.
+> Click a clip (or ↻ replay) to run it again. The eleven clips total ~4½
+> minutes and replace the explanation you would otherwise give live.
 
 The notebooks were already written to stand alone, so a student who wants
 the "why" finds it one scroll below the cell they just ran.
@@ -193,9 +196,25 @@ run the whole pipeline alone on unfamiliar data.
 All 22 assets of the four-hour set are in the repo:
 
 - **11 Manim clips** (`assets/manim/scenes.py` → `assets/rendered/*.mp4`, 1280×720,
-  ≤15 s, ≤4 MB each): 03 for-loop, 05 broadcasting, 08 split-apply-combine,
-  12b train/test split, 13 overfitting, 14 decision boundary, 16 KNN, 17 effect
-  of K, 20 imputation, 21 KNN distance, 22 logistic curve.
+  ≤30 s, ≤4 MB each; ~4½ minutes in total). Each is a **self-contained
+  micro-lesson**: a question as its title, one plain-English caption per step
+  (held ~0.3 s per word + 1 s so the back row can read it), real numbers from
+  the workshop data, and a **TAKEAWAY** box as the final frame — the frame the
+  player stops on. A student who sees only the clip gets the concept.
+
+  | Clip | Question it answers | Takeaway (final frame) | Length |
+  |---|---|---|---|
+  | 03 for-loop | What does a for loop do? | A loop repeats the same steps for every item in a list. | 29 s |
+  | 05 broadcasting | How does NumPy do maths on a whole array? | One operation hits every element — no loop, 50–250× faster. | 21 s |
+  | 20 imputation | What happens when you fill in missing ages? | Filling gaps invents data (106 → 283, std 14.5 → 13.0). | 20 s |
+  | 08 split-apply-combine | What does groupby do? | Split, apply, combine — one answer per group. | 19 s |
+  | 12b train/test split | Why hide some data from the model? | Judge a model on data it has never seen (266 / 67). | 25 s |
+  | 13 overfitting | Underfit, good fit, overfit | Overfitting = memorising the examples (training 0.00, new 0.11). | 26 s |
+  | 14 decision boundary | What does .fit() actually do? | Nudging the boundaries step by step (23% → 95%). | 23 s |
+  | 22 logistic curve | How does the model output a probability? | A weighted score, squashed into a probability. | 25 s |
+  | 16 KNN | How does K-Nearest Neighbours decide? | Find the K most similar examples and let them vote (3–2). | 23 s |
+  | 17 effect of K | What does K change in KNN? | Too small is jumpy, too large ignores groups (0.99 vs 0.81). | 24 s |
+  | 21 KNN distance | What does "nearest" mean for KNN? | Scale your features (25 vs 250 000; 0.82 → 0.99). | 26 s |
 - **9 TikZ diagrams** on the slides (01, 04, 06, 09, 11, 12, 15, 18, 19) plus 02
   and 07 in the notebooks only. The pipeline diagram (19) is labelled Part 1–4.
 - **1 interactive**: the correlation playground.

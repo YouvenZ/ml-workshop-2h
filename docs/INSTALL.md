@@ -162,7 +162,7 @@ an ordinary wheel install, not a compile from source.
 | Step | Command underneath | Fails the build when |
 |---|---|---|
 | 1. Assets | `tools/build_assets.py` | a diagram or clip will not render |
-| 2. Asset budget | `tools/check_assets.py` | a clip exceeds 4 MB or 15 s, or is missing |
+| 2. Asset budget | `tools/check_assets.py` | a clip exceeds 4 MB or 30 s, or is missing |
 | 3. Notebooks | `tools/build_notebooks.py` | generation errors |
 | 4. Notebook run | `tools/check_notebooks.py` | **a hosted dataset URL is down** |
 | 5. Site | `quarto render` | the deck will not build |

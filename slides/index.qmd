@@ -184,16 +184,17 @@ the notebook.
 
 ---
 
-## What a loop actually does
+## What a loop actually does {.clip-slide}
 
-<div class="clip" style="width:78%">
+<div class="clip">
 <video src="../assets/rendered/asset_03_for_loop.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-Point at the accumulator as it updates. The clip plays once and stops on its
-last frame; click it or hit replay to run it again. Then type the loop.
+29 s, self-contained: the code, a pointer walking the list, m taking each
+value, total growing to 14250. Don't talk over it. Then ask: "if the list
+had 344 masses, how many times would the indented line run?" (344)
 :::
 
 ---
@@ -242,16 +243,17 @@ list" question is gone for good.
 
 ---
 
-## "Vectorised" means no loop
+## "Vectorised" means no loop {.clip-slide}
 
-<div class="clip" style="width:72%">
+<div class="clip">
 <video src="../assets/rendered/asset_05_broadcasting.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-One operation, applied to every element, with no `for` in sight. Let it
-play, then the next slide shows the same thing as code.
+21 s: the 2 is stretched to the array's shape, every pair multiplied at
+once, then a > 3700 gives one True/False per element. Ask: "what would
+a + 100 give?" — then the live cell on the next slide lets them check.
 :::
 
 ---
@@ -409,30 +411,32 @@ The Titanic numbers are what they will produce themselves at 1:45.
 
 ---
 
-## What filling actually does
+## What filling actually does {.clip-slide}
 
-<div class="clip" style="width:88%">
+<div class="clip">
 <video src="../assets/rendered/asset_20_imputation.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-Real Titanic ages: 177 filled values pile into one bin, 106 → 283. Let the
-spike land before you say anything — they produce it themselves at 1:45.
+20 s, real Titanic ages: 177 missing, all filled with the median 28, the
+25–30 bar jumps 106 → 283, the spread shrinks 14.5 → 13.0. Ask: "is
+that shrinkage a problem for a model?" — they meet it again at 1:45.
 :::
 
 ---
 
-## Split, apply, combine — in motion
+## Split, apply, combine — in motion {.clip-slide}
 
-<div class="clip" style="width:76%">
+<div class="clip">
 <video src="../assets/rendered/asset_08_split_apply_combine.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-Say the three words as they happen on screen, then read the groupby on the
-next slide.
+19 s: real rows split by species, each group collapses to its mean,
+the means form a new table. Ask: "what would .max() change?" (the apply
+step only).
 :::
 
 ---
@@ -600,29 +604,31 @@ You don't grade a student on the questions they studied.
 
 ---
 
-## The split, in motion
+## The split, in motion {.clip-slide}
 
-<div class="clip" style="width:72%">
+<div class="clip">
 <video src="../assets/rendered/asset_12b_train_test_split.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-The model never sees the orange rows until the exam. One sentence, move on.
+25 s: 333 penguins shuffled, 266 train / 67 test, the model learns from
+train only and sits the exam on test (0.97). Ask: "why shuffle first?"
 :::
 
 ---
 
-## Underfit, good fit, overfit
+## Underfit, good fit, overfit {.clip-slide}
 
-<div class="clip" style="width:92%">
+<div class="clip">
 <video src="../assets/rendered/asset_13_overfitting.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-Ask which one they'd trust BEFORE the labels appear. Take two answers. The
-clip stops on the frame with all three curves — talk over that frame.
+26 s: three models on the same 11 points, then 10 new points. Errors are
+computed on screen: overfit 0.00 on training but the worst (0.11) on new
+points. Ask: "which number would you report to your boss?" (new points)
 :::
 
 ---
@@ -667,30 +673,32 @@ reproducibility; test_size=0.2 holds back 20% for the exam.
 
 ---
 
-## What fitting looks like
+## What fitting looks like {.clip-slide}
 
-<div class="clip" style="width:80%">
+<div class="clip">
 <video src="../assets/rendered/asset_14_decision_boundary.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-The boundary moves, is wrong early, and settles. "fit() is this, repeated,
-until moving stops helping."
+23 s, real penguins: the boundaries start as a random guess (23% correct)
+and gradient steps move them to 95%. Ask: "why does it stop improving?"
+(the classes genuinely overlap).
 :::
 
 ---
 
-## What the model actually computes
+## What the model actually computes {.clip-slide}
 
-<div class="clip" style="width:82%">
+<div class="clip">
 <video src="../assets/rendered/asset_22_logistic_curve.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-A weighted sum, then a squash into 0–1. No calculus. The next slide is the
-same two equations, still, for anyone who wants to copy them.
+25 s: weighted sum → score z → sigmoid → probability, with a live readout
+sweeping z. Ask: "what p does z = 0 give?" (0.5 — the boundary). The next
+slide has the two equations to copy.
 :::
 
 ---
@@ -750,16 +758,16 @@ Not necessarily — the gap is the overfitting signal.
 
 ---
 
-## How KNN decides
+## How KNN decides {.clip-slide}
 
-<div class="clip" style="width:78%">
+<div class="clip">
 <video src="../assets/rendered/asset_16_knn.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-No equation. A new point lands, the circle grows until it has caught K
-neighbours, they vote. That is genuinely the whole algorithm.
+23 s, real penguins: a newcomer between Adelie and Chinstrap, zoom, the 5
+nearest are circled, they vote 3–2 → Adelie. Ask: "what if K were 1?"
 :::
 
 ---
@@ -782,16 +790,17 @@ Let them try a few K values in NB2 while you move to the trap.
 
 ---
 
-## K is a choice you make
+## K is a choice you make {.clip-slide}
 
-<div class="clip" style="width:84%">
+<div class="clip">
 <video src="../assets/rendered/asset_17_effect_of_k.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-K=1 is jagged and believes every bit of noise; very large K smooths away
-real structure. That is what a hyperparameter looks like.
+24 s: decision regions for K = 1, 5, 15, 200 on the real data; at 200
+Chinstrap is outvoted (unseen accuracy 0.99 → 0.81). Ask: "how would you
+pick K?" (try several on data the model hasn't seen).
 :::
 
 ---
@@ -841,16 +850,17 @@ body_mass_g drops accuracy: that is the next slide's trap, felt first.
 
 ---
 
-## What "nearest" actually means
+## What "nearest" actually means {.clip-slide}
 
-<div class="clip" style="width:88%">
+<div class="clip">
 <video src="../assets/rendered/asset_21_knn_distance.mp4" autoplay muted playsinline preload="metadata"></video>
 <button class="replay">&#8635; replay</button>
 </div>
 
 ::: {.notes}
-Walk the triangle, then the two squared terms. 25 versus 250 000 is the
-whole scaling lesson, arrived at arithmetically.
+26 s: Pythagoras, then 5 mm vs 500 g → 25 vs 250 000 drawn to scale, then
+scaled features and 0.82 → 0.99. Ask: "which other feature pairs would
+have this problem?"
 :::
 
 ---

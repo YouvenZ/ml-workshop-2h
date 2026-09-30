@@ -199,3 +199,16 @@ $code-block-bg: #F2F3F5;
 
 // The part dividers sit on navy; reveal tags them .has-dark-background.
 .reveal .has-dark-background .whereami { color: rgba(#fff, 0.7); }
+
+// ---------------------------------------------------------------------
+// Clip slides: the clips are self-contained (each opens with its own
+// question as a title), so the slide heading is kept for navigation and
+// speaker view but hidden, and the clip gets the whole slide.
+// ---------------------------------------------------------------------
+.reveal .slides section.clip-slide > h2 { display: none; }
+.reveal .slides section.clip-slide .clip { width: 100%; }
+// Sized in slide pixels (the deck is 1280x720 and reveal scales it as a
+// whole) — vh units would track the browser window, not the slide.
+.reveal .slides section.clip-slide .clip video {
+  width: 1040px; max-width: 100%; height: auto; max-height: none; margin: 0 auto;
+}
