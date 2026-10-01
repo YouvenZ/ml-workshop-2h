@@ -2,6 +2,11 @@
 title: "Python & Machine Learning"
 subtitle: "From zero to a working classifier in two hours"
 author: "Dr. Rachid Zeghlache"
+institute: "Assistant Professor of Artificial Intelligence · American University in Dubai"
+title-slide-attributes:
+  data-background-image: theme/title-bg.svg
+  data-background-size: cover
+  data-background-color: "#14203A"
 date: today
 format:
   live-revealjs:
@@ -73,7 +78,7 @@ loud — it removes a real anxiety.
 
 ---
 
-## Before anything else {.center background-color="#2A9D8F"}
+## Before anything else {.center background-color="#2A9D8F" background-gradient="linear-gradient(135deg, #2A9D8F 0%, #1F7A70 100%)"}
 
 Open **NB1**. Click **Copy to Drive**. Run cell 1.
 
@@ -90,10 +95,14 @@ Restart & run all — nothing else about Colab matters today.
 
 ---
 
-## Part 1 · Python for data {.center background-color="#1B2A4A"}
+## Part 1 · Python for data {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
-::: {.whereami}
-0:05 – 0:30 · by 0:30 you will be filtering a real table of 344 penguins
+::: {.part-num}
+01
+:::
+
+::: {.part-goal}
+<span>0:05 – 0:30</span> by 0:30 you will be filtering a real table of 344 penguins
 :::
 
 ---
@@ -335,7 +344,7 @@ it now.
 
 ---
 
-## Exercise 1 {background-color="#E07A2C"}
+## Exercise 1 {background-color="#E07A2C" background-gradient="linear-gradient(135deg, #E07A2C 0%, #C4601A 100%)"}
 
 **NB1 → Exercise 1.** Fill the blanks.
 
@@ -366,10 +375,14 @@ A number — the count of penguins over 4000 g.
 
 ---
 
-## Part 2 · Explore & visualise {.center background-color="#1B2A4A"}
+## Part 2 · Explore & visualise {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
-::: {.whereami}
-0:30 – 0:55 · by 0:55 you will have made the chart the second hour depends on
+::: {.part-num}
+02
+:::
+
+::: {.part-goal}
+<span>0:30 – 0:55</span> by 0:55 you will have made the chart the second hour depends on
 :::
 
 ---
@@ -498,7 +511,7 @@ The one sentence you must not skip, even in the fast version. Say it slowly.
 
 ---
 
-## Practice {background-color="#E07A2C"}
+## Practice {background-color="#E07A2C" background-gradient="linear-gradient(135deg, #E07A2C 0%, #C4601A 100%)"}
 
 **NB1 → Independent practice.** Questions 1–3, in pairs.
 
@@ -541,7 +554,7 @@ No. Both are driven by species and overall size.
 
 ---
 
-## Break — 5 minutes {background-color="#2A9D8F" .center}
+## Break — 5 minutes {background-color="#2A9D8F" background-gradient="linear-gradient(135deg, #2A9D8F 0%, #1F7A70 100%)" .center}
 
 Open **NB2** and run cell 1 before you stand up.
 
@@ -549,10 +562,14 @@ The correlation playground is one slide back — go and break it.
 
 ---
 
-## Part 3 · Your first model {.center background-color="#1B2A4A"}
+## Part 3 · Your first model {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
-::: {.whereami}
-1:00 – 1:30 · by 1:30 you will have a trained, scored classifier
+::: {.part-num}
+03
+:::
+
+::: {.part-goal}
+<span>1:00 – 1:30</span> by 1:30 you will have a trained, scored classifier
 :::
 
 ---
@@ -750,10 +767,14 @@ Not necessarily — the gap is the overfitting signal.
 
 ---
 
-## Part 4 · Compare & challenge {.center background-color="#1B2A4A"}
+## Part 4 · Compare & challenge {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
-::: {.whereami}
-1:30 – 2:00 · by 2:00 you will have run the whole pipeline unaided
+::: {.part-num}
+04
+:::
+
+::: {.part-goal}
+<span>1:30 – 2:00</span> by 2:00 you will have run the whole pipeline unaided
 :::
 
 ---
@@ -899,7 +920,7 @@ flattering lie. Same rule as the imputer.
 
 ---
 
-## Titanic {background-color="#E07A2C"}
+## Titanic {background-color="#E07A2C" background-gradient="linear-gradient(135deg, #E07A2C 0%, #C4601A 100%)"}
 
 **NB2 → The Titanic challenge.** In pairs.
 
@@ -931,7 +952,7 @@ split, fit, predict, score — and always look at one it got wrong.
 
 ## Keep going — three next steps {.smaller}
 
-::: {.columns}
+::: {.columns .cards}
 ::: {.column width="33%"}
 ### 📚 Learn
 
@@ -976,9 +997,10 @@ NB-SOLUTIONS now.
 
 ---
 
-## Thank you {.center background-color="#1B2A4A"}
+## Thank you {.center .closing background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
-**Dr. Rachid Zeghlache**
+**Dr. Rachid Zeghlache**<br>
+<span class="affil">Assistant Professor of Artificial Intelligence · American University in Dubai</span>
 
 Slides, notebooks and solutions — yours to keep:
 [github.com/YouvenZ/ml-workshop-2h](https://github.com/YouvenZ/ml-workshop-2h)

@@ -49,3 +49,19 @@
   });
 })();
 </script>
+<script>
+// Tag the deck while the title slide is showing, so the theme can hide the
+// footer there (it only repeats the title).
+(function () {
+  function hook() {
+    if (typeof Reveal === 'undefined' || !Reveal.isReady || !Reveal.isReady()) return setTimeout(hook, 150);
+    var root = Reveal.getRevealElement();
+    var sync = function () {
+      var s = Reveal.getCurrentSlide();
+      root.classList.toggle('title-active', !!s && s.id === 'title-slide');
+    };
+    Reveal.on('slidechanged', sync); sync();
+  }
+  hook();
+})();
+</script>

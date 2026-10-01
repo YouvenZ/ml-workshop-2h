@@ -4,7 +4,8 @@ A 2-hour, zero-prerequisite workshop taking CS/STEM university students from
 no Python to a trained, evaluated classifier. Browser only — students install
 nothing.
 
-By **Dr. Rachid Zeghlache**.
+By **Dr. Rachid Zeghlache**, Assistant Professor of Artificial Intelligence,
+American University in Dubai.
 
 This is the **fast cut of the four-hour workshop**: the same four steps in the
 same order (Python → explore → first model → compare & challenge), all 11

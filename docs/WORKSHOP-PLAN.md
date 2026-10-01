@@ -5,7 +5,7 @@
 > challenge — with the long explanations moved off the slides and into the
 > notebooks. The clips do the explaining now: each one replaces a minute of talk.
 >
-> Presenter: **Dr. Rachid Zeghlache**
+> Presenter: **Dr. Rachid Zeghlache**, Assistant Professor of Artificial Intelligence, American University in Dubai
 
 | | |
 |---|---|

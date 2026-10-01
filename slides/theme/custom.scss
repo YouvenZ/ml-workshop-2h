@@ -4,7 +4,7 @@
 // Without this import the slides are the only part of the system that
 // falls back to Arial, and the mismatch is visible on every slide that
 // puts a caption next to a diagram.
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap");
 
 
 // Palette — identical to the asset production spec so slides and
@@ -28,7 +28,9 @@ $presentation-heading-color: $navy;
 $presentation-heading-font-weight: 700;
 
 $code-block-font-size: 0.72em;
-$code-block-bg: #F2F3F5;
+$code-block-bg: #F6F8FB;
+$font-family-monospace: "JetBrains Mono", ui-monospace, "DejaVu Sans Mono", monospace;
+$link-color-hover: $orange;
 
 /*-- scss:rules --*/
 
@@ -44,17 +46,26 @@ $code-block-bg: #F2F3F5;
 }
 
 // Code blocks get a left rule in brand blue, matching the printed plan
+.reveal pre {
+  box-shadow: 0 1px 2px rgba($navy, 0.06), 0 8px 24px -12px rgba($navy, 0.22);
+  border-radius: 10px;
+  border: 1px solid rgba($navy, 0.08);
+  overflow: hidden;
+}
 .reveal pre code {
   border-left: 4px solid $blue;
-  padding-left: 1em;
-  border-radius: 2px;
-  line-height: 1.35;
+  padding: 0.7em 1em;
+  border-radius: 0;
+  line-height: 1.4;
+  background: $code-block-bg;
 }
 
 // Make blockquotes read as "the thing to remember"
 .reveal blockquote {
   border-left: 4px solid $orange;
   background: rgba($orange, 0.07);
+  border-radius: 0 8px 8px 0;
+  box-shadow: none;
   padding: 0.6em 1em;
   font-style: normal;
   width: 100%;
@@ -63,8 +74,15 @@ $code-block-bg: #F2F3F5;
 // Tables: readable at distance, no heavy borders
 .reveal table {
   font-size: 0.8em;
-  th { background: $navy; color: #fff; }
-  tr:nth-child(even) { background: rgba($gray, 0.35); }
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba($navy, 0.08), 0 8px 24px -14px rgba($navy, 0.25);
+  th { background: $navy; color: #fff; font-weight: 600; letter-spacing: 0.01em; border: none; }
+  td { border-bottom: 1px solid rgba($navy, 0.07); }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) { background: rgba($blue, 0.04); }
 }
 
 // Live Pyodide cells — make the run button obvious from the back row.
@@ -113,9 +131,9 @@ $code-block-bg: #F2F3F5;
   width: 100%;
   height: auto;
   max-height: 62vh;
-  border-radius: 6px;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 2px 16px rgba(27, 42, 74, 0.14);
+  box-shadow: 0 0 0 1px rgba($navy, 0.08), 0 18px 40px -18px rgba($navy, 0.35);
   cursor: pointer;
 }
 
@@ -165,16 +183,28 @@ $code-block-bg: #F2F3F5;
 
 // One short sentence that is the whole point of a slide.
 .reveal .keypoint {
-  font-size: 1.25em;
+  font-size: 1.12em;
   font-weight: 600;
   color: $navy;
-  text-align: center;
-  border-top: 3px solid $orange;
-  border-bottom: 3px solid $orange;
-  padding: 0.5em 0.2em;
+  text-align: left;
+  background: linear-gradient(90deg, rgba($teal, 0.10), rgba($teal, 0.03));
+  border-left: 5px solid $teal;
+  border-radius: 0 10px 10px 0;
+  padding: 0.5em 0.9em 0.5em 1.4em;
   margin: 0.6em auto;
-  max-width: 88%;
+  max-width: 92%;
+  position: relative;
 }
+.reveal .keypoint::before {
+  content: "KEY IDEA";
+  position: absolute; top: -0.85em; left: 1.2em;
+  font-size: 0.42em; font-weight: 800; letter-spacing: 0.14em;
+  color: #fff; background: $teal; padding: 0.25em 0.7em; border-radius: 999px;
+}
+.reveal .has-dark-background .keypoint {
+  color: #fff; background: rgba(#fff, 0.12); border-left-color: #fff;
+}
+.reveal .has-dark-background .keypoint::before { background: #fff; color: $navy; }
 
 // A wrong-vs-right pair. Red-free: the palette's orange carries "watch out",
 // teal carries "this is the one", and the ✗ / ✓ carry it without colour.
@@ -212,3 +242,113 @@ $code-block-bg: #F2F3F5;
 .reveal .slides section.clip-slide .clip video {
   width: 1040px; max-width: 100%; height: auto; max-height: none; margin: 0 auto;
 }
+
+// ---------------------------------------------------------------------
+// Academic polish: headings, title, part dividers, closing slide
+// ---------------------------------------------------------------------
+.reveal h1, .reveal h2, .reveal h3 { letter-spacing: -0.015em; }
+
+// A short orange rule under every content-slide heading. Not on dividers,
+// the closing slide or coloured slides. (Every slide carries .center —
+// the deck sets center: true — so that class can't be used to exclude.)
+.reveal .slides section:not(.part):not(.closing):not(.clip-slide):not(.has-dark-background) > h2 {
+  position: relative;
+  padding-bottom: 0.18em;
+  margin-bottom: 0.45em;
+}
+.reveal .slides section:not(.part):not(.closing):not(.clip-slide):not(.has-dark-background) > h2::after {
+  content: ""; position: absolute; left: 0; bottom: 0;
+  width: 2.2em; height: 4px; border-radius: 2px; background: $orange;
+}
+
+// Progress bar and controls in the palette
+.reveal .progress { height: 4px; color: $orange; }
+.reveal .controls { color: $blue; }
+.reveal .slide-number {
+  background: transparent; color: rgba($navy, 0.55);
+  font-family: $font-family-sans-serif; font-weight: 600; font-size: 0.5em;
+}
+.reveal .has-dark-background .slide-number,
+.reveal.has-dark-background .slide-number { color: rgba(#fff, 0.6); }
+
+// Title slide — left-aligned over the penguin scatter (theme/title-bg.svg)
+.reveal #title-slide { text-align: left; padding-left: 40px; }
+.reveal #title-slide .title {
+  color: #fff; font-size: 2.15em; font-weight: 800; line-height: 1.05;
+  text-align: left; max-width: 9.4em;
+}
+.reveal #title-slide .subtitle, .reveal #title-slide .quarto-title-authors,
+.reveal #title-slide .institute, .reveal #title-slide .date { max-width: 620px; text-align: left; }
+.reveal #title-slide::before {
+  content: "TWO-HOUR WORKSHOP"; display: block; color: $orange;
+  font-size: 0.48em; font-weight: 800; letter-spacing: 0.22em; margin-bottom: 0.6em;
+}
+// The footer repeats the title — redundant on the title slide itself.
+.reveal.title-active .footer,
+body:has(#title-slide.present) .footer { display: none !important; }
+.reveal #title-slide .subtitle {
+  color: rgba(#fff, 0.82); font-weight: 400; font-size: 1.05em; margin-top: 0.3em;
+}
+.reveal #title-slide .quarto-title-authors { justify-content: flex-start; margin-top: 1.6em; }
+.reveal #title-slide .quarto-title-author-name { color: #fff; font-weight: 700; font-size: 0.95em; }
+.reveal #title-slide .quarto-title-author { padding-left: 0; }
+.reveal #title-slide p.institute,
+.reveal #title-slide .institute { color: rgba(#fff, 0.75); font-size: 0.62em; margin-top: 0.2em; }
+.reveal #title-slide .date { color: $orange; font-size: 0.55em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1.4em; }
+
+// Part dividers: a big numeral, the heading, then the goal for the part
+.reveal .slides section.part { text-align: left; }
+.reveal .slides section.part h2 {
+  color: #fff; font-size: 2em; font-weight: 800; margin: 0.1em 0 0.35em;
+}
+.reveal .slides section.part .part-num {
+  font-size: 4.2em; font-weight: 800; line-height: 0.9;
+  color: transparent; -webkit-text-stroke: 2px rgba(#fff, 0.35);
+  order: -1;
+}
+.reveal .slides section.part { display: flex !important; flex-direction: column; justify-content: center; }
+.reveal .slides section.part .part-goal {
+  color: rgba(#fff, 0.85); font-size: 0.75em; max-width: 30em;
+  border-left: 4px solid $orange; padding-left: 0.8em;
+}
+.reveal .slides section.part .part-goal span {
+  display: block; color: $orange; font-weight: 700; letter-spacing: 0.1em; font-size: 0.8em;
+}
+
+// Closing slide
+.reveal .slides section.closing { text-align: left; }
+.reveal .slides section.closing h2 { color: #fff; font-size: 2.2em; font-weight: 800; }
+.reveal .slides section.closing p { color: rgba(#fff, 0.9); }
+.reveal .slides section.closing .affil { font-size: 0.7em; color: rgba(#fff, 0.7); }
+.reveal .slides section.closing a { color: #9EC1FF; }
+
+// Coloured activity slides (exercise / break): white type, bolder lists
+.reveal .has-dark-background h2,
+.reveal .has-dark-background { color: #fff; }
+.reveal .has-dark-background a { color: #fff; text-decoration: underline; }
+
+// Footer: quieter, and out of the way of the content
+.reveal .footer { letter-spacing: 0.02em; }
+
+// quarto-live's "Downloading Pyodide" badge: a quiet pill above the slide
+// number instead of a box sitting on top of it.
+#exercise-loading-indicator {
+  bottom: 44px !important; right: 14px !important;
+  font-size: 0.8rem !important; padding: 0.25rem 0.7rem !important;
+  border-radius: 999px !important; border: 1px solid rgba($navy, 0.12) !important;
+  background: rgba(#fff, 0.92) !important; color: rgba($navy, 0.7);
+  box-shadow: 0 4px 14px -6px rgba($navy, 0.3);
+}
+
+// Card columns (next steps): three equal cards, each topped in a palette colour
+.reveal .columns.cards { display: flex; flex-wrap: nowrap; gap: 0.7em; align-items: stretch; }
+.reveal .columns.cards > .column { flex: 1 1 0; width: auto !important; min-width: 0; }
+.reveal .columns.cards > .column {
+  background: #fff; border-radius: 12px; padding: 0.4em 0.8em 0.6em;
+  border: 1px solid rgba($navy, 0.08); border-top: 5px solid $blue;
+  box-shadow: 0 10px 28px -16px rgba($navy, 0.35);
+}
+.reveal .columns.cards > .column:nth-child(2) { border-top-color: $orange; }
+.reveal .columns.cards > .column:nth-child(3) { border-top-color: $teal; }
+.reveal .columns.cards h3 { font-size: 1.05em; margin: 0.25em 0 0.35em; }
+.reveal .columns.cards p { margin: 0.35em 0; line-height: 1.3; }
