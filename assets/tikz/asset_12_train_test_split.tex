@@ -9,20 +9,25 @@
 \node[capt] at (0,2.85) {\ttfamily df \; --- \; 333 penguins};
 \foreach \i in {0,...,19} {
   \node[cell, gray, minimum width=6.6mm, minimum height=7mm]
-        (F\i) at ({-6.4 + \i*0.68}, 2.1) {};
+        (F\i) at ({-6.46 + \i*0.68}, 2.1) {};
 }
 
 \draw[arr] (0,1.5) -- (0,0.9);
 \node[mono, right=2mm] at (0.15,1.2) {train\_test\_split(X, y, test\_size=0.2)};
 
-% the split
+% the split: 16 train cells, a visible gap, then 4 test cells. Positions
+% are computed from one origin so the two groups (and their braces) can
+% never overlap — the earlier version started test at x=1.9 while train
+% ran to x=3.6.
+\def\step{0.68}\def\gap{0.6}
+\pgfmathsetmacro{\xzero}{-(20*\step + \gap)/2 + \step/2}
 \foreach \i in {0,...,15} {
   \node[cell, blue, minimum width=6.6mm, minimum height=7mm]
-        (T\i) at ({-6.6 + \i*0.68}, 0.3) {};
+        (T\i) at ({\xzero + \i*\step}, 0.3) {};
 }
 \foreach \i in {0,...,3} {
   \node[cell, orange, minimum width=6.6mm, minimum height=7mm]
-        (S\i) at ({1.9 + \i*0.68}, 0.3) {};
+        (S\i) at ({\xzero + (16+\i)*\step + \gap}, 0.3) {};
 }
 
 \draw[decorate, decoration={brace, amplitude=5pt, mirror}, draw=cblue, line width=1pt]
@@ -30,12 +35,15 @@
 \draw[decorate, decoration={brace, amplitude=5pt, mirror}, draw=corange, line width=1pt]
       ($(S0.south west)+(0,-2mm)$) -- ($(S3.south east)+(0,-2mm)$);
 
-\node[capt, text=cblue]   at (-3.5,-0.95) {\textbf{train} \; 80\%};
-\node[capt, text=corange] at ( 2.9,-0.95) {\textbf{test} \; 20\%};
+\path ($(T0)!0.5!(T15)$) coordinate (trainc);
+\path ($(S0)!0.5!(S3)$)  coordinate (testc);
 
-\node[capt, align=center] at (-3.5,-1.75)
+\node[capt, text=cblue]   at (trainc |- 0,-0.95) {\textbf{train} \; 80\% \; {\scriptsize(266 penguins)}};
+\node[capt, text=corange] at (testc |- 0,-0.95)  {\textbf{test} \; 20\% \; {\scriptsize(67)}};
+
+\node[capt, align=center] at (trainc |- 0,-1.75)
      {the model \textbf{sees} these\\\scriptsize and learns from them};
-\node[capt, align=center] at (2.9,-1.75)
+\node[capt, align=center] at (testc |- 0,-1.75)
      {the model \textbf{never} sees these\\\scriptsize until we score it};
 
 % the analogy, which is what actually lands

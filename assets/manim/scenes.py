@@ -1198,3 +1198,206 @@ class LogisticCurve(Lesson):
                  zt.animate.set_value(1.4), run_time=1.2)
         self.takeaway("A weighted score, squashed into a probability — "
                       "fit() picks the weights.")
+
+
+# =====================================================================
+# Asset 23 — the confusion matrix, built from the deck's real predictions.
+# Same model as the deck and NB2: three features, 80/20 split with
+# random_state=42, LogisticRegression(max_iter=1000) -> 67 test penguins.
+# =====================================================================
+def deck_test_predictions():
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split
+    df = penguins_df()
+    X = df[["flipper_length_mm", "body_mass_g", "bill_length_mm"]]
+    y = df["species"]
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2,
+                                              random_state=42)
+    model = LogisticRegression(max_iter=1000).fit(X_tr, y_tr)
+    return list(y_te), list(model.predict(X_te))
+
+
+class ConfusionMatrix(Lesson):
+    def construct(self):
+        truth, pred = deck_test_predictions()
+        n = len(truth)
+        idx = {sp: i for i, sp in enumerate(SPECIES)}
+        counts = np.zeros((3, 3), int)
+        for t, p in zip(truth, pred):
+            counts[idx[t], idx[p]] += 1
+        right = int(np.trace(counts))
+        acc = right / n
+
+        self.heading(f"{acc:.0%} correct — but which mistakes?")
+
+        # ---- the empty grid: rows = truth, columns = prediction ---------
+        S = 1.42
+        g0 = np.array([3.05, -0.4, 0])            # grid centre
+
+        def cell_center(r, c):
+            return g0 + np.array([(c - 1) * S, (1 - r) * S, 0])
+
+        cells = VGroup(*[
+            Square(side_length=S, stroke_color=GRAY, stroke_width=3,
+                   fill_color=WHITE, fill_opacity=1).move_to(cell_center(r, c))
+            for r in range(3) for c in range(3)
+        ])
+        col_lab = VGroup(*[
+            VGroup(marker(sp, ORIGIN, 0.09),
+                   Text(sp, font_size=22, color=SPECIES_COLOR[sp]))
+            .arrange(DOWN, buff=0.08).next_to(cells[c], UP, buff=0.12)
+            for c, sp in enumerate(SPECIES)
+        ])
+        row_lab = VGroup(*[
+            VGroup(Text(sp, font_size=22, color=SPECIES_COLOR[sp]),
+                   marker(sp, ORIGIN, 0.09))
+            .arrange(RIGHT, buff=0.12).next_to(cells[3 * r], LEFT, buff=0.14)
+            for r, sp in enumerate(SPECIES)
+        ])
+        said = Text("what the model said →", font_size=24, color=NAVY,
+                    weight=BOLD).next_to(col_lab, UP, buff=0.1)
+        really = Text("what it really is ↓", font_size=24, color=NAVY,
+                      weight=BOLD).next_to(row_lab, UP, buff=0.18)\
+            .align_to(row_lab, RIGHT)
+
+        # ---- the 67 unseen penguins, waiting in a pile -------------------
+        rng = np.random.default_rng(7)
+        order = list(rng.permutation(n))
+        # open with three easy, correct ones — one of each species
+        firsts = []
+        for sp in SPECIES:
+            firsts.append(next(i for i in order
+                               if truth[i] == sp and pred[i] == sp
+                               and i not in firsts))
+        order = firsts + [i for i in order if i not in firsts]
+
+        pile_c = np.array([-5.15, -0.55, 0])
+        cols = 7
+        pile_pos = {}
+        for k, i in enumerate(order):
+            r, c = divmod(k, cols)
+            pile_pos[i] = pile_c + np.array([(c - 3) * 0.24,
+                                             1.15 - r * 0.24, 0])
+        dots = {i: marker(truth[i], pile_pos[i], 0.07) for i in order}
+        pile = VGroup(*dots.values())
+        pile_lab = Text(f"{n} unseen penguins", font_size=24,
+                        color=ORANGE, weight=BOLD)\
+            .next_to(pile, UP, buff=0.2)
+
+        model = VGroup(
+            RoundedRectangle(width=1.5, height=0.8, corner_radius=0.14,
+                             stroke_color=NAVY, stroke_width=3,
+                             fill_color=PAPER, fill_opacity=1),
+            Text("model", font_size=24, weight=BOLD),
+        ).move_to(np.array([-2.75, -0.55, 0]))
+        model[1].move_to(model[0])
+
+        self.say(f"{n} test penguins the model has never seen.",
+                 FadeIn(pile, lag_ratio=0.01), FadeIn(pile_lab),
+                 FadeIn(model), run_time=1.0)
+        self.say("Rows: what it really is. Columns: what the model said.",
+                 FadeIn(cells, lag_ratio=0.05), FadeIn(col_lab), FadeIn(said),
+                 FadeIn(row_lab), FadeIn(really), run_time=1.1)
+
+        # ---- slots inside each cell, and a live count per cell ----------
+        slot_n = np.zeros((3, 3), int)
+
+        def next_slot(r, c):
+            k = slot_n[r, c]
+            slot_n[r, c] += 1
+            rr, cc = divmod(k, 6)
+            return cell_center(r, c) + np.array([(cc - 2.5) * 0.2,
+                                                 0.32 - rr * 0.2, 0])
+
+        tally = [[Integer(0, font_size=22, color=INK_SOFT)
+                  .move_to(cell_center(r, c) + np.array([0.48, 0.52, 0]))
+                  for c in range(3)] for r in range(3)]
+        self.add(*[t for row in tally for t in row])
+        live = np.zeros((3, 3), int)
+
+        def fly(i):
+            r, c = idx[truth[i]], idx[pred[i]]
+            live[r, c] += 1
+            return dots[i].animate(path_arc=-0.6).move_to(next_slot(r, c))\
+                .scale(0.8)
+
+        def tally_anims(before):
+            return [ChangeDecimalToValue(tally[r][c], live[r, c])
+                    for r in range(3) for c in range(3)
+                    if live[r, c] != before[r, c]]
+
+        # the first three: slowly, through the model
+        cap = "Each penguin lands in row = truth, column = guess."
+        # no reading pause here — the flights below take longer than the read
+        self.say(cap, run_time=0.45, extra=-(read_time(cap) - 0.45))
+        for i in order[:3]:
+            self.play(dots[i].animate.move_to(model.get_center()).scale(1.3),
+                      model[0].animate.set_stroke(TEAL), run_time=0.3)
+            before = live.copy()
+            self.play(fly(i), *tally_anims(before),
+                      model[0].animate.set_stroke(NAVY), run_time=0.4)
+        # then the rest, faster and faster
+        rest = order[3:]
+        for chunk in (rest[:10], rest[10:28], rest[28:]):
+            before = live.copy()
+            self.play(LaggedStart(*[fly(i) for i in chunk], lag_ratio=0.08),
+                      *tally_anims(before), run_time=1.0)
+
+        # ---- markers become counts --------------------------------------
+        big = VGroup()
+        for r in range(3):
+            for c in range(3):
+                col = NAVY if counts[r, c] else GRAY
+                big.add(Text(str(counts[r, c]), font_size=50, color=col,
+                             weight=BOLD).move_to(cell_center(r, c)))
+        self.play(FadeOut(pile_lab), FadeOut(model),
+                  *[FadeOut(d, scale=0.5) for d in dots.values()],
+                  *[FadeOut(t) for row in tally for t in row],
+                  FadeIn(big, scale=1.3), run_time=0.8)
+
+        # ---- the diagonal ------------------------------------------------
+        diag = [cells[3 * k + k] for k in range(3)]
+        self.say("The diagonal is where the model was right.",
+                 *[d.animate.set_fill(TEAL_WASH).set_stroke(TEAL, 5)
+                   for d in diag],
+                 *[big[3 * k + k].animate.set_color(TEAL) for k in range(3)],
+                 run_time=0.8)
+        d = [int(counts[k, k]) for k in range(3)]
+        sum_txt = VGroup(
+            Text("accuracy", font_size=26, color=INK_SOFT),
+            Text(f"({d[0]} + {d[1]} + {d[2]}) ÷ {n}", font_size=30,
+                 color=NAVY),
+            Text(f"= {right} ÷ {n} = {acc:.0%}", font_size=34, color=TEAL,
+                 weight=BOLD),
+        ).arrange(DOWN, buff=0.16, aligned_edge=LEFT)\
+            .to_edge(LEFT, buff=0.6).shift(UP * 0.75)
+        self.say("Accuracy = the diagonal ÷ all penguins.",
+                 FadeIn(sum_txt, shift=RIGHT * 0.2, lag_ratio=0.3),
+                 run_time=1.0)
+
+        # ---- the mistakes, read in plain English -------------------------
+        wrong = [(r, c) for r in range(3) for c in range(3)
+                 if r != c and counts[r, c]]
+
+        def plural(k, sp):
+            return f"{k} {sp}" + ("s" if k > 1 else "")
+
+        lines = [f"{plural(counts[r, c], SPECIES[r])} → called "
+                 f"{'an' if SPECIES[c][0] in 'AEIOU' else 'a'} {SPECIES[c]}"
+                 for r, c in wrong]
+        mist = VGroup(
+            Text("the mistakes", font_size=26, color=ORANGE, weight=BOLD),
+            *[Text(s, font_size=25, color=NAVY) for s in lines],
+        ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)\
+            .next_to(sum_txt, DOWN, buff=0.5).align_to(sum_txt, LEFT)
+        rings = [cells[3 * r + c] for r, c in wrong]
+        self.say("Off the diagonal: each cell names one kind of mistake.",
+                 *[x.animate.set_fill(ORANGE_WASH).set_stroke(ORANGE, 5)
+                   for x in rings],
+                 *[big[3 * r + c].animate.set_color(ORANGE) for r, c in wrong],
+                 FadeIn(mist, shift=RIGHT * 0.2, lag_ratio=0.3),
+                 run_time=1.1)
+        self.play(*[Indicate(big[3 * r + c], color=ORANGE, scale_factor=1.35)
+                    for r, c in wrong], run_time=0.8)
+        self.takeaway("The diagonal is what it got right. "
+                      "Every other cell names a mistake.")

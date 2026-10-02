@@ -51,6 +51,7 @@ CLIPS = {
     "Imputation": "asset_20_imputation",
     "KNNDistance": "asset_21_knn_distance",
     "LogisticCurve": "asset_22_logistic_curve",
+    "ConfusionMatrix": "asset_23_confusion_matrix",
 }
 
 # -qm is exactly 1280x720 @30fps, which is what the asset spec asks for.

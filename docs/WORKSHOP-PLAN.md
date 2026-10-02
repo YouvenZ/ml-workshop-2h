@@ -15,7 +15,7 @@
 | **Balance** | First hour Python for data · second hour applied ML |
 | **Datasets** | Palmer Penguins (taught), Titanic (final challenge) |
 | **Stack** | numpy · pandas · matplotlib / seaborn · scikit-learn |
-| **Deliverables** | 54-slide deck, 11 animated clips, 3 live Python cells, 1 interactive, 9 static diagrams, 3 Colab notebooks + solutions |
+| **Deliverables** | 55-slide deck, 12 animated clips, 3 live Python cells, 1 interactive, 9 static diagrams, 3 Colab notebooks + solutions |
 
 ---
 
@@ -23,10 +23,10 @@
 
 | | 4 hours | 2 hours |
 |---|---|---|
-| Slides | 114, one idea per slide | 54, one *step* per slide |
+| Slides | 114, one idea per slide | 55, one *step* per slide |
 | Animated clips (Manim) | 11 | **all 11 kept** — each replaces the explanation slides around it |
 | Correlation playground | during the break | during the break (slide 26) |
-| In-slide live Python (Pyodide) | 3 cells | **3 cells**: change a value (7), vectorise & mask (14), **new:** pick your own K on real penguins (47) |
+| In-slide live Python (Pyodide) | 3 cells | **3 cells**: change a value (7), vectorise & mask (14), **new:** pick your own K on real penguins (48) |
 | Exercise 1 | 6 min | 5 min |
 | Independent practice | 20 min, 4 questions | 8 min, questions 1–3 (Q4 is homework) |
 | Imputation | 5 slides + clip | 1 slide + clip |
@@ -83,13 +83,19 @@ Slide numbers are as shown in the deck's corner counter (the title is 1).
 | 0:05 – 0:30 | **Part 1 · Python for data** | 5–18 | NB1 Part 1 + Exercise 1 |
 | 0:30 – 0:55 | **Part 2 · Explore & visualise** | 19–29 | NB1 Part 2 + practice |
 | 0:55 – 1:00 | Break — playground on screen, open NB2 | 28–30 | NB2 cell 1 |
-| 1:00 – 1:30 | **Part 3 · Your first model** | 31–42 | NB2 Part 3 |
-| 1:30 – 2:00 | **Part 4 · Compare & challenge** | 43–54 | NB2 Part 4 + Titanic |
+| 1:00 – 1:30 | **Part 3 · Your first model** | 31–43 | NB2 Part 3 |
+| 1:30 – 2:00 | **Part 4 · Compare & challenge** | 44–55 | NB2 Part 4 + Titanic |
 
-Live Python slides: 7, 14, 47 — ~90 seconds each; take one suggestion from the
+Live Python slides: 7, 14, 48 — ~90 seconds each; take one suggestion from the
 room and run it. Clips: 9 (for-loop), 12 (broadcasting), 22 (imputation), 23
 (split-apply-combine), 34 (train/test split), 35 (overfitting), 38 (decision
-boundary), 39 (logistic curve), 44 (KNN), 46 (effect of K), 48 (KNN distance).
+boundary), 39 (logistic curve), **41 (confusion matrix)**, 45 (KNN), 47 (effect
+of K), 49 (KNN distance).
+
+Slide 32 is the rule-based vs machine-learning figure (asset 24); slide 42 the
+hands-on confusion matrix with the real numbers; slide 43 the "which model would
+you trust?" checkpoint (real accuracies: logistic regression 98.1% train / 97.0%
+test vs 1-nearest-neighbour 100% / 80.6%).
 
 ---
 

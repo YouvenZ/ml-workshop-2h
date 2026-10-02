@@ -9,7 +9,7 @@ American University in Dubai.
 
 This is the **fast cut of the four-hour workshop**: the same four steps in the
 same order (Python → explore → first model → compare & challenge), all 11
-animated clips and live Python in the slides, with 114 slides condensed to 54 and the long explanations moved
+animated clips and live Python in the slides, with 114 slides condensed to 55 and the long explanations moved
 into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-the-four-hour-version).
 
 **[▶ View the slides](https://YouvenZ.github.io/ml-workshop-2h/slides/)**
@@ -37,7 +37,7 @@ into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-t
 ```
 ├── index.qmd               landing page for the published site
 ├── _quarto.yml             project config (root, so ../assets/ resolves)
-├── slides/index.qmd        the deck — 54 slides, 11 clips, 3 live Python cells
+├── slides/index.qmd        the deck — 55 slides, 12 clips, 3 live Python cells
 ├── slides/katex/           self-hosted KaTeX, so equations never need a CDN
 ├── notebooks/*.ipynb       BUILD OUTPUT — edit tools/build_notebooks.py
 ├── assets/

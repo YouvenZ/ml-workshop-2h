@@ -41,7 +41,7 @@ run real Python in the browser — no server:
 |---|---|---|
 | 7 | change a value, read the error | none |
 | 14 | vectorise and mask a NumPy array | numpy (preloaded) |
-| 47 | **pick your own K** — KNN on the real penguins | pandas + scikit-learn (fetched on first import) |
+| 48 | **pick your own K** — KNN on the real penguins | pandas + scikit-learn (fetched on first import) |
 
 The penguins CSV is copied into the in-browser filesystem at start-up
 (`pyodide: resources:` in the deck header), so the cell reads

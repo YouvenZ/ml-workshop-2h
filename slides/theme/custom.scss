@@ -352,3 +352,6 @@ body:has(#title-slide.present) .footer { display: none !important; }
 .reveal .columns.cards > .column:nth-child(3) { border-top-color: $teal; }
 .reveal .columns.cards h3 { font-size: 1.05em; margin: 0.25em 0 0.35em; }
 .reveal .columns.cards p { margin: 0.35em 0; line-height: 1.3; }
+
+// Slides whose figure IS the slide: let it take the full height under the title
+.reveal .slides section.fullfig img { max-height: 560px; height: 560px; width: auto; }

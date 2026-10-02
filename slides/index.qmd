@@ -574,27 +574,18 @@ The correlation playground is one slide back — go and break it.
 
 ---
 
-## Machine learning in one slide {.smaller}
+## Machine learning in one slide {.smaller .nostretch .fullfig}
 
-::: {.columns}
-::: {.column width="50%"}
-**Normal programming** — you write the rule.
+![](../assets/rendered/asset_24_rules_vs_learning.svg){fig-align="center"}
 
-```python
-if flipper > 205:
-    return 'Gentoo'
-```
+::: {.notes}
+Left first: this is how all software worked before ML — a person types every
+rule, and every case they did not foresee is wrong (ask: "what about a small
+Gentoo with 200 mm flippers?"). Then the right: same penguins, but we hand
+over examples WITH answers and the computer finds the rule — that is
+supervised learning, and it is all we do today. Unsupervised (no answers,
+it only finds groups) is there so they know the word.
 :::
-::: {.column width="50%"}
-**Machine learning** — you show examples; the computer writes the rule.
-
-```python
-model.fit(X, y)
-```
-:::
-:::
-
-![](../assets/rendered/asset_11_supervised_unsupervised.svg){width="48%" fig-align="center"}
 
 ---
 
@@ -735,34 +726,87 @@ both "Gentoo" — don't treat them the same.
 
 ---
 
-## 97% of what? {.smaller}
+## Which mistakes? The confusion matrix {.clip-slide}
 
-::: {.columns}
-::: {.column width="50%"}
-![](../assets/rendered/asset_15_confusion_matrix.svg){width="86%"}
-:::
-::: {.column width="50%"}
-```python
-wrong = X_test[preds != y_test]
-wrong
-```
-Pull up one wrong penguin. It usually sits on the boundary — a small Gentoo,
-a large Chinstrap.
-:::
-:::
+<div class="clip">
+<video src="../assets/rendered/asset_23_confusion_matrix.mp4" autoplay muted playsinline preload="metadata"></video>
+<button class="replay">&#8635; replay</button>
+</div>
 
-::: {.keypoint}
-Accuracy is a number. A wrong row is a story.
+::: {.notes}
+29 s, self-contained, built from the deck's real 67 test predictions: each
+penguin lands in row = what it really is, column = what the model said. The
+diagonal is every correct answer, (30 + 13 + 22) / 67 = 97%; each orange
+cell names one mistake — 1 Adelie called a Chinstrap, 1 Gentoo called an
+Adelie. Let it play, then point at the orange cells. Ask: "if the rows were
+sick / healthy patients, which off-diagonal cell would worry you most?"
 :::
 
 ---
 
-## Checkpoint {.center}
+## 97% of what? Read the matrix yourself {.smaller}
 
-97% on **test**. 100% on **train**. Good news?
+::: {.columns}
+::: {.column width="52%"}
+```python
+from sklearn.metrics import ConfusionMatrixDisplay
+ConfusionMatrixDisplay.from_estimator(
+    model, X_test, y_test)
+```
+
+| really ↓ · said → | Adelie | Chinstrap | Gentoo |
+|---|---|---|---|
+| **Adelie** | **30** | 1 | 0 |
+| **Chinstrap** | 0 | **13** | 0 |
+| **Gentoo** | 1 | 0 | **22** |
+:::
+::: {.column width="48%"}
+```python
+wrong = X_test[preds != y_test]
+wrong        # the 2 penguins it got wrong
+```
+
+Pull them up. A Gentoo weighing only **3950 g** (Gentoos average ~5 kg) was
+called an Adelie; an Adelie with a long **41 mm** bill was called a Chinstrap.
+The model is not stupid — these two genuinely sit on a boundary.
+:::
+:::
+
+::: {.keypoint}
+Accuracy is one number. The matrix says **which** mistakes — and a wrong row is a story.
+:::
+
+::: {.notes}
+The table is the same matrix the clip just built (real numbers, same split).
+Run the two cells in NB2. The diagonal is bold on purpose: everything off it
+is a mistake, and the row tells you what the penguin really was.
+:::
+
+---
+
+## Checkpoint — which model would you trust? {.smaller}
+
+Two models trained on the **same 266 penguins**, then scored on the **67 they never saw**:
+
+| | on the training penguins | on the 67 unseen penguins | gap |
+|---|---|---|---|
+| **Model A** — logistic regression | 98.1% | **97.0%** | 1 point |
+| **Model B** — 1-nearest-neighbour, raw units | **100%** | 80.6% | **19 points** |
+
+::: {.fragment}
+Model B is *perfect* on the penguins it studied — because it **memorised** them.
+On new penguins it falls apart. That is **overfitting**.
+:::
 
 ::: {.fragment .keypoint}
-Not necessarily — the gap is the overfitting signal.
+Trust the test score, not the training score. A big gap between the two is the overfitting alarm.
+:::
+
+::: {.notes}
+Real numbers, computed with the deck's own split (random_state=42). Ask the
+room to vote A or B BEFORE revealing. Most pick B ("100%!") — that is the
+point. Model B returns to the stage in Part 4: it is exactly the unscaled
+KNN with K=1 they are about to meet.
 :::
 
 ---
