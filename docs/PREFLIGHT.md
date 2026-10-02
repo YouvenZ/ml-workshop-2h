@@ -45,7 +45,7 @@ Everything here has bitten a live session somewhere.
       deployed site**, on the projector laptop.
 - [ ] **Warm the live Python cells.** Open slide 7 on the deployed site and
       wait for *Run Code* to turn green — the first load downloads Python into
-      the browser and took **~2 minutes** in testing. Then run slide 48 once
+      the browser and took **~2 minutes** in testing. Then run slide 49 once
       (it fetches scikit-learn, another ~1 minute). After that both are cached
       and run in about a second.
 - [ ] Wifi checked from where the students will sit, not from the podium.

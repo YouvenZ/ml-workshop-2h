@@ -33,7 +33,7 @@ EXPECTED = [
     "asset_13_overfitting.mp4", "asset_14_decision_boundary.mp4",
     "asset_15_confusion_matrix.svg", "asset_16_knn.mp4",
     "asset_17_effect_of_k.mp4", "asset_18_scaling.svg",
-    "asset_19_pipeline.svg", "asset_24_rules_vs_learning.svg", "asset_20_imputation.mp4",
+    "asset_19_pipeline.svg", "asset_24_rules_vs_learning.svg", "asset_25_confusion_matrix_3x3.svg", "asset_20_imputation.mp4",
     "asset_21_knn_distance.mp4", "asset_22_logistic_curve.mp4",
     "asset_23_confusion_matrix.mp4",
 ]

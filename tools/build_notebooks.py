@@ -989,8 +989,9 @@ plt.show()
 # Rows are the truth, columns are the prediction. Everything off the
 # diagonal is a mistake — and it tells you which pair it mixes up.
 """))
-    c.append(md(img("asset_15_confusion_matrix", 700,
-                    "a 2x2 confusion matrix captioned in plain English") +
+    c.append(md(img("asset_25_confusion_matrix_3x3", 820,
+                    "the real 3x3 confusion matrix of the 67 test penguins, "
+                    "with recall per row and precision per column") +
                 "\n\n" +
                 callout("key",
                         "The diagonal is where it was right. Everything off "

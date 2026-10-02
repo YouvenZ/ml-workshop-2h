@@ -744,42 +744,63 @@ sick / healthy patients, which off-diagonal cell would worry you most?"
 
 ---
 
-## 97% of what? Read the matrix yourself {.smaller}
+## Reading the confusion matrix {.smaller .nostretch .fullfig}
 
-::: {.columns}
-::: {.column width="52%"}
-```python
-from sklearn.metrics import ConfusionMatrixDisplay
-ConfusionMatrixDisplay.from_estimator(
-    model, X_test, y_test)
-```
-
-| really ↓ · said → | Adelie | Chinstrap | Gentoo |
-|---|---|---|---|
-| **Adelie** | **30** | 1 | 0 |
-| **Chinstrap** | 0 | **13** | 0 |
-| **Gentoo** | 1 | 0 | **22** |
-:::
-::: {.column width="48%"}
-```python
-wrong = X_test[preds != y_test]
-wrong        # the 2 penguins it got wrong
-```
-
-Pull them up. A Gentoo weighing only **3950 g** (Gentoos average ~5 kg) was
-called an Adelie; an Adelie with a long **41 mm** bill was called a Chinstrap.
-The model is not stupid — these two genuinely sit on a boundary.
-:::
-:::
-
-::: {.keypoint}
-Accuracy is one number. The matrix says **which** mistakes — and a wrong row is a story.
-:::
+![](../assets/rendered/asset_25_confusion_matrix_3x3.svg){fig-align="center"}
 
 ::: {.notes}
-The table is the same matrix the clip just built (real numbers, same split).
-Run the two cells in NB2. The diagonal is bold on purpose: everything off it
-is a mistake, and the row tells you what the penguin really was.
+The same matrix the clip just built — real numbers, same split. Walk it in
+this order: (1) the teal diagonal is every right answer → 65/67 = 97%;
+(2) the two orange cells name the mistakes; (3) read a ROW to ask "of the
+real Gentoos, how many did it find?" (recall, 22/23); (4) read a COLUMN to
+ask "when it says Chinstrap, how often is it right?" (precision, 13/14).
+In NB2: ConfusionMatrixDisplay.from_estimator(model, X_test, y_test).
+:::
+
+---
+
+## What to look at in the errors {.smaller}
+
+::: {.columns .cards .errcards}
+::: {.column}
+### 🔍 Which pairs get confused?
+Off-diagonal cells name them: **Adelie → Chinstrap** and **Gentoo → Adelie** — the species that overlap in size.
+:::
+::: {.column}
+### 📏 Read each row — *recall*
+Of the real Gentoos, how many did it find? **22 / 23**. A class can look fine overall and still be missed.
+:::
+::: {.column}
+### 🎯 Read each column — *precision*
+When it says "Chinstrap", how often is it right? **13 / 14** — one false alarm.
+:::
+:::
+
+::: {.columns .cards .errcards}
+::: {.column}
+### ⚖️ Watch the small classes
+Only **13** Chinstraps in the test set: one mistake costs 7 points of recall. Overall accuracy hides it.
+:::
+::: {.column}
+### 🩺 Ask what each mistake costs
+A swapped penguin is harmless; a **missed tumour** is not. Judge a model by the mistake you can least afford.
+:::
+::: {.column}
+### 🐧 Open the wrong rows
+`X_test[preds != y_test]` → a **3950 g** Gentoo, a **41 mm**-bill Adelie: genuinely on a boundary, not a bug.
+:::
+:::
+
+```python
+from sklearn.metrics import classification_report
+print(classification_report(y_test, preds))   # recall + precision for every class
+```
+
+::: {.notes}
+Six habits, not six formulas. Spend the time on the cost question (🩺):
+in medicine, a missed cancer (false negative) and a false alarm (false
+positive) are not equal — that is why doctors tune for recall. Then run the
+two lines in NB2 and look at the two wrong penguins together.
 :::
 
 ---
