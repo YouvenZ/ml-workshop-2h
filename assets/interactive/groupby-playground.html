@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split, apply, combine</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .stage{position:relative; height:430px; flex:1}
+  .r{position:absolute; left:0; top:0; width:178px; height:30px; border-radius:8px; background:#fff;
+    border:1.5px solid rgba(27,42,74,.12); display:flex; align-items:center; gap:8px; padding:0 10px;
+    font-size:14px; font-weight:600; box-shadow:0 2px 6px -3px rgba(27,42,74,.3);
+    transition:transform .7s cubic-bezier(.3,.7,.2,1), opacity .5s, width .5s}
+  .r i{width:10px; height:10px; border-radius:50%; flex:none}
+  .r span{margin-left:auto; font-family:"JetBrains Mono",monospace; font-weight:600}
+  .r.gone{opacity:0}
+  .bucket{position:absolute; top:26px; width:192px; height:300px; border-radius:14px; border:2px dashed transparent;
+    transition:border-color .4s, background .4s}
+  .bucket.show{border-color:var(--gray); background:var(--soft)}
+  .bucket h5{margin:0; position:absolute; top:-24px; left:4px; font-size:13px; letter-spacing:.08em; text-transform:uppercase}
+  .res{position:absolute; width:192px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font:800 22px "JetBrains Mono",monospace; color:#fff; opacity:0; transform:scale(.6); transition:all .6s cubic-bezier(.3,.7,.2,1)}
+  .res.show{opacity:1; transform:scale(1)}
+  .phase{font:800 13px Inter,Arial,sans-serif; letter-spacing:.14em; color:var(--muted)}
+  .phase b{color:var(--orange)}
+  .code{font-family:"JetBrains Mono",monospace; font-size:16px; background:var(--soft); border-left:4px solid var(--blue);
+    border-radius:0 10px 10px 0; padding:9px 12px}
+  .code .hl{background:rgba(224,122,44,.18); border-radius:4px; padding:0 2px; transition:background .3s}
+  .seg{display:flex; gap:6px; flex-wrap:wrap}
+  .seg button{padding:5px 12px; font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stage" id="stage"></div>
+  <div class="side" style="flex-basis:300px">
+    <div class="code" id="code"></div>
+    <div class="card"><div class="label" style="margin-bottom:6px">column</div>
+      <div class="seg" id="colSeg"><button data-v="mass" class="on">body_mass_g</button><button data-v="flip">flipper_length_mm</button></div></div>
+    <div class="card"><div class="label" style="margin-bottom:6px">apply</div>
+      <div class="seg" id="aggSeg"><button data-v="mean" class="on">.mean()</button><button data-v="max">.max()</button><button data-v="min">.min()</button><button data-v="count">.count()</button></div></div>
+    <div class="phase" id="phase"></div>
+    <div class="row"><button class="primary" id="next">1 · Split ▶</button><button id="reset">↺ Reset</button></div>
+  </div>
+</div>
+<script src="widget.js"></script>
+<script>
+const ROWS = [
+  ['Adelie', 3750, 181], ['Gentoo', 5400, 230], ['Chinstrap', 3500, 192], ['Adelie', 3250, 186],
+  ['Gentoo', 4650, 211], ['Chinstrap', 3950, 196], ['Adelie', 4300, 195], ['Gentoo', 6050, 222],
+  ['Adelie', 3450, 190], ['Chinstrap', 3700, 201], ['Gentoo', 5200, 215], ['Chinstrap', 3800, 187],
+];
+const SP = ['Adelie', 'Chinstrap', 'Gentoo'];
+const COL = { Adelie: '#E07A2C', Chinstrap: '#8E5CC4', Gentoo: '#2A9D8F' };
+const stage = document.getElementById('stage');
+const BX = [212, 418, 624];
+const buckets = SP.map((s, i) => {
+  const b = W.el('div', { class: 'bucket' }, stage); b.style.left = BX[i] - 7 + 'px';
+  W.el('h5', { text: s }, b).style.color = COL[s];
+  return b;
+});
+const results = SP.map((s, i) => { const r = W.el('div', { class: 'res' }, stage); r.style.left = BX[i] - 7 + 'px'; r.style.top = '352px'; r.style.background = COL[s]; return r; });
+const els = ROWS.map(([s, m, f], i) => {
+  const e = W.el('div', { class: 'r', html: `<i style="background:${COL[s]}"></i>${s}<span></span>` }, stage);
+  e._d = { s, m, f, i };
+  return e;
+});
+let col = 'mass', agg = 'mean', phase = 0;
+const val = (d) => (col === 'mass' ? d.m : d.f);
+const AGG = {
+  mean: (a) => Math.round(a.reduce((s, v) => s + v, 0) / a.length), max: (a) => Math.max(...a),
+  min: (a) => Math.min(...a), count: (a) => a.length,
+};
+function layout() {
+  const cname = col === 'mass' ? 'body_mass_g' : 'flipper_length_mm';
+  const parts = [`df.<span class="${phase === 1 ? 'hl' : ''}">groupby('species')</span>`, `<span>['${cname}']</span>`, `<span class="${phase === 2 ? 'hl' : ''}">.${agg}()</span>`];
+  document.getElementById('code').innerHTML = parts.join('');
+  const counts = [0, 0, 0];
+  els.forEach((e) => {
+    const d = e._d; e.querySelector('span').textContent = val(d);
+    let x = 0, y = 4 + d.i * 34;
+    if (phase >= 1) { const k = SP.indexOf(d.s); x = BX[k]; y = 40 + counts[k]++ * 36; }
+    if (phase >= 2) y = 352;
+    e.style.transform = `translate(${x}px, ${y}px)`;
+    e.classList.toggle('gone', phase >= 2);
+  });
+  buckets.forEach((b) => b.classList.toggle('show', phase >= 1 && phase < 3));
+  SP.forEach((s, k) => {
+    const v = AGG[agg](ROWS.filter((r) => r[0] === s).map((r) => (col === 'mass' ? r[1] : r[2])));
+    results[k].textContent = (phase >= 2 ? `${s.slice(0, 1)} · ${v}` : '');
+    results[k].classList.toggle('show', phase >= 2);
+    results[k].style.top = phase >= 3 ? 40 + k * 56 + 'px' : '352px';
+    results[k].style.left = phase >= 3 ? '470px' : BX[k] - 7 + 'px';
+    results[k].style.width = phase >= 3 ? '260px' : '192px';
+    if (phase >= 3) results[k].textContent = `${s}   ${v}`;
+  });
+  const names = ['the full table: 12 rows', '<b>1 · SPLIT</b> one bucket per species', '<b>2 · APPLY</b> each bucket → one number', '<b>3 · COMBINE</b> one row per group: a new table'];
+  document.getElementById('phase').innerHTML = names[phase];
+  document.getElementById('next').textContent = ['1 · Split ▶', '2 · Apply ▶', '3 · Combine ▶', '↺ Again'][phase];
+}
+document.getElementById('next').onclick = () => { phase = (phase + 1) % 4; layout(); };
+document.getElementById('reset').onclick = () => { phase = 0; layout(); };
+const seg = (id, set) => document.querySelectorAll(`#${id} button`).forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll(`#${id} button`).forEach((x) => x.classList.remove('on')); b.classList.add('on'); set(b.dataset.v); layout();
+}));
+seg('colSeg', (v) => (col = v)); seg('aggSeg', (v) => (agg = v));
+layout();
+</script>
+</body>
+</html>

@@ -166,7 +166,7 @@ all — nothing else about Colab matters today.
 
 ---
 
-## Your turn: sort the values {.widget-slide}
+## Every value has a type {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/types-sort.html" height="560"></iframe>
 
@@ -178,7 +178,7 @@ deliberate: '3750' (quotes win → str), 3.0 (the dot → float) and 'True'
 
 ---
 
-## Try it: change a value {.smaller}
+## Change a value, break a value {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
@@ -253,6 +253,17 @@ the notebook.
 Self-contained: the code, a pointer walking the list, m taking each value,
 total growing to 14250. Don't talk over it. Then ask: "if the list had 344
 masses, how many times would the indented line run?" (344)
+:::
+
+---
+
+## One item at a time {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/loop-stepper.html" height="540"></iframe>
+
+::: {.notes}
+Press Step slowly and let the room predict each next value of total before you click. The orange arrow is
+the line Python is running. Ask at the end: how many times did line 4 run? (4, once per item.)
 :::
 
 ---
@@ -366,7 +377,7 @@ That mask is exactly how you will filter a table.
 
 ---
 
-## Try it: one operation, every element {.smaller}
+## No loop, every element {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
@@ -457,7 +468,7 @@ it now.
 
 ---
 
-## Drag the threshold: watch the mask filter {.widget-slide}
+## A mask keeps the True rows {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/mask-filter.html" height="560"></iframe>
 
@@ -562,6 +573,18 @@ problem for a model?" — they meet it again in the Titanic challenge.
 
 ---
 
+## Every way of filling changes the data {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/impute-playground.html" height="540"></iframe>
+
+::: {.notes}
+Click through the strategies in order. Median: the 25–30 bar jumps by 177 and the spread shrinks (the
+numbers from the clip). Zero: the mean collapses. Sampling real ages keeps the shape. Ask: which would you
+choose for the Titanic challenge, and why?
+:::
+
+---
+
 ## Split, apply, combine: in motion {.clip-slide}
 
 <div class="clip">
@@ -572,6 +595,17 @@ problem for a model?" — they meet it again in the Titanic challenge.
 ::: {.notes}
 Real rows split by species, each group collapses to its mean, the means form
 a new table. Ask: "what would .max() change?" (the apply step only).
+:::
+
+---
+
+## Group, then summarise {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/groupby-playground.html" height="520"></iframe>
+
+::: {.notes}
+Press the button three times: split (rows go to their species), apply (each bucket becomes one number),
+combine (a new three-row table). Then switch .mean() to .max() or .count(): only the apply step changes.
 :::
 
 ---
@@ -790,7 +824,7 @@ score shape for both.
 
 ---
 
-## Your turn: classification or regression? {.widget-slide}
+## Category or number? {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/class-vs-reg.html" height="560"></iframe>
 
@@ -830,6 +864,18 @@ X), the very same code would set up a regression.
 
 ---
 
+## Which column is the answer? {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/features-labels.html" height="520"></iframe>
+
+::: {.notes}
+Do the species question first: species to y, measurements to X. Then drag species into X to show the
+leakage warning. Switch to 'How heavy is it?': body_mass_g moves to y and species can now be a feature.
+The same table gives a classification or a regression depending on y.
+:::
+
+---
+
 ## The split, in motion {.clip-slide}
 
 <div class="clip">
@@ -840,6 +886,18 @@ X), the very same code would set up a regression.
 ::: {.notes}
 333 penguins shuffled, 266 train / 67 test, the model learns from train only
 and sits the exam on test (0.97). Ask: "why shuffle first?"
+:::
+
+---
+
+## Where the penguins go {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/split-playground.html" height="520"></iframe>
+
+::: {.notes}
+Slide test_size from 0.1 to 0.5: fewer penguins to learn from vs a more reliable exam. Re-roll the seed at
+0.1 and watch the species mix of the test set jump around. Turn on stratify: the mix is identical on
+both sides. random_state=42 is what makes your split reproducible.
 :::
 
 ---
@@ -860,7 +918,7 @@ drive the complexity themselves.
 
 ---
 
-## Your turn: push the complexity {.widget-slide}
+## More complex is not always better {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/overfit-slider.html" height="560"></iframe>
 
@@ -928,7 +986,7 @@ and what it misses.
 
 ---
 
-## Correlation, felt before it's defined {.widget-slide}
+## What r measures, and what it misses {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/correlation-playground.html" height="480"></iframe>
 
@@ -982,7 +1040,7 @@ squared residual".
 
 ---
 
-## Your turn: fit the line yourself {.widget-slide}
+## The best line has the smallest errors {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/linreg-playground.html" height="560"></iframe>
 
@@ -1057,7 +1115,7 @@ split.
 
 ---
 
-## Try it: predict a penguin's mass {.smaller}
+## Predicting a penguin's mass, live {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
@@ -1182,7 +1240,7 @@ both "Gentoo", so don't treat them the same.
 
 ---
 
-## Your turn: shape the sigmoid {.widget-slide}
+## From a score to a probability {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/sigmoid-playground.html" height="560"></iframe>
 
@@ -1228,7 +1286,7 @@ In NB2: ConfusionMatrixDisplay.from_estimator(model, X_test, y_test).
 
 ---
 
-## Your turn: move the threshold {.widget-slide}
+## The threshold chooses your mistakes {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/threshold-matrix.html" height="560"></iframe>
 
@@ -1376,7 +1434,7 @@ several on data the model hasn't seen).
 
 ---
 
-## Your turn: drag the newcomer {.widget-slide}
+## The K nearest neighbours vote {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/knn-playground.html" height="560"></iframe>
 
@@ -1389,7 +1447,7 @@ The coloured regions change shape completely. That is the next three slides.
 
 ---
 
-## Try it: pick your own K {.smaller}
+## Choosing K, live {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
@@ -1569,7 +1627,7 @@ split, fit, predict, score, and always look at one it got wrong.
 
 ---
 
-## Your turn: put the pipeline in order {.widget-slide}
+## The pipeline, in order {.widget-slide}
 
 <iframe class="widget" src="../assets/interactive/pipeline-order.html" height="520"></iframe>
 

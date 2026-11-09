@@ -28,6 +28,11 @@ animations, and interactive widgets you can drag and slide.
 ## Also here
 
 - **Interactive widgets:** [types](assets/interactive/types-sort.html) ·
+  [loop](assets/interactive/loop-stepper.html) ·
+  [missing values](assets/interactive/impute-playground.html) ·
+  [groupby](assets/interactive/groupby-playground.html) ·
+  [features & label](assets/interactive/features-labels.html) ·
+  [train/test split](assets/interactive/split-playground.html) ·
   [mask filter](assets/interactive/mask-filter.html) ·
   [classification or regression?](assets/interactive/class-vs-reg.html) ·
   [overfitting](assets/interactive/overfit-slider.html) ·

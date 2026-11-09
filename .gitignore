@@ -27,3 +27,7 @@ __pycache__/
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Written by the NB2 competition cell when tools/check_notebooks.py runs it
+/predictions.csv
+/submission.zip

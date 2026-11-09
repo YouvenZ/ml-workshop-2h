@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filling missing ages</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .strat{display:flex; flex-direction:column; gap:8px}
+  .strat button{text-align:left; border-radius:12px; padding:9px 14px; display:flex; justify-content:space-between; gap:8px}
+  .strat button code{font-size:12.5px; color:var(--muted); font-weight:400}
+  .strat button.on code{color:#cfd8ea}
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .stats .card{padding:9px 12px}
+  .verdict{font-size:15px; border-radius:0 10px 10px 0; padding:9px 14px; border-left:4px solid var(--orange); background:rgba(224,122,44,.08)}
+  .verdict.ok{border-color:var(--teal); background:rgba(42,157,143,.08)}
+  .delta{font-size:12px; font-weight:700; margin-left:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot" style="display:flex; flex-direction:column; gap:10px">
+    <svg id="svg" viewBox="0 0 700 360" role="img" aria-label="Histogram of passenger ages"></svg>
+    <div class="stats">
+      <div class="card"><div class="label">rows you keep</div><div class="mid" id="rows"></div></div>
+      <div class="card"><div class="label">mean age</div><div class="mid" id="mean"></div></div>
+      <div class="card"><div class="label">spread (std)</div><div class="mid" id="std"></div></div>
+    </div>
+  </div>
+  <div class="side" style="flex-basis:300px">
+    <div class="label">177 of 891 ages are missing. What do you do?</div>
+    <div class="strat" id="strat">
+      <button data-s="none" class="on">Leave them missing <code>NaN</code></button>
+      <button data-s="drop">Drop those rows <code>.dropna()</code></button>
+      <button data-s="median">Fill with the median <code>.fillna(28)</code></button>
+      <button data-s="mean">Fill with the mean <code>.fillna(29.7)</code></button>
+      <button data-s="zero">Fill with zero <code>.fillna(0)</code></button>
+      <button data-s="spread">Fill by sampling real ages <code>random</code></button>
+    </div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+</div>
+<script src="data/titanic-ages.js"></script>
+<script src="widget.js"></script>
+<script>
+const svg = document.getElementById('svg');
+const M = { l: 50, r: 690, t: 16, b: 320 };
+const BW = 5, NB = 17;                       // 5-year bins, 0–85
+const X = W.lin(0, 85, M.l, M.r), Y = W.lin(0, 300, M.b, M.t);
+const known = TITANIC_AGES.filter((a) => a !== null);
+const nMiss = TITANIC_AGES.length - known.length;
+const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+const std = (a) => { const m = mean(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
+const median = (a) => { const s = [...a].sort((x, y) => x - y), h = s.length / 2; return s.length % 2 ? s[Math.floor(h)] : (s[h - 1] + s[h]) / 2; };
+const MED = median(known), MEAN = mean(known);
+const bin = (v) => Math.min(NB - 1, Math.floor(v / BW));
+
+for (let v = 0; v <= 300; v += 100) {
+  W.svg('line', { x1: M.l, x2: M.r, y1: Y(v), y2: Y(v), class: 'gridline' }, svg);
+  W.svg('text', { x: M.l - 8, y: Y(v) + 4, 'text-anchor': 'end', class: 'tick' }, svg).textContent = v;
+}
+for (let v = 0; v <= 80; v += 10) W.svg('text', { x: X(v), y: M.b + 18, 'text-anchor': 'middle', class: 'tick' }, svg).textContent = v;
+W.svg('text', { x: (M.l + M.r) / 2, y: M.b + 38, 'text-anchor': 'middle', class: 'axlabel' }, svg).textContent = 'age (years)';
+const base = [], add = [], lbl = [];
+for (let i = 0; i < NB; i++) {
+  const x = X(i * BW) + 1.5, w = X(BW) - X(0) - 3;
+  base.push(W.svg('rect', { x, width: w, y: M.b, height: 0, fill: 'var(--blue)', rx: 2 }, svg));
+  add.push(W.svg('rect', { x, width: w, y: M.b, height: 0, fill: 'var(--orange)', rx: 2 }, svg));
+  lbl.push(W.svg('text', { x: x + w / 2, y: M.b, 'text-anchor': 'middle', class: 'tick', style: 'font-weight:700; fill:var(--orange)' }, svg));
+}
+W.svg('line', { x1: M.l, x2: M.r, y1: M.b, y2: M.b, class: 'axis' }, svg);
+const qGroup = W.svg('g', {}, svg);
+const qText = W.svg('text', { x: M.r - 10, y: M.t + 24, 'text-anchor': 'end', style: 'font:700 15px Inter,Arial,sans-serif; fill:var(--orange)' }, svg);
+
+const baseCounts = new Array(NB).fill(0); known.forEach((a) => baseCounts[bin(a)]++);
+let cur = { b: baseCounts.slice(), a: new Array(NB).fill(0) };
+
+function target(s) {
+  const a = new Array(NB).fill(0);
+  let vals = known.slice();
+  if (s === 'median') { a[bin(MED)] = nMiss; vals = vals.concat(new Array(nMiss).fill(MED)); }
+  if (s === 'mean') { a[bin(MEAN)] = nMiss; vals = vals.concat(new Array(nMiss).fill(MEAN)); }
+  if (s === 'zero') { a[0] = nMiss; vals = vals.concat(new Array(nMiss).fill(0)); }
+  if (s === 'spread') {
+    const r = W.rng(4);
+    for (let i = 0; i < nMiss; i++) { const v = known[Math.floor(r() * known.length)]; a[bin(v)]++; vals.push(v); }
+  }
+  return { a, vals };
+}
+const TEXT = {
+  none: ['The model can’t use these rows at all: <code>.fit()</code> stops with an error on NaN.', false],
+  drop: ['Honest, but you lose 177 passengers (20%), and dropped rows are rarely random.', false],
+  median: ['Keeps every row, but 177 people are now exactly 28: one bar jumps and the spread <b>shrinks</b>.', false],
+  mean: ['Same problem as the median: one spike, a narrower spread, and an age nobody has (29.7).', false],
+  zero: ['177 newborns on the Titanic. A constant that means nothing invents nonsense: the mean collapses.', false],
+  spread: ['Keeps the shape and the spread. Still invented values, but they look like the real ones.', true],
+};
+let raf = null;
+function show(s) {
+  const { a, vals } = target(s);
+  const from = { b: cur.b.slice(), a: cur.a.slice() }, t0 = performance.now();
+  cancelAnimationFrame(raf);
+  const tick = (t) => {
+    const k = W.clamp((t - t0) / 600, 0, 1), e = 1 - Math.pow(1 - k, 3);
+    for (let i = 0; i < NB; i++) {
+      const hb = from.b[i] + (baseCounts[i] - from.b[i]) * e, ha = from.a[i] + (a[i] - from.a[i]) * e;
+      cur.b[i] = hb; cur.a[i] = ha;
+      const yb = Y(Math.min(hb, 300)), ya = Y(Math.min(hb + ha, 300));
+      base[i].setAttribute('y', yb); base[i].setAttribute('height', M.b - yb);
+      add[i].setAttribute('y', ya); add[i].setAttribute('height', Math.max(0, yb - ya));
+      lbl[i].setAttribute('y', ya - 6); lbl[i].textContent = a[i] > 30 && k === 1 ? `+${a[i]}` : '';
+    }
+    if (k < 1) raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  qGroup.innerHTML = '';
+  if (s === 'none') {
+    for (let i = 0; i < 6; i++) W.svg('text', { x: M.r - 16 - i * 22, y: M.t + 52, 'text-anchor': 'end', style: 'font:800 20px Inter,Arial; fill:var(--orange)' }, qGroup).textContent = '?';
+    qText.textContent = '177 ages: NaN';
+  } else if (s === 'drop') qText.textContent = '177 rows deleted';
+  else qText.textContent = '';
+  const keep = s === 'drop' || s === 'none' ? known.length : TITANIC_AGES.length;
+  const m = mean(vals), sd = std(vals);
+  const dm = m - MEAN, ds = sd - std(known);
+  document.getElementById('rows').innerHTML = `${keep}<span class="delta" style="color:${keep < 891 ? 'var(--orange)' : 'var(--teal)'}">/ 891</span>`;
+  document.getElementById('mean').innerHTML = `${m.toFixed(1)}<span class="delta" style="color:${Math.abs(dm) > 0.5 ? 'var(--orange)' : 'var(--muted)'}">${dm >= 0 ? '+' : ''}${dm.toFixed(1)}</span>`;
+  document.getElementById('std').innerHTML = `${sd.toFixed(1)}<span class="delta" style="color:${Math.abs(ds) > 0.3 ? 'var(--orange)' : 'var(--muted)'}">${ds >= 0 ? '+' : ''}${ds.toFixed(1)}</span>`;
+  const v = document.getElementById('verdict');
+  v.innerHTML = TEXT[s][0]; v.classList.toggle('ok', TEXT[s][1]);
+}
+document.querySelectorAll('#strat button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('#strat button').forEach((x) => x.classList.remove('on'));
+  b.classList.add('on'); show(b.dataset.s);
+}));
+show('none');
+</script>
+</body>
+</html>

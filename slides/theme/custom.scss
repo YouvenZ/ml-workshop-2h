@@ -376,12 +376,7 @@ body:has(#title-slide.present) .footer { display: none !important; }
   box-shadow: 0 0 0 1px rgba($navy, 0.07), 0 18px 40px -22px rgba($navy, 0.35);
 }
 .reveal .slides section.widget-slide > h2 { font-size: 1.15em; margin-bottom: 0.3em; }
-.reveal .slides section.widget-slide > h2::before {
-  content: "INTERACTIVE"; display: inline-block; vertical-align: middle;
-  font-size: 0.42em; font-weight: 800; letter-spacing: 0.14em; color: #fff;
-  background: $teal; padding: 0.3em 0.8em; border-radius: 999px; margin-right: 0.7em;
-  position: relative; top: -0.15em;
-}
+
 
 // ---------------------------------------------------------------------
 // Library introductions: logo, one import line, "why it matters".
@@ -419,3 +414,11 @@ body:has(#title-slide.present) .footer { display: none !important; }
 // Algorithm divider slides have no numeral: tighten them
 .reveal .slides section.part:not(:has(.part-num)) h2 { font-size: 1.8em; }
 .reveal .libintro .column:first-child pre { max-width: 92%; }
+
+// Readability pass: tables on .smaller slides and live-code editors were
+// too small to read past the middle of a lecture hall.
+.reveal .slides section.smaller table { font-size: 0.95em; }
+.reveal .slides section.smaller table td, .reveal .slides section.smaller table th { padding: 0.35em 0.7em; }
+.reveal .slides section:not(.smaller) table { font-size: 0.85em; }
+.reveal .exercise-cell .cm-editor { font-size: 0.8em !important; }
+.reveal .exercise-cell .exercise-cell-output, .reveal .exercise-cell pre { font-size: 0.8em; }

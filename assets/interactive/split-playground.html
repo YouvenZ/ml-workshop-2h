@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train / test split</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .stage{position:relative; height:360px; flex:1; align-self:center}
+  .sq{position:absolute; left:0; top:0; width:16px; height:16px; border-radius:4px;
+    transition:transform .8s cubic-bezier(.3,.7,.2,1)}
+  .zone{position:absolute; top:28px; bottom:56px; border-radius:14px; border:2px dashed var(--gray); background:var(--soft)}
+  .zone h5{position:absolute; top:-24px; left:4px; margin:0; font-size:13px; letter-spacing:.1em; text-transform:uppercase}
+  .bal{position:absolute; bottom:0; height:46px}
+  .bal .bar{display:flex; height:12px; border-radius:6px; overflow:hidden; margin-top:6px}
+  .bal .bar i{display:block; height:100%; transition:width .6s}
+  .bal small{font-size:12.5px; color:var(--muted); font-weight:600}
+  .legend{display:flex; gap:12px; font-size:13px; font-weight:600}
+  .legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:5px; vertical-align:-1px}
+  .seed{font-family:"JetBrains Mono",monospace; font-size:15px; background:var(--soft); border-left:4px solid var(--blue);
+    border-radius:0 10px 10px 0; padding:9px 12px; line-height:1.5}
+  .seed b{color:var(--orange)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stage" id="stage"></div>
+  <div class="side" style="flex-basis:300px">
+    <div class="seed" id="code"></div>
+    <div class="card slider">
+      <div class="top">test_size <b id="tv">0.20</b></div>
+      <input type="range" id="ts" min="0.1" max="0.5" step="0.05" value="0.2">
+    </div>
+    <div class="row" style="flex-wrap:wrap">
+      <button class="primary" id="shuffle">🎲 New random_state</button>
+      <button id="strat">stratify: off</button>
+    </div>
+    <div class="legend"><span><i style="background:var(--adelie)"></i>Adelie</span><span><i style="background:var(--chinstrap)"></i>Chinstrap</span><span><i style="background:var(--gentoo)"></i>Gentoo</span></div>
+    <p class="hint">The model learns only from the <b>train</b> side and is graded on the <b>test</b> side. Re-roll the seed: small test sets swing a lot. <b>stratify</b> keeps the species mix identical on both sides.</p>
+  </div>
+</div>
+<script src="data/penguins.js"></script>
+<script src="widget.js"></script>
+<script>
+const stage = document.getElementById('stage');
+const COLS = ['#E07A2C', '#8E5CC4', '#2A9D8F'];
+const sp = PENGUINS.map((p) => p[0]);
+const N = sp.length, S = 19;               // cell pitch
+const W_STAGE = () => stage.clientWidth;
+const zones = ['train', 'test'].map((n, i) => {
+  const z = W.el('div', { class: 'zone' }, stage);
+  W.el('h5', { text: '' }, z).style.color = i ? 'var(--orange)' : 'var(--blue)';
+  return z;
+});
+const bals = [0, 1].map(() => {
+  const b = W.el('div', { class: 'bal' }, stage);
+  W.el('small', {}, b);
+  const bar = W.el('div', { class: 'bar' }, b);
+  COLS.forEach((c) => W.el('i', { style: `background:${c}` }, bar));
+  return b;
+});
+const sqs = sp.map((s) => W.el('div', { class: 'sq', style: `background:${COLS[s]}` }, stage));
+
+let testSize = 0.2, seed = 42, stratify = false;
+function split() {
+  const r = W.rng(seed * 7919 + 1);
+  const idx = sp.map((_, i) => i);
+  for (let i = N - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  const nTest = Math.ceil(N * testSize);
+  const isTest = new Array(N).fill(false);
+  if (!stratify) idx.slice(0, nTest).forEach((i) => (isTest[i] = true));
+  else {
+    [0, 1, 2].forEach((c) => {
+      const members = idx.filter((i) => sp[i] === c);
+      members.slice(0, Math.round(members.length * testSize)).forEach((i) => (isTest[i] = true));
+    });
+  }
+  return { idx, isTest };
+}
+function render() {
+  const { idx, isTest } = split();
+  const w = W_STAGE(), gap = 24;
+  const nTest = isTest.filter(Boolean).length, nTrain = N - nTest;
+  // width proportional to share, at least room for 4 columns
+  const avail = w - gap;
+  const wTest = Math.max(4 * S + 24, Math.round(avail * (nTest / N)));
+  const wTrain = avail - wTest;
+  const geo = [{ x: 0, w: wTrain }, { x: wTrain + gap, w: wTest }];
+  zones.forEach((z, k) => {
+    z.style.left = geo[k].x + 'px'; z.style.width = geo[k].w + 'px';
+    z.querySelector('h5').textContent = k ? `test · ${nTest}` : `train · ${nTrain} penguins`;
+  });
+  const cols = geo.map((g) => Math.max(1, Math.floor((g.w - 20) / S)));
+  const pos = [0, 0];
+  // order inside each zone by species so the mix is easy to read
+  const order = idx.slice().sort((a, b) => sp[a] - sp[b] || a - b);
+  order.forEach((i) => {
+    const k = isTest[i] ? 1 : 0, p = pos[k]++;
+    const x = geo[k].x + 10 + (p % cols[k]) * S, y = 40 + Math.floor(p / cols[k]) * S;
+    sqs[i].style.transform = `translate(${x}px, ${y}px)`;
+  });
+  [0, 1].forEach((k) => {
+    const members = sp.filter((_, i) => (isTest[i] ? 1 : 0) === k);
+    const c = [0, 1, 2].map((s) => members.filter((v) => v === s).length);
+    const b = bals[k]; b.style.left = geo[k].x + 'px'; b.style.width = geo[k].w + 'px';
+    b.querySelector('small').textContent = c.map((v, s) => `${Math.round(v / members.length * 100)}%`).join(' · ');
+    b.querySelectorAll('i').forEach((el, s) => (el.style.width = (c[s] / members.length) * 100 + '%'));
+  });
+  document.getElementById('tv').textContent = testSize.toFixed(2);
+  document.getElementById('code').innerHTML =
+    `train_test_split(X, y,<br>&nbsp;&nbsp;test_size=<b>${testSize.toFixed(2)}</b>,<br>&nbsp;&nbsp;random_state=<b>${seed}</b>${stratify ? ',<br>&nbsp;&nbsp;stratify=<b>y</b>' : ''})`;
+}
+W.bindRange(document.getElementById('ts'), (v) => { testSize = v; render(); });
+document.getElementById('shuffle').onclick = () => { seed = Math.floor(Math.random() * 100); render(); };
+document.getElementById('strat').onclick = (e) => {
+  stratify = !stratify; e.target.classList.toggle('on', stratify);
+  e.target.textContent = 'stratify: ' + (stratify ? 'y' : 'off'); render();
+};
+window.addEventListener('resize', render);
+requestAnimationFrame(render);
+</script>
+</body>
+</html>

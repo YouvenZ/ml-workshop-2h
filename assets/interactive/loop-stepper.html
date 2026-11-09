@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Step through a loop</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .code{font-family:"JetBrains Mono",monospace; font-size:19px; background:var(--soft); border-radius:12px;
+    border:1px solid rgba(27,42,74,.08); padding:12px 0; counter-reset:ln}
+  .ln{display:flex; align-items:center; padding:4px 16px 4px 0; position:relative; transition:background .2s}
+  .ln::before{counter-increment:ln; content:counter(ln); width:42px; text-align:right; padding-right:14px; color:#aab1bf; font-size:14px}
+  .ln.cur{background:rgba(224,122,44,.14)}
+  .ln.cur::after{content:"◀ running"; position:absolute; right:12px; font:700 12px Inter,Arial,sans-serif; color:var(--orange); letter-spacing:.05em}
+  .kw{color:#8E3BB5; font-weight:600} .num{color:var(--orange)} .fn{color:var(--blue)}
+  .mem{display:flex; flex-direction:column; gap:14px}
+  .cells{display:flex; gap:8px}
+  .cell{width:86px; text-align:center; border:2px solid var(--gray); border-radius:10px; padding:10px 0 6px;
+    font:700 20px "JetBrains Mono",monospace; position:relative; transition:all .25s}
+  .cell small{display:block; font:600 11px Inter,Arial,sans-serif; color:var(--muted)}
+  .cell.on{border-color:var(--orange); background:rgba(224,122,44,.10); transform:translateY(-4px)}
+  .cell.done{border-color:var(--teal); background:rgba(42,157,143,.07)}
+  .vars{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .var{border-radius:12px; border:2px solid var(--gray); padding:10px 14px}
+  .var .label{margin-bottom:2px}
+  .var b{font:800 30px "JetBrains Mono",monospace; font-variant-numeric:tabular-nums}
+  .pop{animation:pop .45s ease}
+  @keyframes pop{40%{transform:scale(1.12); border-color:var(--orange)}}
+  .out{font-family:"JetBrains Mono",monospace; background:#0f1a30; color:#d6e2ff; border-radius:10px; padding:10px 14px; min-height:44px; font-size:16px}
+  .count{font-size:14px; color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap" style="align-items:center">
+  <div class="plot" style="flex-basis:50%">
+    <div class="code" id="code"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="primary" id="step">Step ▶</button>
+      <button id="play">▶▶ Play</button>
+      <button id="reset">↺ Reset</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+  <div class="mem" style="flex:1">
+    <div><div class="label" style="margin-bottom:6px">masses: the list</div><div class="cells" id="cells"></div></div>
+    <div class="vars">
+      <div class="var" id="vm"><div class="label">m: the current item</div><b id="m">—</b></div>
+      <div class="var" id="vt"><div class="label">total: the running sum</div><b id="t">—</b></div>
+    </div>
+    <div><div class="label" style="margin-bottom:6px">output</div><div class="out" id="out"></div></div>
+    <p class="hint" id="explain" style="font-size:15px; color:var(--navy); min-height:44px"></p>
+  </div>
+</div>
+<script src="widget.js"></script>
+<script>
+const MASSES = [3750, 3800, 3250, 3450];
+const LINES = [
+  `masses = [<span class="num">3750</span>, <span class="num">3800</span>, <span class="num">3250</span>, <span class="num">3450</span>]`,
+  `total = <span class="num">0</span>`,
+  `<span class="kw">for</span> m <span class="kw">in</span> masses:`,
+  `&nbsp;&nbsp;&nbsp;&nbsp;total = total + m`,
+  `<span class="fn">print</span>(total)`,
+];
+const code = document.getElementById('code');
+const lineEls = LINES.map((h) => W.el('div', { class: 'ln', html: `<span style="white-space:pre">${h}</span>` }, code));
+const cellsEl = document.getElementById('cells');
+const cells = MASSES.map((v, i) => W.el('div', { class: 'cell', html: `${v}<small>masses[${i}]</small>` }, cellsEl));
+
+// The trace: every step the interpreter takes.
+const trace = [];
+trace.push({ line: 0, why: 'Python builds the list and puts it in a box called <b>masses</b>.', show: 'list' });
+trace.push({ line: 1, total: 0, why: '<b>total</b> starts at 0: nothing added yet.' });
+let tot = 0;
+MASSES.forEach((v, i) => {
+  trace.push({ line: 2, m: v, idx: i, total: tot, why: `The loop takes the next item: <b>m = ${v}</b>.` });
+  tot += v;
+  trace.push({ line: 3, m: v, idx: i, total: tot, popT: true, why: `The indented line runs: total = ${tot - v} + ${v} = <b>${tot}</b>.` });
+});
+trace.push({ line: 2, m: MASSES.at(-1), idx: 4, total: tot, why: 'No items left, so the loop ends and Python moves past the indented block.' });
+trace.push({ line: 4, m: MASSES.at(-1), idx: 4, total: tot, out: String(tot), why: `<b>${tot}</b>. The indented line ran exactly <b>${MASSES.length}</b> times, once per item.` });
+
+let k = -1, timer = null;
+function render() {
+  const s = trace[k] || {};
+  lineEls.forEach((l, i) => l.classList.toggle('cur', s.line === i));
+  cellsEl.style.opacity = k >= 0 ? 1 : 0.25;
+  cells.forEach((c, i) => {
+    c.classList.toggle('on', s.idx === i);
+    c.classList.toggle('done', s.idx !== undefined && i < s.idx);
+  });
+  document.getElementById('m').textContent = s.m ?? '—';
+  const t = document.getElementById('t');
+  t.textContent = s.total ?? '—';
+  const vt = document.getElementById('vt');
+  vt.classList.remove('pop'); if (s.popT) { void vt.offsetWidth; vt.classList.add('pop'); }
+  const vm = document.getElementById('vm');
+  vm.classList.remove('pop'); if (s.line === 2 && s.idx < 4) { void vm.offsetWidth; vm.classList.add('pop'); }
+  document.getElementById('out').textContent = s.out ? '>>> ' + s.out : '';
+  document.getElementById('explain').innerHTML = s.why || 'Press <b>Step</b> to run the program one line at a time.';
+  document.getElementById('count').textContent = k >= 0 ? `step ${k + 1} / ${trace.length}` : '';
+  document.getElementById('step').disabled = k >= trace.length - 1;
+}
+function step() { if (k < trace.length - 1) { k++; render(); } else stop(); }
+function stop() { clearInterval(timer); timer = null; document.getElementById('play').textContent = '▶▶ Play'; }
+document.getElementById('step').onclick = () => { stop(); step(); };
+document.getElementById('play').onclick = (e) => {
+  if (timer) return stop();
+  if (k >= trace.length - 1) k = -1;
+  e.target.textContent = '❚❚ Pause'; step(); timer = setInterval(step, 1100);
+};
+document.getElementById('reset').onclick = () => { stop(); k = -1; render(); };
+render();
+</script>
+</body>
+</html>

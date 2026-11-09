@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Features and label</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .chip{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:18px; padding:11px 16px}
+  .chip.cat{border-style:dashed}
+  .bins{grid-template-columns:1.6fr 1fr 1fr}
+  .bin{min-height:170px} .bin h4{font-size:20px} .bin h4 small{font-size:14px}
+  .q{display:flex; gap:8px; align-items:center; justify-content:center}
+  .q button{font-size:17px; padding:9px 18px}
+  .out{font-size:17px; background:var(--soft); border-left:4px solid var(--blue);
+    border-radius:0 10px 10px 0; padding:9px 14px; min-height:62px; line-height:1.5}
+  .out .bad{color:var(--orange); font-family:Inter,Arial,sans-serif; font-weight:600}
+  .out .ok{color:var(--teal); font-family:Inter,Arial,sans-serif; font-weight:700}
+</style>
+</head>
+<body>
+<div class="game" id="game">
+  <div class="q"><span class="label">the question:</span>
+    <button data-t="species" class="on">🐧 Which species is it?</button>
+    <button data-t="body_mass_g">⚖️ How heavy is it?</button>
+  </div>
+  <div class="tray" id="tray"></div>
+  <div class="bins">
+    <div class="bin" data-bin="X" style="border-top:6px solid var(--blue)"><h4><code>X</code> <small>features: what the model sees</small></h4><div class="drop"></div></div>
+    <div class="bin" data-bin="y" style="border-top:6px solid var(--orange)"><h4><code>y</code> <small>label: the answer</small></h4><div class="drop"></div></div>
+    <div class="bin" data-bin="no" style="border-top:6px solid var(--gray)"><h4>not used</h4><div class="drop"></div></div>
+  </div>
+  <div class="out" id="out"></div>
+</div>
+<script src="widget.js"></script>
+<script>
+const COLS = [
+  ['species', true], ['island', true], ['bill_length_mm'], ['bill_depth_mm'],
+  ['flipper_length_mm'], ['body_mass_g'], ['sex', true],
+];
+let target = 'species';
+const tray = document.getElementById('tray');
+const drops = {};
+document.querySelectorAll('.bin').forEach((b) => (drops[b.dataset.bin] = b.querySelector('.drop')));
+const chips = COLS.map(([c, cat]) => {
+  const el = W.el('div', { class: 'chip' + (cat ? ' cat' : ''), text: c }, tray);
+  el.title = cat ? 'text column: needs encoding to numbers before .fit()' : 'numeric column';
+  drag(el); return el;
+});
+
+function where(c) { for (const k in drops) if (drops[k].contains(c)) return k; return 'tray'; }
+function check() {
+  const X = chips.filter((c) => where(c) === 'X').map((c) => c.textContent);
+  const y = chips.filter((c) => where(c) === 'y').map((c) => c.textContent);
+  const out = document.getElementById('out');
+  const kind = target === 'species' ? 'classification' : 'regression';
+  if (!X.length && !y.length) { out.innerHTML = `Drag the columns. For <b>${target}</b>, which one is the answer, and which ones help find it?`; return; }
+  const msgs = [];
+  if (X.includes(target)) msgs.push(`<span class="bad">✗ ${target} is in X: the model would be shown the answer. That is leakage: a perfect score that means nothing.</span>`);
+  if (y.length > 1) msgs.push('<span class="bad">✗ y holds one column: the single thing you predict.</span>');
+  if (y.length === 1 && y[0] !== target) msgs.push(`<span class="bad">✗ The question is about <b>${target}</b>, so that is y.</span>`);
+  if (msgs.length) { out.innerHTML = msgs.join('<br>'); return; }
+  const code = `<code>X = df[[${X.map((c) => `'${c}'`).join(', ')}]]</code><br><code>y = df['${y[0] || '?'}']</code>`;
+  const cats = X.filter((c) => COLS.find((k) => k[0] === c)[1]);
+  let note = y.length ? `<span class="ok">✓ a ${kind} problem</span>` : '';
+  if (cats.length) note += ` <span style="font-family:Inter,Arial; color:var(--muted)">· ${cats.join(', ')} ${cats.length > 1 ? 'are' : 'is'} text: encode before <code>.fit()</code></span>`;
+  out.innerHTML = code + (note ? '<br>' + note : '');
+}
+
+function drag(chip) {
+  let ox = 0, oy = 0, hot = null, ph = null;
+  const move = (e) => {
+    chip.style.left = e.clientX - ox + 'px'; chip.style.top = e.clientY - oy + 'px';
+    const u = document.elementFromPoint(e.clientX, e.clientY);
+    const b = u && (u.closest('.bin') || u.closest('.tray'));
+    if (hot && hot !== b) hot.classList.remove('hot');
+    hot = b; if (hot && hot.classList.contains('bin')) hot.classList.add('hot');
+  };
+  const end = () => {
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end);
+    chip.classList.remove('dragging'); chip.style.left = chip.style.top = ''; if (ph) ph.remove();
+    if (hot) { hot.classList.remove('hot'); (hot.classList.contains('tray') ? tray : drops[hot.dataset.bin]).appendChild(chip); }
+    hot = null; check();
+  };
+  chip.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const r = chip.getBoundingClientRect(); ox = e.clientX - r.left; oy = e.clientY - r.top;
+    ph = W.el('div', { class: chip.className, text: chip.textContent }); ph.style.visibility = 'hidden';
+    chip.parentNode.insertBefore(ph, chip);
+    chip.classList.add('dragging'); chip.style.left = r.left + 'px'; chip.style.top = r.top + 'px';
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', end);
+  });
+}
+document.querySelectorAll('.q button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.q button').forEach((x) => x.classList.remove('on')); b.classList.add('on');
+  target = b.dataset.t; chips.forEach((c) => tray.appendChild(c)); check();
+}));
+check();
+</script>
+</body>
+</html>

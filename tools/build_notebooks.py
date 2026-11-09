@@ -20,6 +20,7 @@ GH_REPO = "ml-workshop-2h"
 
 PENGUINS_URL = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv"
 TITANIC_URL = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+COMP_URL = f"https://raw.githubusercontent.com/{GH_USER}/{GH_REPO}/main/codabench/bundle/input_data"
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "notebooks"
@@ -1508,6 +1509,75 @@ for cols in (['Pclass', 'Sex_num', 'Age', 'SibSp'],
 
     c.append(md("""
 ---
+## Step 6 — enter the mini competition 🏆
+
+The competition on **Codabench** uses its own split: 712 passengers with
+the answer (`train.csv`) and 179 without it (`test.csv`). Your job: predict
+`Survived` for the 179, save `predictions.csv`, zip it and upload the zip.
+The leaderboard scores you on passengers you have never seen.
+
+| to beat | accuracy |
+|---|---|
+| "nobody survived" | 0.615 |
+| "only women survived" | 0.782 |
+"""))
+    c.append(EX(sol, f"""
+import zipfile
+COMP = "{COMP_URL}"
+ctrain = pd.read_csv(COMP + "/train.csv")
+ctest  = pd.read_csv(COMP + "/test.csv")
+
+def prepare(df, age_median):
+    X = pd.DataFrame()
+    X['Pclass']  = df['Pclass']
+    X['Sex_num'] = (df['Sex'] == 'female').astype(int)
+    X['Age']     = df['Age'].fillna(age_median)      # the TRAIN median
+    X['SibSp']   = df['SibSp']
+    return X
+
+age_median = ctrain['Age'].median()
+cmodel = LogisticRegression(max_iter=1000).fit(prepare(ctrain, age_median), ctrain['Survived'])
+
+sub = pd.DataFrame({{'PassengerId': ctest['PassengerId'],
+                    'Survived': cmodel.___(prepare(ctest, age_median))}})
+sub.to_csv('predictions.csv', index=False)
+with zipfile.ZipFile('submission.zip', 'w') as z:
+    z.write('predictions.csv')
+print(sub.shape, "→ upload submission.zip on Codabench")
+""", f"""
+import zipfile
+COMP = "{COMP_URL}"
+ctrain = pd.read_csv(COMP + "/train.csv")
+ctest  = pd.read_csv(COMP + "/test.csv")
+
+def prepare(df, age_median):
+    X = pd.DataFrame()
+    X['Pclass']  = df['Pclass']
+    X['Sex_num'] = (df['Sex'] == 'female').astype(int)
+    X['Age']     = df['Age'].fillna(age_median)      # the TRAIN median
+    X['SibSp']   = df['SibSp']
+    return X
+
+age_median = ctrain['Age'].median()
+cmodel = LogisticRegression(max_iter=1000).fit(prepare(ctrain, age_median), ctrain['Survived'])
+
+sub = pd.DataFrame({{'PassengerId': ctest['PassengerId'],
+                    'Survived': cmodel.predict(prepare(ctest, age_median))}})
+sub.to_csv('predictions.csv', index=False)
+with zipfile.ZipFile('submission.zip', 'w') as z:
+    z.write('predictions.csv')
+print(sub.shape, "→ upload submission.zip on Codabench")
+"""))
+    c.append(md("""
+**In Colab:** open the 📁 *Files* panel on the left, right-click
+`submission.zip` → *Download*, then upload it under *My Submissions* on the
+competition page. Then improve: the title in `Name` (Mr, Mrs, Miss,
+Master…), family size, `Embarked`, another model. Compare ideas with
+`cross_val_score` on the training set before spending a submission.
+"""))
+
+    c.append(md("""
+---
 ## What you built today
 
     raw data  →  clean  →  split  →  train  →  evaluate  →  predict
@@ -1520,10 +1590,13 @@ You recognise every box in that line. That is the point.
     c.append(md("""
 ### Three next steps
 
-1. **A course** — *[fill in your recommendation]*
+1. **A course** — the free [scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)
+   by Inria and the scikit-learn team: today's library, properly.
 2. **A dataset** — find one you actually care about and run this exact
    pipeline on it. That is how this becomes yours rather than ours.
-3. **A community** — *[fill in your recommendation]*
+3. **A community** — [Kaggle](https://www.kaggle.com/) for competitions and
+   notebooks to learn from; [Hugging Face Learn](https://huggingface.co/learn)
+   when you are ready for deep learning.
 
 > The most valuable thing you can take from today is not `.fit()`. It is the
 > habit of looking at a prediction the model got **wrong** before believing
