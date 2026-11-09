@@ -365,3 +365,57 @@ body:has(#title-slide.present) .footer { display: none !important; }
 // No programming ligatures: beginners must see `!=` and `==`, not ≠ — they
 // type what they see.
 .reveal pre, .reveal code { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+
+// ---------------------------------------------------------------------
+// Interactive widgets (assets/interactive/*.html), embedded as iframes.
+// The widget gets the whole slide under a compact heading.
+// ---------------------------------------------------------------------
+.reveal iframe.widget {
+  display: block; width: 100%; border: 0; margin: 0 auto;
+  border-radius: 14px; background: #fff;
+  box-shadow: 0 0 0 1px rgba($navy, 0.07), 0 18px 40px -22px rgba($navy, 0.35);
+}
+.reveal .slides section.widget-slide > h2 { font-size: 1.15em; margin-bottom: 0.3em; }
+.reveal .slides section.widget-slide > h2::before {
+  content: "INTERACTIVE"; display: inline-block; vertical-align: middle;
+  font-size: 0.42em; font-weight: 800; letter-spacing: 0.14em; color: #fff;
+  background: $teal; padding: 0.3em 0.8em; border-radius: 999px; margin-right: 0.7em;
+  position: relative; top: -0.15em;
+}
+
+// ---------------------------------------------------------------------
+// Library introductions: logo, one import line, "why it matters".
+// ---------------------------------------------------------------------
+.reveal .libintro img.liblogo {
+  display: block; width: 100%; max-width: 330px; max-height: 150px; object-fit: contain;
+  margin: 0.2em auto 0.5em; box-shadow: none; border: 0; background: transparent;
+}
+.reveal .libintro h3 {
+  font-size: 0.5em !important; text-transform: uppercase; letter-spacing: 0.14em; color: $orange; margin: 0 0 0.5em;
+}
+.reveal .libintro ul { margin: 0; }
+.reveal .libintro li { margin: 0.25em 0; line-height: 1.32; }
+.reveal .libintro pre { margin-top: 0.3em; }
+
+.reveal .libgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7em; margin: 0.4em 0 0.8em; }
+.reveal .libgrid .lib {
+  background: #fff; border-radius: 14px; padding: 0.7em 0.7em 0.5em; text-align: center;
+  border: 1px solid rgba($navy, 0.08); box-shadow: 0 10px 28px -16px rgba($navy, 0.35);
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.reveal .libgrid .lib img { height: 92px; width: 100%; object-fit: contain; margin: 0.2em 0 0.4em; box-shadow: none; }
+.reveal .libgrid .lib p { margin: 0; font-size: 0.82em; line-height: 1.3; }
+.reveal .libgrid .lib:nth-child(1) { border-top: 5px solid #4D77CF; }
+.reveal .libgrid .lib:nth-child(2) { border-top: 5px solid #150458; }
+.reveal .libgrid .lib:nth-child(3) { border-top: 5px solid #11557C; }
+.reveal .libgrid .lib:nth-child(4) { border-top: 5px solid #F7931E; }
+
+// Two big comparison cards (classification vs regression)
+.reveal .columns.cards.twocards > .column { padding: 0.5em 1em 0.7em; }
+.reveal .columns.cards.twocards > .column:nth-child(2) { border-top-color: $teal; }
+.reveal .columns.cards.twocards h3 { font-size: 1.15em; }
+.reveal .columns.cards.twocards p { font-size: 0.92em; }
+
+// Algorithm divider slides have no numeral: tighten them
+.reveal .slides section.part:not(:has(.part-num)) h2 { font-size: 1.8em; }
+.reveal .libintro .column:first-child pre { max-width: 92%; }

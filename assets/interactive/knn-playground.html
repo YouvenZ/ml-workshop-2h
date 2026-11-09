@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KNN playground</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .p{stroke:#fff; stroke-width:1}
+  .nb{stroke:var(--navy); stroke-width:1.4; opacity:.55}
+  .ring{fill:none; stroke:var(--navy); stroke-width:2.2}
+  .new{cursor:grab}
+  .new:active{cursor:grabbing}
+  .votes{display:flex; flex-direction:column; gap:6px; margin-top:6px}
+  .vote{display:grid; grid-template-columns:88px 1fr 26px; gap:8px; align-items:center; font-size:14px; font-weight:600}
+  .vbar{height:12px; border-radius:6px; background:var(--gray); overflow:hidden}
+  .vbar i{display:block; height:100%; transition:width .2s}
+  .pred{font-size:24px; font-weight:800}
+  .toggle{display:flex; gap:6px}
+  .toggle button{flex:1; padding:6px 8px; font-size:13px}
+  canvas{position:absolute; pointer-events:none; opacity:.17; image-rendering:pixelated}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot" id="plot">
+    <canvas id="bg"></canvas>
+    <svg id="svg" viewBox="0 0 740 470" role="img" aria-label="Penguins scatter with a draggable newcomer"></svg>
+  </div>
+  <div class="side">
+    <div class="card slider">
+      <div class="top">K, neighbours who vote <b id="kv">5</b></div>
+      <input type="range" id="k" min="1" max="40" step="1" value="5">
+    </div>
+    <div class="card">
+      <div class="label">the vote</div>
+      <div class="votes" id="votes"></div>
+      <div class="pred" id="pred" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:6px">distance measured on…</div>
+      <div class="toggle">
+        <button id="raw">raw units</button>
+        <button id="std" class="on">scaled features</button>
+      </div>
+    </div>
+    <p class="hint">Drag the <b>★ newcomer</b>. Then switch to <b>raw units</b>: grams swamp millimetres, so the “nearest” penguins are just the ones with the same mass, in a flat horizontal band.</p>
+  </div>
+</div>
+<script src="data/penguins.js"></script>
+<script src="widget.js"></script>
+<script>
+const svg = document.getElementById('svg');
+const M = { l: 76, r: 726, t: 14, b: 410 };
+const X = W.lin(31, 61, M.l, M.r), Y = W.lin(2600, 6400, M.b, M.t);
+const COLORS = ['#E07A2C', '#8E5CC4', '#2A9D8F'];
+const pts = PENGUINS.map((p) => ({ s: p[0], x: p[1], y: p[4] }));
+const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+const sd = (a) => { const m = mean(a); return Math.sqrt(mean(a.map((v) => (v - m) ** 2))); };
+const SX = sd(pts.map((p) => p.x)), SY = sd(pts.map((p) => p.y));
+
+for (let v = 3000; v <= 6000; v += 500) {
+  W.svg('line', { x1: M.l, x2: M.r, y1: Y(v), y2: Y(v), class: 'gridline' }, svg);
+  W.svg('text', { x: M.l - 8, y: Y(v) + 4, 'text-anchor': 'end', class: 'tick' }, svg).textContent = v.toLocaleString('en-US');
+}
+for (let v = 35; v <= 60; v += 5) {
+  W.svg('line', { y1: M.t, y2: M.b, x1: X(v), x2: X(v), class: 'gridline' }, svg);
+  W.svg('text', { x: X(v), y: M.b + 18, 'text-anchor': 'middle', class: 'tick' }, svg).textContent = v;
+}
+W.svg('line', { x1: M.l, x2: M.r, y1: M.b, y2: M.b, class: 'axis' }, svg);
+W.svg('line', { x1: M.l, x2: M.l, y1: M.t, y2: M.b, class: 'axis' }, svg);
+W.svg('text', { x: (M.l + M.r) / 2, y: M.b + 44, 'text-anchor': 'middle', class: 'axlabel' }, svg).textContent = 'bill_length_mm';
+W.svg('text', { x: 16, y: (M.t + M.b) / 2, 'text-anchor': 'middle', class: 'axlabel', transform: `rotate(-90 16 ${(M.t + M.b) / 2})` }, svg).textContent = 'body_mass_g';
+const gLines = W.svg('g', {}, svg);
+const gPts = W.svg('g', {}, svg);
+const els = pts.map((p) => W.svg('circle', { cx: X(p.x), cy: Y(p.y), r: 5, class: 'p', fill: COLORS[p.s] }, gPts));
+const gRings = W.svg('g', {}, svg);
+const newG = W.svg('g', { class: 'new' }, svg);
+const star = W.svg('path', { d: starPath(0, 0, 16, 7), fill: 'var(--navy)', stroke: '#fff', 'stroke-width': 2.5 }, newG);
+
+function starPath(cx, cy, R, r) {
+  let d = '';
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r : R; d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(1) + ',' + (cy + rr * Math.sin(a)).toFixed(1); }
+  return d + 'Z';
+}
+
+let nx = 46, ny = 4300, K = 5, scaled = true;
+const dist = (ax, ay, bx, by) => scaled ? Math.hypot((ax - bx) / SX, (ay - by) / SY) : Math.hypot(ax - bx, ay - by);
+function knn(x, y, k) {
+  const d = pts.map((p, i) => [dist(x, y, p.x, p.y), i]).sort((a, b) => a[0] - b[0]).slice(0, k);
+  const v = [0, 0, 0]; d.forEach(([, i]) => v[pts[i].s]++);
+  return { idx: d.map((e) => e[1]), v, win: v.indexOf(Math.max(...v)) };
+}
+
+// Decision regions on a coarse grid, painted once per change of K or scaling.
+const cv = document.getElementById('bg'), ctx = cv.getContext('2d');
+function paintRegions() {
+  const GX = 92, GY = 52; cv.width = GX; cv.height = GY;
+  const img = ctx.createImageData(GX, GY);
+  const rgb = [[224, 122, 44], [142, 92, 196], [42, 157, 143]];
+  for (let j = 0; j < GY; j++) for (let i = 0; i < GX; i++) {
+    const x = X.inv(M.l + ((i + 0.5) / GX) * (M.r - M.l)), y = Y.inv(M.t + ((j + 0.5) / GY) * (M.b - M.t));
+    const c = rgb[knn(x, y, K).win], o = (j * GX + i) * 4;
+    img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2]; img.data[o + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  const box = svg.getBoundingClientRect(), s = box.width / 740;
+  Object.assign(cv.style, { left: M.l * s + 'px', top: M.t * s + 'px', width: (M.r - M.l) * s + 'px', height: (M.b - M.t) * s + 'px' });
+}
+
+function render() {
+  const res = knn(nx, ny, K);
+  newG.setAttribute('transform', `translate(${X(nx)},${Y(ny)})`);
+  gLines.innerHTML = ''; gRings.innerHTML = '';
+  res.idx.forEach((i) => {
+    W.svg('line', { x1: X(nx), y1: Y(ny), x2: X(pts[i].x), y2: Y(pts[i].y), class: 'nb' }, gLines);
+    W.svg('circle', { cx: X(pts[i].x), cy: Y(pts[i].y), r: 8.5, class: 'ring' }, gRings);
+  });
+  star.setAttribute('fill', COLORS[res.win]);
+  const vEl = document.getElementById('votes'); vEl.innerHTML = '';
+  SPECIES.forEach((s, i) => {
+    W.el('div', { class: 'vote', html: `<span style="color:${COLORS[i]}">${s}</span><div class="vbar"><i style="width:${(res.v[i] / K) * 100}%;background:${COLORS[i]}"></i></div><span>${res.v[i]}</span>` }, vEl);
+  });
+  const pr = document.getElementById('pred');
+  pr.innerHTML = `→ <span style="color:${COLORS[res.win]}">${SPECIES[res.win]}</span>`;
+  document.getElementById('kv').textContent = K;
+}
+
+let drag = false;
+newG.addEventListener('pointerdown', (e) => { drag = true; svg.setPointerCapture(e.pointerId); });
+svg.addEventListener('pointermove', (e) => {
+  if (!drag) return; const l = W.local(svg, e);
+  nx = W.clamp(X.inv(l.x), 31.5, 60.5); ny = W.clamp(Y.inv(l.y), 2650, 6350); render();
+});
+['pointerup', 'pointercancel'].forEach((ev) => svg.addEventListener(ev, () => (drag = false)));
+W.bindRange(document.getElementById('k'), (v) => { K = v; render(); paintRegions(); });
+const rawB = document.getElementById('raw'), stdB = document.getElementById('std');
+rawB.onclick = () => { scaled = false; rawB.classList.add('on'); stdB.classList.remove('on'); render(); paintRegions(); };
+stdB.onclick = () => { scaled = true; stdB.classList.add('on'); rawB.classList.remove('on'); render(); paintRegions(); };
+window.addEventListener('resize', paintRegions);
+render(); requestAnimationFrame(paintRegions);
+</script>
+</body>
+</html>

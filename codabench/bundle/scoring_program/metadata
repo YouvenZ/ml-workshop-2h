@@ -1,0 +1,2 @@
+command: python3 $program/score.py $input $output
+description: Scores Titanic survival predictions (accuracy, balanced accuracy, F1) and writes a detailed report.

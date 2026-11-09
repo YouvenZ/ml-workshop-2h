@@ -2,12 +2,13 @@
 title: "Python & Machine Learning"
 subtitle: "From zero to a working classifier in two hours"
 author: "Dr. Rachid Zeghlache"
-institute: "Assistant Professor of Artificial Intelligence · American University in Dubai"
+institute: "Assistant Professor of computer science (Artificial Intelligence) · American University in Dubai"
 title-slide-attributes:
   data-background-image: theme/title-bg.svg
   data-background-size: cover
   data-background-color: "#14203A"
-date: today
+date: 2026-11-11
+date-format: "DD/MM/YYYY"
 format:
   live-revealjs:
     theme: [default, theme/custom.scss]
@@ -22,7 +23,7 @@ format:
     highlight-style: github
     width: 1280
     height: 720
-    footer: "Dr. Rachid Zeghlache · Python & ML Workshop · 2 hours"
+    footer: "Python & ML Workshop · 2 hours"
     include-after-body: video-once.html
     # Self-hosted KaTeX. Quarto's default points at cdn.jsdelivr.net (and at
     # katex@latest, unpinned), so on a lecture-hall network that blocks or
@@ -30,8 +31,8 @@ format:
     html-math-method:
       method: katex
       url: katex/
-engine: jupyter
-# Copied into the in-browser Python filesystem, so the live KNN cell reads the
+jupyter: python3
+# Copied into the in-browser Python filesystem, so the live cells read the
 # same penguins as the notebooks without a network call from Python.
 pyodide:
   resources:
@@ -40,40 +41,76 @@ pyodide:
 
 ## Where we're going {.center}
 
-By **1:30** you will have trained a machine learning model that classifies
-penguins by species — and by **2:00** you will have done it again, alone, on
-the Titanic.
+Today you will train a machine learning model that classifies penguins by
+species, then a model that predicts their weight, and then you will do it
+again, alone, on the Titanic.
 
 ::: {.fragment}
-No installs. Just a browser. And we are going to move fast.
+No installs. Just a browser. And at the end, a **mini competition** with a live leaderboard.
 :::
 
 ::: {.notes}
-This is the two-hour cut of the four-hour workshop. Same four steps, same
-notebooks, half the talking. The rule for the whole session: show the idea,
-type the code, move on. If the room needs an explanation, give it in the
-notebook, not on a slide. Open NB1 and run cell 1 before anything else.
+Same four steps as the long workshop, same notebooks, less talking. The rule
+for the whole session: show the idea, let them touch it (the interactive
+slides), type the code, move on. Open NB1 and run cell 1 before anything else.
 :::
 
 ---
 
-## The two hours
+## The journey
 
-| | | |
+| | part | what you will do |
 |---|---|---|
-| **0:00 – 0:30** | Python for data | variables → NumPy → Pandas |
-| **0:30 – 0:55** | Explore & visualise | missing values, groupby, the hue chart |
-| **1:00 – 1:30** | Your first model | split → fit → predict → score |
-| **1:30 – 2:00** | Compare & challenge | KNN, scaling, Titanic |
+| **01** | Python for data | variables → **NumPy** → **pandas** |
+| **02** | Explore & visualise | missing values, groupby, **Matplotlib** charts |
+| **03** | Your first models | **scikit-learn** · classification vs regression · linear & logistic regression |
+| **04** | Compare & challenge | KNN, scaling, the Titanic, the **Codabench** competition |
 
 ::: {.fragment}
-👍 **thumbs up** — done · ✋ **flat hand** — stuck. Use both, all session.
+👍 **thumbs up**: done · ✋ **flat hand**: stuck. Use both, all session.
 :::
 
 ::: {.notes}
-Two notebooks: NB1 for the first hour, NB2 for the second. NB2 loads its own
-clean data in cell 1, so a broken NB1 never blocks the ML hour. Say that out
-loud — it removes a real anxiety.
+Two notebooks: NB1 for Parts 1–2, NB2 for Parts 3–4. NB2 loads its own clean
+data in cell 1, so a broken NB1 never blocks the ML part. Say that out loud —
+it removes a real anxiety.
+:::
+
+---
+
+## Your toolkit {.smaller}
+
+::: {.libgrid}
+::: {.lib}
+![](../assets/logos/numpy.svg)
+
+**NumPy** · fast maths on whole arrays of numbers
+:::
+::: {.lib}
+![](../assets/logos/pandas.svg)
+
+**pandas** · tables with named columns: load, clean, filter
+:::
+::: {.lib}
+![](../assets/logos/matplotlib.svg)
+
+**Matplotlib** · turn numbers into pictures
+:::
+::: {.lib}
+![](../assets/logos/scikit-learn.svg)
+
+**scikit-learn** · machine learning in four verbs
+:::
+:::
+
+::: {.keypoint}
+Each one stands on the one before it. We meet them in that order, each at the moment we need it.
+:::
+
+::: {.notes}
+Thirty-second preview, not a lecture. Point at the stack: scikit-learn is
+built on NumPy, pandas is built on NumPy, Matplotlib draws NumPy arrays.
+Each library gets its own "why" slide when it first appears.
 :::
 
 ---
@@ -89,8 +126,8 @@ Stuck later? **Runtime → Restart and run all.** You cannot break anything.
 :::
 
 ::: {.notes}
-First win inside 90 seconds. Only Shift+Enter, the runtime indicator and
-Restart & run all — nothing else about Colab matters today.
+First win, fast. Only Shift+Enter, the runtime indicator and Restart & run
+all — nothing else about Colab matters today.
 :::
 
 ---
@@ -102,7 +139,7 @@ Restart & run all — nothing else about Colab matters today.
 :::
 
 ::: {.part-goal}
-<span>0:05 – 0:30</span> by 0:30 you will be filtering a real table of 344 penguins
+<span>GOAL</span> you will be filtering a real table of 344 penguins
 :::
 
 ---
@@ -116,7 +153,7 @@ Restart & run all — nothing else about Colab matters today.
 ::: {.column width="45%"}
 | you write | type |
 |---|---|
-| `'Adelie'` | `str` — text, in quotes |
+| `'Adelie'` | `str`: text, in quotes |
 | `3750` | `int` |
 | `39.1` | `float` |
 | `True` | `bool` |
@@ -129,14 +166,26 @@ Restart & run all — nothing else about Colab matters today.
 
 ---
 
-## Try it — change a value {.smaller}
+## Your turn: sort the values {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/types-sort.html" height="560"></iframe>
+
+::: {.notes}
+Call students up to drag, or let the room shout the bin. The three traps are
+deliberate: '3750' (quotes win → str), 3.0 (the dot → float) and 'True'
+(quotes → str). Ask "how would Python tell you?" → type(...), next slide.
+:::
+
+---
+
+## Try it: change a value {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
 Every line here is live. Change a number, change a word, press **Run**.
 
 ::: {.fragment}
-Now delete the quotes around `'Adelie'` and run it again. Read the error —
+Now delete the quotes around `'Adelie'` and run it again. Read the error:
 you will see that one a lot today.
 :::
 :::
@@ -155,9 +204,9 @@ print(type(species), type(body_mass_g))
 :::
 
 ::: {.notes}
-Take one suggestion from the room and type it. Ninety seconds maximum — the
-real practice is in the notebook; this keeps the room awake and makes errors
-feel survivable early. First run downloads Python into the browser (~10 s).
+Take one suggestion from the room and type it. Keep it short — the real
+practice is in the notebook; this keeps the room awake and makes errors feel
+survivable early. First run downloads Python into the browser (~10 s).
 :::
 
 ---
@@ -168,8 +217,8 @@ feel survivable early. First run downloads Python into the browser (~10 s).
 ::: {.column width="50%"}
 ```python
 masses = [3750, 3800, 3250, 3450]
-masses[0]     # 3750 — counts from 0
-masses[-1]    # 3450 — from the end
+masses[0]     # 3750: counts from 0
+masses[-1]    # 3450: from the end
 masses[:2]    # [3750, 3800]
 len(masses)   # 4
 ```
@@ -187,7 +236,7 @@ A row of a table is a dict.
 :::
 
 ::: {.notes}
-Zero-indexing is the one thing worth ten seconds here. Everything else is in
+Zero-indexing is the one thing worth stopping on here. Everything else is in
 the notebook.
 :::
 
@@ -201,9 +250,9 @@ the notebook.
 </div>
 
 ::: {.notes}
-29 s, self-contained: the code, a pointer walking the list, m taking each
-value, total growing to 14250. Don't talk over it. Then ask: "if the list
-had 344 masses, how many times would the indented line run?" (344)
+Self-contained: the code, a pointer walking the list, m taking each value,
+total growing to 14250. Don't talk over it. Then ask: "if the list had 344
+masses, how many times would the indented line run?" (344)
 :::
 
 ---
@@ -219,7 +268,7 @@ for m in masses:
     else:
         print(m, 'light')
 ```
-The **indent** is the syntax — four spaces means "inside".
+The **indent** is the syntax: four spaces means "inside".
 :::
 ::: {.column width="50%"}
 ```python
@@ -235,6 +284,38 @@ size_label(3750)    # 'large'
 
 ---
 
+## Meet NumPy {.smaller .libintro}
+
+::: {.columns}
+::: {.column width="34%"}
+![](../assets/logos/numpy.svg){.liblogo}
+
+```python
+import numpy as np
+```
+:::
+::: {.column width="66%"}
+### Why it matters, right now
+
+- A Python list is a row of separate boxes: looping over 1 000 000 of them is **slow**.
+- A NumPy **array** is one block of numbers, processed in fast compiled code: **one operation hits every element**.
+- Every number in machine learning (features, weights, predictions) lives in a NumPy array.
+- **pandas, Matplotlib and scikit-learn are all built on top of it.**
+:::
+:::
+
+::: {.keypoint}
+Lists are for storing things. Arrays are for doing maths on them.
+:::
+
+::: {.notes}
+This is the moment the room needs to know why a second way to hold numbers
+exists. The next slide proves the speed claim; the one after shows
+vectorisation.
+:::
+
+---
+
 ## Why NumPy? Speed {.smaller .nostretch}
 
 ![](../assets/rendered/asset_04_list_vs_array.svg){width="58%" fig-align="center"}
@@ -242,12 +323,12 @@ size_label(3750)    # 'large'
 ```python
 big = np.random.rand(1_000_000)
 %timeit sum(big)      # milliseconds
-%timeit big.sum()     # microseconds — 50–250× faster
+%timeit big.sum()     # microseconds: 50–250× faster
 ```
 
 ::: {.notes}
-Run the %timeit live in the notebook. Sixty seconds, and the "why not a
-list" question is gone for good.
+Run the %timeit live in the notebook. The "why not a list" question is gone
+for good.
 :::
 
 ---
@@ -260,9 +341,9 @@ list" question is gone for good.
 </div>
 
 ::: {.notes}
-21 s: the 2 is stretched to the array's shape, every pair multiplied at
-once, then a > 3700 gives one True/False per element. Ask: "what would
-a + 100 give?" — then the live cell on the next slide lets them check.
+The 2 is stretched to the array's shape, every pair multiplied at once, then
+a > 3700 gives one True/False per element. Ask: "what would a + 100 give?" —
+then the live cell lets them check.
 :::
 
 ---
@@ -274,9 +355,9 @@ a = np.array([3750, 3800, 3250, 3450])
 
 a * 2            # no loop: [7500 7600 6500 6900]
 a.mean()         # 3562.5
-a > 3700         # [ True  True False False]  — one answer per element
-a[a > 3700]      # [3750 3800]                — keep only the True ones
-(a > 3700).sum() # 2                          — True counts as 1
+a > 3700         # [ True  True False False]: one answer per element
+a[a > 3700]      # [3750 3800]: keep only the True ones
+(a > 3700).sum() # 2: True counts as 1
 ```
 
 ::: {.keypoint}
@@ -285,7 +366,7 @@ That mask is exactly how you will filter a table.
 
 ---
 
-## Try it — one operation, every element {.smaller}
+## Try it: one operation, every element {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
@@ -312,8 +393,40 @@ print((masses > 3700).sum(), "above 3700")
 :::
 
 ::: {.notes}
-Sixty seconds. The mask is the bridge to pandas filtering on the next two
-slides — say so.
+The mask is the bridge to pandas filtering in a few slides — say so.
+:::
+
+---
+
+## Meet pandas {.smaller .libintro}
+
+::: {.columns}
+::: {.column width="34%"}
+![](../assets/logos/pandas.svg){.liblogo}
+
+```python
+import pandas as pd
+df = pd.read_csv('penguins.csv')
+```
+:::
+::: {.column width="66%"}
+### Why it matters, right now
+
+- Real data is a **table**: named columns, mixed types (text, numbers), missing cells. A bare array can't hold that.
+- pandas reads a CSV, an Excel file or a database in **one line**.
+- It answers questions in one line too: *filter*, *sort*, *group*, *count*, *fill the gaps*.
+- Under every column is a NumPy array, so the speed (and the masks) come with it.
+:::
+:::
+
+::: {.keypoint}
+pandas is where data science happens: 80% of a real project is getting the table right.
+:::
+
+::: {.notes}
+"Spreadsheet you can program" is the one-line pitch. The mask they just met
+in NumPy is literally how pandas filters rows; two slides from now they drag
+a threshold and watch it happen.
 :::
 
 ---
@@ -338,8 +451,20 @@ slides — say so.
 :::
 
 ::: {.notes}
-Single vs double brackets causes the most common error in the ML hour — flag
+Single vs double brackets causes the most common error in the ML part — flag
 it now.
+:::
+
+---
+
+## Drag the threshold: watch the mask filter {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/mask-filter.html" height="560"></iframe>
+
+::: {.notes}
+Drag the slider slowly from 2800 to 6200: rows fade out as their mask flips
+to False. Then click "Gentoo" and show the code line grow an & condition with
+parentheses — exactly the rule on the previous slide.
 :::
 
 ---
@@ -348,15 +473,13 @@ it now.
 
 **NB1 → Exercise 1.** Fill the blanks.
 
-{{< countdown minutes=5 top=0 right=0 font_size="2.2em" warn_when=60 >}}
-
 1. A function that labels a flipper `'long'` or `'short'`
 2. Count the penguins above the mean mass
 3. Count the Chinstraps
 
 ::: {.notes}
-Circulate, do not present. If a third of the room is still on task 1 at the
-3-minute mark, stop the clock and do it together on screen.
+Circulate, do not present. If a third of the room is still on task 1, stop
+and do it together on screen.
 :::
 
 ---
@@ -370,7 +493,7 @@ df[df['body_mass_g'] > 4000].shape[0]
 A penguin, a number, or a table?
 
 ::: {.fragment .keypoint}
-A number — the count of penguins over 4000 g.
+A number: the count of penguins over 4000 g.
 :::
 
 ---
@@ -382,7 +505,7 @@ A number — the count of penguins over 4000 g.
 :::
 
 ::: {.part-goal}
-<span>0:30 – 0:55</span> by 0:55 you will have made the chart the second hour depends on
+<span>GOAL</span> you will have made the chart the rest of the workshop depends on
 :::
 
 ---
@@ -405,7 +528,7 @@ Run all three on any new dataset, before anything else.
 
 | option | what it costs you |
 |---|---|
-| **drop the rows** — `df.dropna()` | data; and dropped rows are rarely random |
+| **drop the rows**: `df.dropna()` | data; and dropped rows are rarely random |
 | **fill with a constant** | invents a value that may be nonsense |
 | **fill with the median** (*imputation*) | keeps rows, shrinks the spread |
 
@@ -413,13 +536,13 @@ On the Titanic, a median fill puts 177 people at age 28: the 25–30 bin goes
 from **106 → 283**.
 
 ::: {.keypoint}
-You are not recovering the value. You are inventing one — so fit it on train
+You are not recovering the value. You are inventing one, so fit it on train
 only, and record what you filled.
 :::
 
 ::: {.notes}
 Ask the room what dropna loses before running it (11 of 344 — cheap here).
-The Titanic numbers are what they will produce themselves at 1:45.
+The Titanic numbers are what they will produce themselves in the challenge.
 :::
 
 ---
@@ -432,14 +555,14 @@ The Titanic numbers are what they will produce themselves at 1:45.
 </div>
 
 ::: {.notes}
-20 s, real Titanic ages: 177 missing, all filled with the median 28, the
-25–30 bar jumps 106 → 283, the spread shrinks 14.5 → 13.0. Ask: "is
-that shrinkage a problem for a model?" — they meet it again at 1:45.
+Real Titanic ages: 177 missing, all filled with the median 28, the 25–30 bar
+jumps 106 → 283, the spread shrinks 14.5 → 13.0. Ask: "is that shrinkage a
+problem for a model?" — they meet it again in the Titanic challenge.
 :::
 
 ---
 
-## Split, apply, combine — in motion {.clip-slide}
+## Split, apply, combine: in motion {.clip-slide}
 
 <div class="clip">
 <video src="../assets/rendered/asset_08_split_apply_combine.mp4" autoplay muted playsinline preload="metadata"></video>
@@ -447,9 +570,8 @@ that shrinkage a problem for a model?" — they meet it again at 1:45.
 </div>
 
 ::: {.notes}
-19 s: real rows split by species, each group collapses to its mean,
-the means form a new table. Ask: "what would .max() change?" (the apply
-step only).
+Real rows split by species, each group collapses to its mean, the means form
+a new table. Ask: "what would .max() change?" (the apply step only).
 :::
 
 ---
@@ -462,10 +584,43 @@ df.groupby('species')['body_mass_g'].mean()
 
 | part | what it does |
 |---|---|
-| `groupby('species')` | **split** — one bucket per species |
+| `groupby('species')` | **split**: one bucket per species |
 | `['body_mass_g']` | the column to summarise |
-| `.mean()` | **apply** — each bucket to one number |
-| *(result)* | **combine** — one row per group |
+| `.mean()` | **apply**: each bucket to one number |
+| *(result)* | **combine**: one row per group |
+
+---
+
+## Meet Matplotlib {.smaller .libintro}
+
+::: {.columns}
+::: {.column width="34%"}
+![](../assets/logos/matplotlib.svg){.liblogo}
+
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns   # built on it
+```
+:::
+::: {.column width="66%"}
+### Why it matters, right now
+
+- A table of 344 rows hides its patterns. A **picture shows them in a second**: groups, trends, outliers, data errors.
+- Matplotlib is Python's base plotting library: every chart, in every notebook, in every paper.
+- **seaborn** sits on top of it and makes statistical charts (colour by group, in one line) with nicer defaults.
+- Before you train a model, you **look**. The chart tells you whether a model even has a chance.
+:::
+:::
+
+::: {.keypoint}
+Never model data you haven't plotted.
+:::
+
+::: {.notes}
+Why now: we have summaries (describe, groupby); numbers alone cannot show a
+shape. Next slide is how to make a chart readable; the slide after is the
+chart the whole ML part depends on.
+:::
 
 ---
 
@@ -506,7 +661,10 @@ Those groups are what a classifier learns to draw a line between.
 :::
 
 ::: {.notes}
-The one sentence you must not skip, even in the fast version. Say it slowly.
+The one sentence you must not skip. Say it slowly. Also point at the left
+chart: the cloud slopes upward — longer flippers, heavier penguins. Part 3
+puts a number on that slope (correlation) and then draws the line (linear
+regression).
 :::
 
 ---
@@ -515,61 +673,32 @@ The one sentence you must not skip, even in the fast version. Say it slowly.
 
 **NB1 → Independent practice.** Questions 1–3, in pairs.
 
-{{< countdown minutes=8 top=0 right=0 font_size="2.2em" warn_when=60 >}}
-
 1. Which species is heaviest on average?
 2. How many penguins on each island?
 3. Do flipper length and mass move together? Show it.
 
 ::: {.notes}
-Question 4 (the open chart) is homework in this version. At 0:53 ask the
-checkpoint on the next slide, then break.
+Question 4 (the open chart) is homework. Question 3 is the setup for Part 3:
+whatever they draw, they will put a number on it (r) and a line through it
+(linear regression) after the break.
 :::
 
 ---
 
-## Correlation, felt before it's defined
-
-<iframe src="../assets/interactive/correlation-playground.html"
-        width="100%" height="460" frameborder="0"
-        style="border:0"></iframe>
-
-::: {.notes}
-Let two students drag points before you name the concept. Then hit the
-"curved" preset: an unmistakable pattern that r scores at zero. Leave this
-on screen during the break — students play with it unprompted.
-:::
-
----
-
-## Checkpoint {.center}
-
-Flipper length and body mass: **r = 0.87**.
-
-Do longer flippers *cause* more mass?
-
-::: {.fragment .keypoint}
-No. Both are driven by species and overall size.
-:::
-
----
-
-## Break — 5 minutes {background-color="#2A9D8F" background-gradient="linear-gradient(135deg, #2A9D8F 0%, #1F7A70 100%)" .center}
+## Break {background-color="#2A9D8F" background-gradient="linear-gradient(135deg, #2A9D8F 0%, #1F7A70 100%)" .center}
 
 Open **NB2** and run cell 1 before you stand up.
 
-The correlation playground is one slide back — go and break it.
-
 ---
 
-## Part 3 · Your first model {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
+## Part 3 · Your first models {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
 ::: {.part-num}
 03
 :::
 
 ::: {.part-goal}
-<span>1:00 – 1:30</span> by 1:30 you will have a trained, scored classifier
+<span>GOAL</span> you will have trained and scored a regression model and a classifier
 :::
 
 ---
@@ -585,6 +714,90 @@ Gentoo with 200 mm flippers?"). Then the right: same penguins, but we hand
 over examples WITH answers and the computer finds the rule — that is
 supervised learning, and it is all we do today. Unsupervised (no answers,
 it only finds groups) is there so they know the word.
+:::
+
+---
+
+## Meet scikit-learn {.smaller .libintro}
+
+::: {.columns}
+::: {.column width="34%"}
+![](../assets/logos/scikit-learn.svg){.liblogo}
+
+```python
+from sklearn.linear_model import (
+    LinearRegression)
+model = LinearRegression()
+```
+:::
+::: {.column width="66%"}
+### Why it matters, right now
+
+- Dozens of algorithms (linear regression, logistic regression, KNN, trees…), **all with the same four verbs**: `fit`, `predict`, `score`, `transform`.
+- Learn the pattern once, swap the algorithm in **one line**.
+- The tools around the model are included: `train_test_split`, scalers, metrics, the confusion matrix.
+- Free, tested, and used in industry and research. It takes **NumPy arrays and pandas tables** directly.
+:::
+:::
+
+::: {.keypoint}
+In scikit-learn, every model is used the same way. That is why we can meet three of them today.
+:::
+
+::: {.notes}
+This is why the rest of the workshop is possible in the time we have. Point
+at the import: the module tells you the family (linear_model, neighbors,
+metrics, preprocessing).
+:::
+
+---
+
+## Two kinds of question: classification vs regression {.smaller}
+
+::: {.columns .cards .twocards}
+::: {.column}
+### 🏷️ Classification
+The answer is a **category** from a fixed list.
+
+*Which species is this penguin?* · *Did this passenger survive?*
+
+**Output** a label (`'Gentoo'`, `0`/`1`) · **Scored by** accuracy, the confusion matrix
+
+**Today:** logistic regression · KNN
+:::
+::: {.column}
+### 📈 Regression
+The answer is a **number** on a scale.
+
+*How heavy is this penguin?* · *What will this flat sell for?*
+
+**Output** a quantity (`4 158 g`) · **Scored by** average error (MAE), R²
+
+**Today:** linear regression
+:::
+:::
+
+::: {.keypoint}
+Same data, two questions. Predict `species` → classification. Predict `body_mass_g` → regression.
+:::
+
+::: {.notes}
+The test: "is being off by a little meaningful?" Predicting 4100 g for a
+4150 g penguin is nearly right; predicting Chinstrap for a Gentoo is just
+wrong. That is why they need different scores. Same split → fit → predict →
+score shape for both.
+:::
+
+---
+
+## Your turn: classification or regression? {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/class-vs-reg.html" height="560"></iframe>
+
+::: {.notes}
+Take votes from the room before each drag. The digit card is the trap: the
+answer is a number but it is a category (no "closer" wrong answer). The bus
+card is the opposite: minutes have an order and a distance → regression.
 :::
 
 ---
@@ -610,6 +823,11 @@ y = df['species']           # label
 You don't grade a student on the questions they studied.
 :::
 
+::: {.notes}
+y = species → classification. If y were body_mass_g (and mass left out of
+X), the very same code would set up a regression.
+:::
+
 ---
 
 ## The split, in motion {.clip-slide}
@@ -620,8 +838,8 @@ You don't grade a student on the questions they studied.
 </div>
 
 ::: {.notes}
-25 s: 333 penguins shuffled, 266 train / 67 test, the model learns from
-train only and sits the exam on test (0.97). Ask: "why shuffle first?"
+333 penguins shuffled, 266 train / 67 test, the model learns from train only
+and sits the exam on test (0.97). Ask: "why shuffle first?"
 :::
 
 ---
@@ -634,9 +852,22 @@ train only and sits the exam on test (0.97). Ask: "why shuffle first?"
 </div>
 
 ::: {.notes}
-26 s: three models on the same 11 points, then 10 new points. Errors are
-computed on screen: overfit 0.00 on training but the worst (0.11) on new
-points. Ask: "which number would you report to your boss?" (new points)
+Three models on the same 11 points, then 10 new points. Errors are computed on
+screen: overfit 0.00 on training but the worst (0.11) on new points. Ask:
+"which number would you report to your boss?" (new points). Next slide: they
+drive the complexity themselves.
+:::
+
+---
+
+## Your turn: push the complexity {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/overfit-slider.html" height="560"></iframe>
+
+::: {.notes}
+Slide the degree from 0 to 11 slowly. Training error (blue) only ever goes
+down; error on new points (orange) goes down, then back up — the U. Hit "New
+unseen points" at degree 11: the wiggly curve is wrong in new ways each time.
 :::
 
 ---
@@ -652,6 +883,230 @@ points. Ask: "which number would you report to your boss?" (new points)
 ::: {.keypoint}
 A model that memorised scores brilliantly and is useless on the next penguin.
 The test set is the only column that counts.
+:::
+
+---
+
+## Algorithm 1 · Linear regression {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
+
+::: {.part-goal}
+<span>REGRESSION</span> predict a penguin's body mass (a number) from its flipper length
+:::
+
+---
+
+## First: do the two columns move together? {.smaller}
+
+::: {.columns}
+::: {.column width="52%"}
+In the practice you plotted flipper length against body mass: the cloud goes **up and to the right**.
+
+**Correlation** `r` puts one number on that:
+
+- `r = +1`: a perfect rising straight line
+- `r = 0`: no straight-line relationship
+- `r = −1`: a perfect falling straight line
+:::
+::: {.column width="48%"}
+```python
+df['flipper_length_mm'].corr(
+    df['body_mass_g'])
+# 0.87
+```
+:::
+:::
+
+::: {.keypoint}
+A strong `r` says a straight line is worth drawing. Linear regression is how we draw it.
+:::
+
+::: {.notes}
+This is why correlation is here, not in Part 2: it is the question you ask
+before fitting a line. 0.87 is strong. Next slide: they feel what r measures,
+and what it misses.
+:::
+
+---
+
+## Correlation, felt before it's defined {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/correlation-playground.html" height="480"></iframe>
+
+::: {.notes}
+Let two students drag points. The dashed orange line is already a linear
+regression — say so: "that line is what we fit next." Then hit "curved": an
+unmistakable pattern that r scores at zero. r only measures straight lines.
+:::
+
+---
+
+## Checkpoint {.center}
+
+Flipper length and body mass: **r = 0.87**.
+
+Do longer flippers *cause* more mass?
+
+::: {.fragment .keypoint}
+No. Both are driven by species and overall size. A line can **predict** without explaining **why**.
+:::
+
+---
+
+## Linear regression: the best straight line {.smaller}
+
+$$\hat{y} = w\,x + b \qquad\qquad \text{MSE} = \frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2$$
+
+::: {.columns}
+::: {.column width="55%"}
+- $x$: the feature (flipper length), $\hat{y}$: the prediction (mass)
+- $w$, the **slope**: grams gained per extra mm of flipper
+- $b$, the **intercept**: where the line starts
+- $y_i - \hat{y}_i$, the **residual**: how far each penguin is from the line
+:::
+::: {.column width="45%"}
+`.fit()` searches for the $w$ and $b$ that make the **mean squared error** as small as possible ("least squares").
+
+Squaring makes every error positive, and punishes big misses much more than small ones.
+:::
+:::
+
+::: {.keypoint}
+Two numbers, $w$ and $b$, are the whole model.
+:::
+
+::: {.notes}
+Point at the residual: it is the orange vertical line in the next widget.
+Don't derive anything; the widget shows that "best" means "smallest total
+squared residual".
+:::
+
+---
+
+## Your turn: fit the line yourself {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/linreg-playground.html" height="560"></iframe>
+
+::: {.notes}
+Real penguins, all 333. Invite a student to drag the two handles and get the
+MAE as low as they can. Then press "Let .fit() find it" and compare: the
+machine's line lands around 50 g per mm. Use the probe slider: a 200 mm
+flipper → about 4 160 g.
+:::
+
+---
+
+## split → fit → predict → score, for a number {.smaller}
+
+```{.python code-line-numbers="|1-4|6-7|9|10-12"}
+from sklearn.linear_model import LinearRegression
+X = df[['flipper_length_mm']];  y = df['body_mass_g']
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+reg = LinearRegression().fit(X_train, y_train)
+reg.coef_, reg.intercept_      # w ≈ 50.4 g per mm, b ≈ −5919
+
+preds = reg.predict(X_test)    # 67 masses, in grams
+mean_absolute_error(y_test, preds)   # ≈ 290 g off, on average
+r2_score(y_test, preds)              # ≈ 0.79
+```
+
+::: {.keypoint}
+Same four steps as any model. Only the **score** changed: there is no "accuracy" for a number.
+:::
+
+::: {.notes}
+Read the coefficient out loud as a sentence: "each extra millimetre of
+flipper adds about 50 grams." That interpretability is linear regression's
+superpower. Baseline: always guessing the mean mass is ~674 g off, so 290 g
+is a real improvement.
+:::
+
+---
+
+## How good is a regression? {.smaller}
+
+| score | what it means | ours |
+|---|---|---|
+| **MAE**: mean absolute error | on average, how many grams off | **290 g** |
+| **RMSE**: root mean squared error | like MAE, but big misses count more | 360 g |
+| **R²** | share of the variation the model explains (1 = perfect, 0 = no better than the mean) | **0.79** |
+| *baseline*: always predict the mean | the number to beat | 674 g |
+
+::: {.columns}
+::: {.column width="50%"}
+**More features → a better line:**
+
+```python
+X = df[['flipper_length_mm', 'is_male', 'is_gentoo']]
+```
+:::
+::: {.column width="50%"}
+MAE **290 → 209 g**, R² **0.79 → 0.88**.
+
+$\hat{y} = w_1x_1 + w_2x_2 + w_3x_3 + b$: one weight per feature.
+:::
+:::
+
+::: {.notes}
+Multiple linear regression is the same idea with one weight per column. Sex
+and species carry information that flipper length doesn't: a male penguin is
+~545 g heavier at the same flipper length. RMSE value: computed on the same
+split.
+:::
+
+---
+
+## Try it: predict a penguin's mass {.smaller}
+
+::: {.columns}
+::: {.column width="40%"}
+A real linear regression, live. Press **Run**.
+
+::: {.fragment}
+Add `'bill_depth_mm'` or `'is_male'` to `features`. Does the error go down?
+:::
+
+::: {.fragment}
+Read `w`: how many grams per unit of each feature?
+:::
+:::
+::: {.column width="60%"}
+```{pyodide}
+#| edit: true
+#| runbutton: true
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
+
+df = pd.read_csv("data/penguins.csv").dropna()
+df['is_male'] = (df['sex'] == 'MALE').astype(int)
+
+features = ['flipper_length_mm']        # <- add more
+X, y = df[features], df['body_mass_g']
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+reg = LinearRegression().fit(X_train, y_train)
+p = reg.predict(X_test)
+print("w =", reg.coef_.round(1), " b =", round(reg.intercept_))
+print(f"MAE = {mean_absolute_error(y_test, p):.0f} g   R² = {r2_score(y_test, p):.3f}")
+```
+:::
+:::
+
+::: {.notes}
+The first run fetches scikit-learn into the browser — run it once before the
+session so it is cached. Adding is_male: MAE 290 → 257 g.
+:::
+
+---
+
+## Algorithm 2 · Logistic regression {.part .center background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
+
+::: {.part-goal}
+<span>CLASSIFICATION</span> the same weighted sum as linear regression, squashed into a probability
 :::
 
 ---
@@ -674,9 +1129,10 @@ Every model you ever meet uses this same four-step shape.
 :::
 
 ::: {.notes}
-Walk the highlight with the arrow keys, typing along in NB2. Pause on .fit()
-— it is what the whole workshop has been building towards. random_state is
-reproducibility; test_size=0.2 holds back 20% for the exam.
+Back to y = species. Walk the highlight with the arrow keys, typing along in
+NB2. Pause on .fit(). Compared to the regression slide: only the model class
+and the score changed. random_state is reproducibility; test_size=0.2 holds
+back 20% for the exam.
 :::
 
 ---
@@ -689,9 +1145,9 @@ reproducibility; test_size=0.2 holds back 20% for the exam.
 </div>
 
 ::: {.notes}
-23 s, real penguins: the boundaries start as a random guess (23% correct)
-and gradient steps move them to 95%. Ask: "why does it stop improving?"
-(the classes genuinely overlap).
+Real penguins: the boundaries start as a random guess (23% correct) and
+gradient steps move them to 95%. Ask: "why does it stop improving?" (the
+classes genuinely overlap).
 :::
 
 ---
@@ -704,9 +1160,9 @@ and gradient steps move them to 95%. Ask: "why does it stop improving?"
 </div>
 
 ::: {.notes}
-25 s: weighted sum → score z → sigmoid → probability, with a live readout
-sweeping z. Ask: "what p does z = 0 give?" (0.5 — the boundary). The next
-slide has the two equations to copy.
+Weighted sum → score z → sigmoid → probability, with a live readout sweeping
+z. Ask: "what p does z = 0 give?" (0.5 — the boundary). The next slide has
+the two equations to copy.
 :::
 
 ---
@@ -716,12 +1172,25 @@ slide has the two equations to copy.
 $$z = w_1x_1 + w_2x_2 + w_3x_3 + b \qquad\qquad p = \frac{1}{1 + e^{-z}}$$
 
 - $x$ are the features, $w$ how much each one counts, $b$ an offset
-- the sigmoid squashes any score $z$ into a probability between 0 and 1
-- `.fit()` is the search for good $w$ and $b$ — nothing more
+- $z$ is **exactly a linear regression**; the sigmoid squashes it into a probability between 0 and 1
+- `.fit()` is the search for good $w$ and $b$, nothing more
 
 ::: {.keypoint}
 `model.predict_proba(X_test)` shows the probabilities. A 0.51 and a 0.99 are
-both "Gentoo" — don't treat them the same.
+both "Gentoo", so don't treat them the same.
+:::
+
+---
+
+## Your turn: shape the sigmoid {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/sigmoid-playground.html" height="560"></iframe>
+
+::: {.notes}
+One feature (body mass), one yes/no question (Gentoo?). The boundary slider
+moves the p = 0.5 point; steepness w sets how sure the model gets. Steep +
+wrong boundary → log-loss explodes: confidently wrong is worst. Then press
+"Let .fit() find it".
 :::
 
 ---
@@ -734,12 +1203,12 @@ both "Gentoo" — don't treat them the same.
 </div>
 
 ::: {.notes}
-29 s, self-contained, built from the deck's real 67 test predictions: each
-penguin lands in row = what it really is, column = what the model said. The
-diagonal is every correct answer, (30 + 13 + 22) / 67 = 97%; each orange
-cell names one mistake — 1 Adelie called a Chinstrap, 1 Gentoo called an
-Adelie. Let it play, then point at the orange cells. Ask: "if the rows were
-sick / healthy patients, which off-diagonal cell would worry you most?"
+Built from the deck's real 67 test predictions: each penguin lands in row =
+what it really is, column = what the model said. The diagonal is every
+correct answer, (30 + 13 + 22) / 67 = 97%; each orange cell names one
+mistake — 1 Adelie called a Chinstrap, 1 Gentoo called an Adelie. Ask: "if
+the rows were sick / healthy patients, which off-diagonal cell would worry
+you most?"
 :::
 
 ---
@@ -759,20 +1228,34 @@ In NB2: ConfusionMatrixDisplay.from_estimator(model, X_test, y_test).
 
 ---
 
+## Your turn: move the threshold {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/threshold-matrix.html" height="560"></iframe>
+
+::: {.notes}
+Real Titanic passengers, the same kind of model they will build in the
+challenge. Default threshold 0.5. Drag it down to 0.2: recall jumps, false
+alarms pile up. Drag it to 0.8: almost no false alarms, many missed
+survivors. Accuracy barely changes while the kinds of mistake swap — that is
+why one number is never enough.
+:::
+
+---
+
 ## What to look at in the errors {.smaller}
 
 ::: {.columns .cards .errcards}
 ::: {.column}
 ### 🔍 Which pairs get confused?
-Off-diagonal cells name them: **Adelie → Chinstrap** and **Gentoo → Adelie** — the species that overlap in size.
+Off-diagonal cells name them: **Adelie → Chinstrap** and **Gentoo → Adelie**, the species that overlap in size.
 :::
 ::: {.column}
-### 📏 Read each row — *recall*
+### 📏 Read each row: *recall*
 Of the real Gentoos, how many did it find? **22 / 23**. A class can look fine overall and still be missed.
 :::
 ::: {.column}
-### 🎯 Read each column — *precision*
-When it says "Chinstrap", how often is it right? **13 / 14** — one false alarm.
+### 🎯 Read each column: *precision*
+When it says "Chinstrap", how often is it right? **13 / 14**: one false alarm.
 :::
 :::
 
@@ -805,17 +1288,17 @@ two lines in NB2 and look at the two wrong penguins together.
 
 ---
 
-## Checkpoint — which model would you trust? {.smaller}
+## Checkpoint: which model would you trust? {.smaller}
 
 Two models trained on the **same 266 penguins**, then scored on the **67 they never saw**:
 
 | | on the training penguins | on the 67 unseen penguins | gap |
 |---|---|---|---|
-| **Model A** — logistic regression | 98.1% | **97.0%** | 1 point |
-| **Model B** — 1-nearest-neighbour, raw units | **100%** | 80.6% | **19 points** |
+| **Model A**: logistic regression | 98.1% | **97.0%** | 1 point |
+| **Model B**: 1-nearest-neighbour, raw units | **100%** | 80.6% | **19 points** |
 
 ::: {.fragment}
-Model B is *perfect* on the penguins it studied — because it **memorised** them.
+Model B is *perfect* on the penguins it studied, because it **memorised** them.
 On new penguins it falls apart. That is **overfitting**.
 :::
 
@@ -826,8 +1309,8 @@ Trust the test score, not the training score. A big gap between the two is the o
 ::: {.notes}
 Real numbers, computed with the deck's own split (random_state=42). Ask the
 room to vote A or B BEFORE revealing. Most pick B ("100%!") — that is the
-point. Model B returns to the stage in Part 4: it is exactly the unscaled
-KNN with K=1 they are about to meet.
+point. Model B returns in Part 4: it is exactly the unscaled KNN with K=1
+they are about to meet.
 :::
 
 ---
@@ -839,12 +1322,12 @@ KNN with K=1 they are about to meet.
 :::
 
 ::: {.part-goal}
-<span>1:30 – 2:00</span> by 2:00 you will have run the whole pipeline unaided
+<span>GOAL</span> you will have run the whole pipeline unaided, and entered the competition
 :::
 
 ---
 
-## How KNN decides {.clip-slide}
+## Algorithm 3 · How KNN decides {.clip-slide}
 
 <div class="clip">
 <video src="../assets/rendered/asset_16_knn.mp4" autoplay muted playsinline preload="metadata"></video>
@@ -852,8 +1335,8 @@ KNN with K=1 they are about to meet.
 </div>
 
 ::: {.notes}
-23 s, real penguins: a newcomer between Adelie and Chinstrap, zoom, the 5
-nearest are circled, they vote 3–2 → Adelie. Ask: "what if K were 1?"
+Real penguins: a newcomer between Adelie and Chinstrap, zoom, the 5 nearest
+are circled, they vote 3–2 → Adelie. Ask: "what if K were 1?"
 :::
 
 ---
@@ -866,12 +1349,14 @@ $$d = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}$$
 
 | | who sets it | example |
 |---|---|---|
-| **parameter** | the model, during `.fit()` | logistic regression's $w$ and $b$ |
+| **parameter** | the model, during `.fit()` | linear and logistic regression's $w$ and $b$ |
 | **hyperparameter** | **you**, before `.fit()` | `n_neighbors=5` |
 
 ::: {.notes}
-K=1 is jagged and trusts noise; very large K smooths away real structure.
-Let them try a few K values in NB2 while you move to the trap.
+KNN learns no equation at all — .fit() just stores the training penguins.
+(KNeighborsRegressor exists too: average the neighbours' masses instead of
+voting.) K=1 is jagged and trusts noise; very large K smooths away real
+structure.
 :::
 
 ---
@@ -884,14 +1369,27 @@ Let them try a few K values in NB2 while you move to the trap.
 </div>
 
 ::: {.notes}
-24 s: decision regions for K = 1, 5, 15, 200 on the real data; at 200
-Chinstrap is outvoted (unseen accuracy 0.99 → 0.81). Ask: "how would you
-pick K?" (try several on data the model hasn't seen).
+Decision regions for K = 1, 5, 15, 200 on the real data; at 200 Chinstrap is
+outvoted (unseen accuracy 0.99 → 0.81). Ask: "how would you pick K?" (try
+several on data the model hasn't seen).
 :::
 
 ---
 
-## Try it — pick your own K {.smaller}
+## Your turn: drag the newcomer {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/knn-playground.html" height="560"></iframe>
+
+::: {.notes}
+Drag the star across a border: the vote flips. Raise K to 40 near the
+Chinstraps: they get outvoted. Then the trap: click "raw units" — the
+neighbours collapse into a flat horizontal band, because 500 g dwarfs 5 mm.
+The coloured regions change shape completely. That is the next three slides.
+:::
+
+---
+
+## Try it: pick your own K {.smaller}
 
 ::: {.columns}
 ::: {.column width="40%"}
@@ -902,7 +1400,7 @@ Try **1**, **15**, **100**, **250**. Where does it get *worse*, and why?
 :::
 
 ::: {.fragment}
-Then swap `bill_length_mm` for `body_mass_g` — the scaling trap, before you
+Then swap `bill_length_mm` for `body_mass_g`: the scaling trap, before you
 see it.
 :::
 :::
@@ -928,10 +1426,9 @@ print(f"K = {K:<4} accuracy = {knn.score(X_test, y_test):.3f}")
 :::
 
 ::: {.notes}
-The first run fetches scikit-learn into the browser (a few seconds) — run it
-once before the session so it is cached. K=1 memorises noise; K near the
-number of training penguins just votes for the biggest species. Swapping in
-body_mass_g drops accuracy: that is the next slide's trap, felt first.
+K=1 memorises noise; K near the number of training penguins just votes for
+the biggest species. Swapping in body_mass_g drops accuracy: that is the
+next slide's trap, felt first.
 :::
 
 ---
@@ -944,9 +1441,9 @@ body_mass_g drops accuracy: that is the next slide's trap, felt first.
 </div>
 
 ::: {.notes}
-26 s: Pythagoras, then 5 mm vs 500 g → 25 vs 250 000 drawn to scale, then
-scaled features and 0.82 → 0.99. Ask: "which other feature pairs would
-have this problem?"
+Pythagoras, then 5 mm vs 500 g → 25 vs 250 000 drawn to scale, then scaled
+features and 0.82 → 0.99. Ask: "which other feature pairs would have this
+problem?"
 :::
 
 ---
@@ -985,11 +1482,28 @@ flattering lie. Same rule as the imputer.
 
 ---
 
+## Three algorithms, side by side {.smaller}
+
+| | **linear regression** | **logistic regression** | **KNN** |
+|---|---|---|---|
+| task | regression (a number) | classification (a category) | both (`KNeighbors…`) |
+| what `.fit()` learns | one weight per feature + $b$ | one weight per feature + $b$, per class | nothing: it stores the data |
+| prediction | $\hat{y} = w x + b$ | sigmoid of $w x + b$ → probability | vote (or average) of the K nearest |
+| you choose | the features | the features, the threshold | **K**, the features |
+| needs scaling? | no | mostly no | **yes, always** |
+| scored by | MAE, R² | accuracy, confusion matrix | depends on the task |
+| superpower | easy to explain: "+50 g per mm" | gives probabilities | no equation; any boundary shape |
+
+::: {.notes}
+This is the slide to photograph. Same four steps for all three; only the
+model line and the score change.
+:::
+
+---
+
 ## Titanic {background-color="#E07A2C" background-gradient="linear-gradient(135deg, #E07A2C 0%, #C4601A 100%)"}
 
 **NB2 → The Titanic challenge.** In pairs.
-
-{{< countdown minutes=12 top=0 right=0 font_size="2.2em" warn_when=60 >}}
 
 1. Load and explore
 2. Handle the missing `Age`
@@ -1000,7 +1514,47 @@ flattering lie. Same rule as the imputer.
 ::: {.notes}
 Step 4 is the real assessment. At the end, ask: what does always guessing
 "did not survive" score? 0.59 — so 0.80 is real, but only because we checked
-the baseline.
+the baseline. Then: the competition.
+:::
+
+---
+
+## The mini competition 🏆 {.smaller .compete}
+
+::: {.columns}
+::: {.column width="56%"}
+**Titanic · Who Survives?** on **Codabench**, with a live leaderboard.
+
+1. Download `train.csv` (712 passengers, with the answer) and `test.csv` (179, without it)
+2. Train any model you like on `train.csv`
+3. Predict `Survived` (0 or 1) for every passenger in `test.csv`
+4. Save `predictions.csv`, zip it, **upload**
+5. Watch your rank appear
+:::
+::: {.column width="44%"}
+```python
+sub = pd.DataFrame({
+    'PassengerId': test['PassengerId'],
+    'Survived': model.predict(X_test)})
+sub.to_csv('predictions.csv', index=False)
+```
+
+| to beat | accuracy |
+|---|---|
+| "nobody survived" | 0.615 |
+| "only women survived" | 0.782 |
+:::
+:::
+
+::: {.keypoint}
+The leaderboard scores you on passengers you have never seen: the test set, for real.
+:::
+
+::: {.notes}
+Put the Codabench link on the board / in the chat. The starting kit has a
+baseline notebook that produces a valid submission in one run. Scores: accuracy
+ranks, balanced accuracy and F1 shown too. The competition stays open for a
+week after the workshop.
 :::
 
 ---
@@ -1010,48 +1564,63 @@ the baseline.
 ![](../assets/rendered/asset_19_pipeline.svg){width="94%" fig-align="center"}
 
 ::: {.keypoint}
-split, fit, predict, score — and always look at one it got wrong.
+split, fit, predict, score, and always look at one it got wrong.
 :::
 
 ---
 
-## Keep going — three next steps {.smaller}
+## Your turn: put the pipeline in order {.widget-slide}
+
+<iframe class="widget" src="../assets/interactive/pipeline-order.html" height="520"></iframe>
+
+::: {.notes}
+Last recall exercise. The common mistake: "explore & clean" or scaling after
+the split vs before — the rule is that nothing is allowed to learn from the
+test set.
+:::
+
+---
+
+## Keep going: three next steps {.smaller}
 
 ::: {.columns .cards}
 ::: {.column width="33%"}
 ### 📚 Learn
 
 **[scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)**
-free, by Inria and the scikit-learn team — today's library, properly
+free, by Inria and the scikit-learn team: today's library, properly
 
 **[Kaggle Learn: Intro to ML](https://www.kaggle.com/learn/intro-to-machine-learning)**
-~3 hours, in the browser, certificate
+in the browser, certificate
 
-*Hands-On Machine Learning* — A. Géron
+*Hands-On Machine Learning*, A. Géron
 ([notebooks](https://github.com/ageron/handson-ml3))
 :::
 ::: {.column width="33%"}
 ### 🧪 Practise
 
+**The workshop competition on Codabench**
+climb the leaderboard this week
+
 **[Titanic on Kaggle](https://www.kaggle.com/competitions/titanic)**
-submit today's model — you get a public score and a leaderboard rank tonight
+the same problem, a global leaderboard
 
 **[UCI ML Repository](https://archive.ics.uci.edu/)**
-600+ real datasets — pick one you care about and run split → fit → predict → score
+600+ real datasets: pick one you care about and run split → fit → predict → score
 :::
 ::: {.column width="33%"}
 ### 🤝 Join
 
-**[Kaggle](https://www.kaggle.com/)** — competitions and notebooks to learn from
+**[Kaggle](https://www.kaggle.com/)**: competitions and notebooks to learn from
 
-**[Hugging Face Learn](https://huggingface.co/learn)** — the next step: deep learning and language models
+**[Hugging Face Learn](https://huggingface.co/learn)**: the next step, deep learning and language models
 
-**[PyData meetups](https://www.meetup.com/pro/pydata/)** — people doing this near you
+**[PyData meetups](https://www.meetup.com/pro/pydata/)**: people doing this near you
 :::
 :::
 
 ::: {.fragment .keypoint}
-Your homework, if you want one: submit the Titanic model to Kaggle this week.
+Your homework, if you want one: beat "only women survived" on the leaderboard.
 :::
 
 ::: {.notes}
@@ -1065,9 +1634,9 @@ NB-SOLUTIONS now.
 ## Thank you {.center .closing background-color="#1B2A4A" background-gradient="linear-gradient(135deg, #14203A 0%, #22365E 100%)"}
 
 **Dr. Rachid Zeghlache**<br>
-<span class="affil">Assistant Professor of Artificial Intelligence · American University in Dubai</span>
+<span class="affil">Assistant Professor of computer science (Artificial Intelligence) · American University in Dubai</span>
 
-Slides, notebooks and solutions — yours to keep:
+Slides, notebooks and solutions, yours to keep:
 [github.com/YouvenZ/ml-workshop-2h](https://github.com/YouvenZ/ml-workshop-2h)
 
 ::: {.whereami}

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Put the pipeline in order</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .game{max-width:1100px}
+  .list{display:flex; flex-direction:column; gap:8px; position:relative}
+  .step{display:grid; grid-template-columns:44px 1fr 1.25fr 30px; gap:14px; align-items:center;
+    background:#fff; border:1.5px solid rgba(27,42,74,.12); border-radius:12px; padding:9px 14px;
+    box-shadow:var(--shadow); cursor:grab; touch-action:none; transition:transform .18s ease, border-color .2s, background .2s}
+  .step.dragging{cursor:grabbing; z-index:5; transition:none; box-shadow:0 18px 30px -12px rgba(27,42,74,.5); border-color:var(--blue)}
+  .num{width:34px; height:34px; border-radius:50%; background:var(--navy); color:#fff; font-weight:800;
+    display:flex; align-items:center; justify-content:center; font-size:16px}
+  .name{font-weight:700; font-size:17px}
+  .code{font-family:"JetBrains Mono",monospace; font-size:14px; color:var(--blue); opacity:0; transition:opacity .3s}
+  .step.ok{border-color:var(--teal); background:rgba(42,157,143,.07)}
+  .step.ok .num{background:var(--teal)}
+  .step.bad{border-color:var(--orange); background:rgba(224,122,44,.08)}
+  .step.bad .num{background:var(--orange)}
+  .reveal .code, .step.ok .code{opacity:1}
+  .grab{color:var(--muted); font-size:20px; text-align:right}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="list" id="list"></div>
+  <div class="status">
+    <div class="why" id="why">Drag the steps into the order you would run them on a brand-new dataset.</div>
+    <div class="row"><button class="primary" id="check">Check my order</button><button id="shuffle">↺ Shuffle</button></div>
+  </div>
+</div>
+<script src="widget.js"></script>
+<script>
+const STEPS = [
+  ['📥 Load the data', "df = pd.read_csv('titanic.csv')"],
+  ['🔍 Explore the data', 'df.describe(); df.isna().sum()'],
+  ['✂️ Split train / test', 'train_test_split(X, y, test_size=0.2)'],
+  ['🧠 Fit on train only', 'model.fit(X_train, y_train)'],
+  ['🔮 Predict on test', 'preds = model.predict(X_test)'],
+  ['📊 Score & read the errors', 'accuracy_score(y_test, preds)'],
+];
+const list = document.getElementById('list'), why = document.getElementById('why');
+let order = [];
+
+function build() {
+  order = STEPS.map((_, i) => i);
+  do { order.sort(() => Math.random() - 0.5); } while (order.every((v, i) => v === i));
+  draw();
+  why.textContent = 'Drag the steps into the order you would run them on a brand-new dataset.';
+}
+function draw(check) {
+  list.innerHTML = '';
+  order.forEach((s, pos) => {
+    const el = W.el('div', { class: 'step' + (check ? (s === pos ? ' ok' : ' bad') : '') }, list);
+    el.dataset.s = s;
+    W.el('div', { class: 'num', text: pos + 1 }, el);
+    W.el('div', { class: 'name', text: STEPS[s][0] }, el);
+    W.el('div', { class: 'code', text: STEPS[s][1] }, el);
+    W.el('div', { class: 'grab', text: '⠿' }, el);
+    makeDraggable(el);
+  });
+}
+function makeDraggable(el) {
+  let y0 = 0, h = 0, from = 0;
+  el.addEventListener('pointerdown', (e) => {
+    const items = [...list.children];
+    from = items.indexOf(el); y0 = e.clientY; h = el.getBoundingClientRect().height + 8;
+    el.classList.add('dragging'); el.setPointerCapture(e.pointerId);
+    items.forEach((x) => x.classList.remove('ok', 'bad'));
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!el.classList.contains('dragging')) return;
+    const dy = e.clientY - y0;
+    el.style.transform = `translateY(${dy}px)`;
+    const to = W.clamp(from + Math.round(dy / h), 0, order.length - 1);
+    [...list.children].forEach((x, i) => {
+      if (x === el) return;
+      let shift = 0;
+      if (from < to && i > from && i <= to) shift = -h;
+      if (from > to && i < from && i >= to) shift = h;
+      x.style.transform = shift ? `translateY(${shift}px)` : '';
+    });
+    el._to = to;
+  });
+  const end = () => {
+    if (!el.classList.contains('dragging')) return;
+    el.classList.remove('dragging');
+    const to = el._to ?? from;
+    const [s] = order.splice(from, 1); order.splice(to, 0, s);
+    draw();
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+document.getElementById('check').onclick = () => {
+  draw(true);
+  const right = order.filter((s, i) => s === i).length;
+  why.innerHTML = right === STEPS.length
+    ? '🎉 <b style="color:var(--teal)">Perfect.</b> Split <i>before</i> you fit anything, so the test set stays a real exam.'
+    : `<b>${right} / ${STEPS.length}</b> in the right place. Hint: nothing is allowed to learn from the test set, so the split comes before any fitting.`;
+};
+document.getElementById('shuffle').onclick = build;
+build();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fit the line yourself</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .pt{fill:var(--blue); fill-opacity:.7; stroke:#fff; stroke-width:1}
+  .res{stroke:var(--orange); stroke-width:1.6; opacity:.75}
+  .line{stroke:var(--navy); stroke-width:3.5; stroke-linecap:round}
+  .best{stroke:var(--teal); stroke-width:2.5; stroke-dasharray:7 6; opacity:0}
+  .handle{fill:#fff; stroke:var(--navy); stroke-width:3; cursor:ns-resize}
+  .handle:hover,.handle.drag{fill:var(--orange); stroke:var(--orange)}
+  .probe{fill:var(--orange); stroke:#fff; stroke-width:2.5}
+  .probeline{stroke:var(--orange); stroke-width:1.5; stroke-dasharray:4 4}
+  .ptext{font:700 15px Inter,Arial,sans-serif; fill:var(--orange); paint-order:stroke; stroke:#fff; stroke-width:5px}
+  .lossrow{display:flex; justify-content:space-between; align-items:baseline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot">
+    <svg id="svg" viewBox="0 0 760 470" role="img" aria-label="Scatter of flipper length against body mass with a draggable line"></svg>
+  </div>
+  <div class="side">
+    <div class="eq" id="eq">ŷ = w·x + b</div>
+    <div class="card">
+      <div class="lossrow"><span class="label">mean abs. error (MAE)</span></div>
+      <div class="big" id="mae">0 g</div>
+      <div class="meter"><i id="bar"></i></div>
+      <div class="hint" style="margin-top:6px">R² <b id="r2">0.00</b> · best possible MAE <b id="bestmae">0 g</b></div>
+    </div>
+    <div class="card slider">
+      <div class="top">predict for a flipper of <b id="pv">200 mm</b></div>
+      <input type="range" id="probe" min="172" max="231" step="1" value="200">
+    </div>
+    <div class="row" style="flex-wrap:wrap">
+      <button class="primary" id="fit">▶ Let .fit() find it</button>
+      <button id="flat">Flat line</button>
+      <button id="resbtn" class="on">Residuals</button>
+    </div>
+    <p class="hint">Drag the two <b>white handles</b> to move the line. The <span style="color:var(--orange); font-weight:700">orange</span> lines are the errors (residuals). <code>.fit()</code> finds the line with the smallest squared errors.</p>
+  </div>
+</div>
+<script src="data/penguins.js"></script>
+<script src="widget.js"></script>
+<script>
+const svg = document.getElementById('svg');
+const M = { l: 70, r: 740, t: 18, b: 410 };
+const X = W.lin(170, 235, M.l, M.r), Y = W.lin(2500, 6500, M.b, M.t);
+
+// axes, grid, ticks
+for (let v = 3000; v <= 6500; v += 500) {
+  W.svg('line', { x1: M.l, x2: M.r, y1: Y(v), y2: Y(v), class: 'gridline' }, svg);
+  W.svg('text', { x: M.l - 8, y: Y(v) + 4, 'text-anchor': 'end', class: 'tick' }, svg).textContent = v.toLocaleString('en-US');
+}
+for (let v = 175; v <= 235; v += 10) {
+  W.svg('line', { y1: M.t, y2: M.b, x1: X(v), x2: X(v), class: 'gridline' }, svg);
+  W.svg('text', { x: X(v), y: M.b + 18, 'text-anchor': 'middle', class: 'tick' }, svg).textContent = v;
+}
+W.svg('line', { x1: M.l, x2: M.r, y1: M.b, y2: M.b, class: 'axis' }, svg);
+W.svg('line', { x1: M.l, x2: M.l, y1: M.t, y2: M.b, class: 'axis' }, svg);
+W.svg('text', { x: (M.l + M.r) / 2, y: M.b + 44, 'text-anchor': 'middle', class: 'axlabel' }, svg).textContent = 'flipper_length_mm   (x, the feature)';
+W.svg('text', { x: 18, y: (M.t + M.b) / 2, 'text-anchor': 'middle', class: 'axlabel', transform: `rotate(-90 18 ${(M.t + M.b) / 2})` }, svg).textContent = 'body_mass_g   (y, the target)';
+
+const pts = PENGUINS.map((p) => [p[3], p[4]]);
+const n = pts.length;
+const gRes = W.svg('g', {}, svg);
+const gPts = W.svg('g', {}, svg);
+pts.forEach(([x, y]) => W.svg('circle', { cx: X(x), cy: Y(y), r: 4.2, class: 'pt' }, gPts));
+const best = W.svg('line', { class: 'best' }, svg);
+const line = W.svg('line', { class: 'line' }, svg);
+const pl = W.svg('line', { class: 'probeline' }, svg);
+const pdot = W.svg('circle', { r: 8, class: 'probe' }, svg);
+const ptext = W.svg('text', { class: 'ptext' }, svg);
+
+// Least squares, closed form: the answer .fit() returns.
+const mx = pts.reduce((s, p) => s + p[0], 0) / n, my = pts.reduce((s, p) => s + p[1], 0) / n;
+let sxy = 0, sxx = 0, syy = 0;
+pts.forEach(([x, y]) => { sxy += (x - mx) * (y - my); sxx += (x - mx) ** 2; syy += (y - my) ** 2; });
+const W_BEST = sxy / sxx, B_BEST = my - W_BEST * mx;
+const maeOf = (w, b) => pts.reduce((s, [x, y]) => s + Math.abs(y - (w * x + b)), 0) / n;
+const r2Of = (w, b) => 1 - pts.reduce((s, [x, y]) => s + (y - (w * x + b)) ** 2, 0) / syy;
+const MAE_BEST = maeOf(W_BEST, B_BEST), MAE_FLAT = maeOf(0, my);
+document.getElementById('bestmae').textContent = Math.round(MAE_BEST) + ' g';
+
+// The line is defined by its height at two x positions: those are the handles.
+const XA = 178, XB = 226;
+let ya = 3300, yb = 3600, showRes = true, probeX = 200;
+const hA = W.svg('circle', { r: 11, class: 'handle' }, svg);
+const hB = W.svg('circle', { r: 11, class: 'handle' }, svg);
+best.setAttribute('x1', X(170)); best.setAttribute('x2', X(235));
+best.setAttribute('y1', Y(W_BEST * 170 + B_BEST)); best.setAttribute('y2', Y(W_BEST * 235 + B_BEST));
+
+function wb() { const w = (yb - ya) / (XB - XA); return [w, ya - w * XA]; }
+
+function render() {
+  const [w, b] = wb();
+  line.setAttribute('x1', X(170)); line.setAttribute('y1', Y(w * 170 + b));
+  line.setAttribute('x2', X(235)); line.setAttribute('y2', Y(w * 235 + b));
+  hA.setAttribute('cx', X(XA)); hA.setAttribute('cy', Y(ya));
+  hB.setAttribute('cx', X(XB)); hB.setAttribute('cy', Y(yb));
+  gRes.innerHTML = '';
+  if (showRes) pts.forEach(([x, y]) => W.svg('line', { x1: X(x), x2: X(x), y1: Y(y), y2: Y(w * x + b), class: 'res' }, gRes));
+  const mae = maeOf(w, b), r2 = r2Of(w, b);
+  document.getElementById('mae').textContent = Math.round(mae) + ' g';
+  document.getElementById('r2').textContent = W.fmt(r2, 2);
+  const good = W.clamp((MAE_FLAT - mae) / (MAE_FLAT - MAE_BEST), 0, 1);
+  const bar = document.getElementById('bar');
+  bar.style.width = good * 100 + '%';
+  bar.style.background = good > 0.97 ? 'var(--teal)' : good > 0.6 ? 'var(--blue)' : 'var(--orange)';
+  document.getElementById('eq').innerHTML =
+    `ŷ = <b style="color:var(--blue)">${W.fmt(w, 1)}</b>·x ${b < 0 ? '−' : '+'} <b style="color:var(--blue)">${W.fmt(Math.abs(b), 0)}</b>`;
+  const py = w * probeX + b;
+  pdot.setAttribute('cx', X(probeX)); pdot.setAttribute('cy', Y(W.clamp(py, 2500, 6500)));
+  pl.setAttribute('x1', X(probeX)); pl.setAttribute('x2', X(probeX)); pl.setAttribute('y1', M.b); pl.setAttribute('y2', Y(W.clamp(py, 2500, 6500)));
+  ptext.setAttribute('x', X(probeX) + 12); ptext.setAttribute('y', Y(W.clamp(py, 2500, 6500)) - 10);
+  ptext.textContent = `≈ ${Math.round(py).toLocaleString('en-US')} g`;
+  document.getElementById('pv').textContent = probeX + ' mm';
+}
+
+// dragging the handles
+let dragging = null;
+[hA, hB].forEach((h) => h.addEventListener('pointerdown', (e) => {
+  dragging = h; h.classList.add('drag'); svg.setPointerCapture(e.pointerId); stopAnim();
+}));
+svg.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const v = W.clamp(Y.inv(W.local(svg, e).y), 2500, 6500);
+  if (dragging === hA) ya = v; else yb = v;
+  render();
+});
+['pointerup', 'pointercancel'].forEach((ev) => svg.addEventListener(ev, () => {
+  if (dragging) dragging.classList.remove('drag'); dragging = null;
+}));
+
+// "fit": glide to the least-squares line, like watching the optimiser work
+let raf = null;
+function stopAnim() { if (raf) cancelAnimationFrame(raf); raf = null; }
+function glide(ta, tb, showBest) {
+  stopAnim();
+  const a0 = ya, b0 = yb, t0 = performance.now(), D = 1400;
+  const step = (t) => {
+    const k = W.clamp((t - t0) / D, 0, 1), e = 1 - Math.pow(1 - k, 3);
+    ya = a0 + (ta - a0) * e; yb = b0 + (tb - b0) * e; render();
+    if (k < 1) raf = requestAnimationFrame(step);
+    else if (showBest) best.style.opacity = 0.9;
+  };
+  raf = requestAnimationFrame(step);
+}
+document.getElementById('fit').addEventListener('click', () => glide(W_BEST * XA + B_BEST, W_BEST * XB + B_BEST, true));
+document.getElementById('flat').addEventListener('click', () => { best.style.opacity = 0; glide(my, my); });
+document.getElementById('resbtn').addEventListener('click', (e) => {
+  showRes = !showRes; e.target.classList.toggle('on', showRes); render();
+});
+W.bindRange(document.getElementById('probe'), (v) => { probeX = v; render(); });
+render();
+</script>
+</body>
+</html>

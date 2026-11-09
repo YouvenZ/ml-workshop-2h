@@ -4,13 +4,14 @@ A 2-hour, zero-prerequisite workshop taking CS/STEM university students from
 no Python to a trained, evaluated classifier. Browser only — students install
 nothing.
 
-By **Dr. Rachid Zeghlache**, Assistant Professor of Artificial Intelligence,
-American University in Dubai.
+By **Dr. Rachid Zeghlache**, Assistant Professor of computer science (Artificial
+Intelligence), American University in Dubai. Workshop date: **11/11/2026**.
 
 This is the **fast cut of the four-hour workshop**: the same four steps in the
-same order (Python → explore → first model → compare & challenge), all 11
-animated clips and live Python in the slides, with 114 slides condensed to 56 and the long explanations moved
-into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-the-four-hour-version).
+same order (Python → explore → first models → compare & challenge), all the
+animated clips, live Python and **interactive drag-and-drop / slider widgets**
+in the slides, three algorithms in detail (linear regression, logistic
+regression, KNN), and a closing **Codabench mini competition**. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-the-four-hour-version).
 
 **[▶ View the slides](https://YouvenZ.github.io/ml-workshop-2h/slides/)**
 
@@ -19,12 +20,12 @@ into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-t
 | Notebook | Covers | |
 |---|---|---|
 | NB0 — Warm-up | 20-min pre-work, sent T−3 days — **expected** in the 2h format | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB0-warmup.ipynb) |
-| NB1 — Python & Data | 0:00 – 0:55 | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB1-python-data.ipynb) |
-| NB2 — Machine Learning | 1:00 – 2:00 | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB2-machine-learning.ipynb) |
+| NB1 — Python & Data | Parts 1–2: Python, NumPy, pandas, Matplotlib | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB1-python-data.ipynb) |
+| NB2 — Machine Learning | Parts 3–4: classification vs regression, linear & logistic regression, KNN, Titanic | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB2-machine-learning.ipynb) |
 | NB-SOLUTIONS | Released at the end | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YouvenZ/ml-workshop-2h/blob/main/notebooks/NB-SOLUTIONS.ipynb) |
 
-> **NB2 loads its own clean data in cell 1.** A student whose NB1 is broken at
-> 0:55 still starts the ML hour on time with everyone else.
+> **NB2 loads its own clean data in cell 1.** A student whose NB1 is broken
+> still starts the ML part with everyone else.
 
 ## For instructors
 
@@ -37,17 +38,26 @@ into the notebooks. See [what changed](docs/WORKSHOP-PLAN.md#what-changed-from-t
 ```
 ├── index.qmd               landing page for the published site
 ├── _quarto.yml             project config (root, so ../assets/ resolves)
-├── slides/index.qmd        the deck — 56 slides, 12 clips, 3 live Python cells
+├── slides/index.qmd        the deck: 79 slides, 12 clips, 9 interactive widgets, 4 live Python cells
 ├── slides/katex/           self-hosted KaTeX, so equations never need a CDN
 ├── notebooks/*.ipynb       BUILD OUTPUT — edit tools/build_notebooks.py
 ├── assets/
 │   ├── tikz/*.tex          11 static diagrams (SVG for slides, PNG for notebooks)
 │   ├── manim/scenes.py     11 animated clips, one file
-│   ├── interactive/        the correlation playground (slide 26, and the break)
+│   ├── interactive/        10 drag/slider widgets embedded in the deck (+ data/, generated)
+│   ├── logos/              NumPy, pandas, Matplotlib, scikit-learn, seaborn logos
 │   └── rendered/           committed build output the slides point at
+├── codabench/              the mini competition: bundle, scorer, starting kit (see codabench/README.md)
 ├── data/                   backup CSVs, in case a hosted URL is down
 └── tools/                  build + verification scripts
 ```
+
+## The mini competition
+
+`codabench/dist/titanic-who-survives_bundle.zip` is a ready-to-upload
+[Codabench](https://www.codabench.org) bundle: styled pages, a live
+leaderboard, a detailed per-submission report and a starting kit. See
+[codabench/README.md](codabench/README.md).
 
 ## Building it
 

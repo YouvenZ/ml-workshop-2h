@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="480" viewBox="0 0 1600 480">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14203A"/>
+      <stop offset="1" stop-color="#22365E"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#14203A" stop-opacity="1"/>
+      <stop offset=".55" stop-color="#14203A" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#14203A" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="480" fill="url(#bg)"/>
+  <!-- a field of 179 passengers: survived (teal) vs not (grey), split by a boundary -->
+  <g id="field" transform="translate(930 40)">
+    <g fill="#8B94A6" opacity=".75">
+      <circle cx="20" cy="30" r="8"/><circle cx="64" cy="70" r="8"/><circle cx="30" cy="120" r="8"/><circle cx="96" cy="150" r="8"/>
+      <circle cx="140" cy="40" r="8"/><circle cx="170" cy="110" r="8"/><circle cx="60" cy="210" r="8"/><circle cx="120" cy="250" r="8"/>
+      <circle cx="200" cy="200" r="8"/><circle cx="30" cy="300" r="8"/><circle cx="90" cy="330" r="8"/><circle cx="170" cy="300" r="8"/>
+      <circle cx="240" cy="270" r="8"/><circle cx="220" cy="350" r="8"/><circle cx="300" cy="330" r="8"/><circle cx="20" cy="380" r="8"/>
+      <circle cx="150" cy="390" r="8"/><circle cx="260" cy="390" r="8"/><circle cx="350" cy="380" r="8"/><circle cx="210" cy="60" r="8"/>
+      <circle cx="380" cy="300" r="8"/><circle cx="420" cy="370" r="8"/><circle cx="320" cy="230" r="8"/><circle cx="250" cy="140" r="8"/>
+      <circle cx="500" cy="380" r="8"/><circle cx="460" cy="320" r="8"/>
+    </g>
+    <g fill="#2A9D8F">
+      <circle cx="330" cy="40" r="9"/><circle cx="380" cy="90" r="9"/><circle cx="430" cy="30" r="9"/><circle cx="470" cy="120" r="9"/>
+      <circle cx="520" cy="60" r="9"/><circle cx="560" cy="150" r="9"/><circle cx="610" cy="40" r="9"/><circle cx="650" cy="110" r="9"/>
+      <circle cx="420" cy="180" r="9"/><circle cx="500" cy="220" r="9"/><circle cx="580" cy="250" r="9"/><circle cx="640" cy="200" r="9"/>
+      <circle cx="690" cy="60" r="9"/><circle cx="700" cy="280" r="9"/><circle cx="620" cy="320" r="9"/><circle cx="540" cy="300" r="9"/>
+      <circle cx="680" cy="370" r="9"/><circle cx="600" cy="390" r="9"/><circle cx="300" cy="120" r="9"/><circle cx="360" cy="160" r="9"/>
+      <circle cx="270" cy="70" r="9"/>
+    </g>
+    <path d="M230 -10 C 300 120, 300 220, 560 420" fill="none" stroke="#E07A2C" stroke-width="5" stroke-dasharray="16 12" stroke-linecap="round"/>
+  </g>
+  <rect width="1600" height="480" fill="url(#fade)"/>
+  <!-- ship silhouette on the horizon -->
+  <g transform="translate(1180 330) scale(0.62)" opacity=".95">
+    <g fill="#E07A2C"><path d="M94 0 l10 -56 h34 l-7 56 z"/><path d="M156 0 l10 -56 h34 l-7 56 z"/><path d="M218 0 l10 -56 h34 l-7 56 z"/><path d="M280 0 l10 -56 h34 l-7 56 z" opacity=".55"/></g>
+    <rect x="60" y="-6" width="290" height="34" rx="5" fill="#F4F6FA"/>
+    <path d="M0 26 H410 L382 92 H38 Z" fill="#0B1322"/>
+    <path d="M0 26 H410 L406 36 H4 Z" fill="#E07A2C"/>
+  </g>
+  <path d="M0 420 Q 40 404 80 420 T 160 420 T 240 420 T 320 420 T 400 420 T 480 420 T 560 420 T 640 420 T 720 420 T 800 420 T 880 420 T 960 420 T 1040 420 T 1120 420 T 1200 420 T 1280 420 T 1360 420 T 1440 420 T 1520 420 T 1600 420 V480 H0 Z" fill="#2A9D8F"/>
+  <path d="M0 444 Q 40 430 80 444 T 160 444 T 240 444 T 320 444 T 400 444 T 480 444 T 560 444 T 640 444 T 720 444 T 800 444 T 880 444 T 960 444 T 1040 444 T 1120 444 T 1200 444 T 1280 444 T 1360 444 T 1440 444 T 1520 444 T 1600 444" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="4"/>
+  <!-- title -->
+  <g font-family="Inter, 'Helvetica Neue', Arial, sans-serif">
+    <text x="84" y="112" font-size="22" font-weight="800" fill="#E07A2C" letter-spacing="7">PYTHON &amp; ML WORKSHOP · MINI COMPETITION</text>
+    <text x="80" y="210" font-size="92" font-weight="800" fill="#FFFFFF">Titanic</text>
+    <text x="80" y="306" font-size="92" font-weight="800" fill="#FFFFFF">Who Survives?</text>
+    <text x="84" y="362" font-size="27" font-weight="400" fill="#C9D3E6">Train a model on 712 passengers. Predict 179 you have never seen.</text>
+  </g>
+</svg>

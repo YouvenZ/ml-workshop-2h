@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Titanic results</title>
+<style>
+  :root{--navy:#1B2A4A;--blue:#2E5CA8;--orange:#E07A2C;--teal:#2A9D8F;--gray:#D9DCE1;--muted:#6b7689}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 Inter,"Helvetica Neue",Arial,sans-serif;color:var(--navy);background:#F4F6FA}
+  .hero{background:linear-gradient(135deg,#14203A,#22365E);color:#fff;padding:28px 32px 26px;border-radius:0 0 22px 22px}
+  .kick{color:var(--orange);font-weight:800;letter-spacing:.2em;font-size:12px}
+  .hero h1{margin:6px 0 4px;font-size:26px}
+  .score{display:flex;align-items:baseline;gap:14px;margin-top:10px;flex-wrap:wrap}
+  .score b{font-size:58px;line-height:1;font-weight:800}
+  .score span{color:rgba(255,255,255,.75)}
+  .verdict{margin-top:10px;display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:600}
+  .wrap{max-width:980px;margin:0 auto;padding:22px 20px 40px;display:grid;gap:18px}
+  .card{background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(27,42,74,.06),0 12px 30px -18px rgba(27,42,74,.35)}
+  h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .tile{background:#F6F8FB;border-radius:12px;padding:12px 14px;border-top:4px solid var(--blue)}
+  .tile:nth-child(2){border-color:var(--teal)} .tile:nth-child(3){border-color:var(--orange)} .tile:nth-child(4){border-color:var(--navy)}
+  .tile span{display:block;font-size:12px;color:var(--muted);font-weight:600}
+  .tile b{font-size:24px}
+  .two{display:grid;grid-template-columns:1fr 1.2fr;gap:18px}
+  .cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:stretch}
+  .cm .h{font-size:12px;color:var(--muted);font-weight:700;text-align:center}
+  .cm .r{font-size:12px;color:var(--muted);font-weight:700;align-self:center;text-align:right}
+  .cell{border-radius:12px;padding:14px 8px;text-align:center}
+  .cell b{display:block;font-size:30px;line-height:1.1}
+  .cell span{font-size:12px;font-weight:600}
+  .ok{background:rgba(42,157,143,.14);color:#1f7a70} .bad{background:rgba(224,122,44,.14);color:#b85d17}
+  .bar{display:grid;grid-template-columns:200px 1fr 56px;gap:12px;align-items:center;padding:7px 0}
+  .bar.me .bl b{color:var(--blue)}
+  .bl span{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bt{height:14px;border-radius:7px;background:#EEF0F4;overflow:hidden} .bt i{display:block;height:100%;border-radius:7px}
+  .bv{font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td{padding:7px 6px;border-bottom:1px solid #EEF0F4} tr:last-child td{border:0}
+  .mini{height:8px;border-radius:4px;background:#EEF0F4;width:120px;overflow:hidden} .mini i{display:block;height:100%;background:var(--teal)}
+  .tip{font-size:14px;color:var(--navy);background:#FDF2E9;border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:10px 14px}
+  @media (max-width:720px){.tiles{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.bar{grid-template-columns:120px 1fr 50px}}
+</style></head><body>
+<div class="hero">
+  <div class="kick">TITANIC · WHO SURVIVES?</div>
+  <h1>Your results on 179 unseen passengers</h1>
+  <div class="score"><b>77.7%</b><span>accuracy · 139 of 179 passengers right</span></div>
+  <div class="verdict" style="color:#FFC48F">Better than guessing, but “only women survived” still wins. Keep going!</div>
+</div>
+<div class="wrap">
+  <div class="card"><h2>Every score</h2><div class="tiles"><div class='tile'><span>Balanced accuracy</span><b>0.767</b></div><div class='tile'><span>F1 (survived)</span><b>0.714</b></div><div class='tile'><span>Precision</span><b>0.704</b></div><div class='tile'><span>Recall</span><b>0.725</b></div></div></div>
+  <div class="two">
+    <div class="card"><h2>Confusion matrix</h2>
+      <div class="cm">
+        <div></div><div class="h">said: died</div><div class="h">said: survived</div>
+        <div class="r">really died</div><div class="cell ok"><b>89</b><span>correct</span></div><div class="cell bad"><b>21</b><span>false alarm</span></div>
+        <div class="r">really survived</div><div class="cell bad"><b>19</b><span>missed</span></div><div class="cell ok"><b>50</b><span>correct</span></div>
+      </div>
+    </div>
+    <div class="card"><h2>Against the baselines</h2>
+        <div class="bar me">
+          <div class="bl"><b>Your submission</b><span>predictions.csv</span></div>
+          <div class="bt"><i style="width:77.7%;background:#2E5CA8"></i></div>
+          <div class="bv">0.777</div>
+        </div>
+        <div class="bar">
+          <div class="bl"><b>Nobody survived</b><span>predict 0 for everyone</span></div>
+          <div class="bt"><i style="width:61.5%;background:#AEB5C2"></i></div>
+          <div class="bv">0.615</div>
+        </div>
+        <div class="bar">
+          <div class="bl"><b>Only women survived</b><span>predict 1 if Sex is female</span></div>
+          <div class="bt"><i style="width:78.2%;background:#AEB5C2"></i></div>
+          <div class="bv">0.782</div>
+        </div></div>
+  </div>
+  <div class="card"><h2>Where are you right? Accuracy by group</h2>
+    <table><tr><td>Women</td><td>45/58</td><td><div class='mini'><i style='width:78%'></i></div></td><td><b>78%</b></td></tr><tr><td>Men</td><td>94/121</td><td><div class='mini'><i style='width:78%'></i></div></td><td><b>78%</b></td></tr><tr><td>1st class</td><td>32/44</td><td><div class='mini'><i style='width:73%'></i></div></td><td><b>73%</b></td></tr><tr><td>2nd class</td><td>37/44</td><td><div class='mini'><i style='width:84%'></i></div></td><td><b>84%</b></td></tr><tr><td>3rd class</td><td>70/91</td><td><div class='mini'><i style='width:77%'></i></div></td><td><b>77%</b></td></tr></table>
+  </div>
+  <div class="tip"><b>Next step:</b> compare your accuracy by group. If one group is much worse, a feature
+  that describes it (class, age, family size, the title in the name…) may be missing from your model.</div>
+</div>
+</body></html>

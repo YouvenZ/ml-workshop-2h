@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14203A"/>
+      <stop offset="1" stop-color="#2A4373"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A9D8F"/>
+      <stop offset="1" stop-color="#1F7A70"/>
+    </linearGradient>
+    <clipPath id="r"><rect width="512" height="512" rx="96"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <!-- stars: passengers, survived (teal) or not (grey) -->
+    <g opacity=".9">
+      <circle cx="78" cy="92" r="7" fill="#2A9D8F"/><circle cx="128" cy="62" r="5" fill="#8B94A6"/>
+      <circle cx="176" cy="104" r="6" fill="#8B94A6"/><circle cx="226" cy="70" r="7" fill="#2A9D8F"/>
+      <circle cx="292" cy="96" r="5" fill="#8B94A6"/><circle cx="344" cy="58" r="6" fill="#2A9D8F"/>
+      <circle cx="398" cy="100" r="7" fill="#8B94A6"/><circle cx="440" cy="66" r="5" fill="#2A9D8F"/>
+      <circle cx="104" cy="148" r="5" fill="#8B94A6"/><circle cx="420" cy="150" r="6" fill="#8B94A6"/>
+    </g>
+    <!-- decision boundary through the sky -->
+    <path d="M40 186 C 160 130, 330 220, 472 140" fill="none" stroke="#E07A2C" stroke-width="6" stroke-dasharray="14 12" stroke-linecap="round"/>
+    <!-- funnels -->
+    <g fill="#E07A2C">
+      <path d="M150 232 l12 -66 h40 l-8 66 z"/>
+      <path d="M222 232 l12 -66 h40 l-8 66 z"/>
+      <path d="M294 232 l12 -66 h40 l-8 66 z"/>
+      <path d="M366 232 l12 -66 h40 l-8 66 z" opacity=".55"/>
+    </g>
+    <g fill="#1B2A4A"><rect x="160" y="166" width="44" height="12"/><rect x="232" y="166" width="44" height="12"/><rect x="304" y="166" width="44" height="12"/><rect x="376" y="166" width="44" height="12" opacity=".55"/></g>
+    <!-- superstructure and hull -->
+    <rect x="118" y="226" width="300" height="40" rx="6" fill="#F4F6FA"/>
+    <g fill="#2E5CA8">
+      <rect x="136" y="238" width="16" height="14" rx="3"/><rect x="164" y="238" width="16" height="14" rx="3"/>
+      <rect x="192" y="238" width="16" height="14" rx="3"/><rect x="220" y="238" width="16" height="14" rx="3"/>
+      <rect x="248" y="238" width="16" height="14" rx="3"/><rect x="276" y="238" width="16" height="14" rx="3"/>
+      <rect x="304" y="238" width="16" height="14" rx="3"/><rect x="332" y="238" width="16" height="14" rx="3"/>
+      <rect x="360" y="238" width="16" height="14" rx="3"/><rect x="388" y="238" width="16" height="14" rx="3"/>
+    </g>
+    <path d="M56 262 H470 L438 340 H104 Z" fill="#0E1729"/>
+    <path d="M56 262 H470 L466 274 H60 Z" fill="#E07A2C"/>
+    <!-- sea -->
+    <path d="M0 330 Q 32 312 64 330 T 128 330 T 192 330 T 256 330 T 320 330 T 384 330 T 448 330 T 512 330 V512 H0 Z" fill="url(#sea)"/>
+    <path d="M0 372 Q 32 356 64 372 T 128 372 T 192 372 T 256 372 T 320 372 T 384 372 T 448 372 T 512 372" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="5"/>
+    <!-- wordmark -->
+    <text x="256" y="440" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="56" fill="#fff" letter-spacing="1">WHO SURVIVES?</text>
+    <text x="256" y="480" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="22" fill="#14203A" letter-spacing="6">TITANIC · ML CHALLENGE</text>
+  </g>
+</svg>

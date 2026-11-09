@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model complexity: underfit to overfit</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .curve{fill:none; stroke:var(--navy); stroke-width:3.5; stroke-linejoin:round}
+  .tr{fill:var(--blue); stroke:#fff; stroke-width:1.5}
+  .te{fill:#fff; stroke:var(--orange); stroke-width:2.5}
+  .te.hide{opacity:0}
+  .verdict{font-size:22px; font-weight:800}
+  .legend{display:flex; gap:14px; font-size:13px; color:var(--muted); align-items:center}
+  .legend i{display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:5px; vertical-align:-1px}
+  .uline{fill:none; stroke-width:2.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot">
+    <svg id="svg" viewBox="0 0 700 395" role="img" aria-label="Polynomial fits of increasing degree"></svg>
+    <div class="legend" style="justify-content:center">
+      <span><i style="background:var(--blue)"></i>training points (the model sees these)</span>
+      <span><i style="border:2.5px solid var(--orange); background:#fff"></i>new points (it never sees these)</span>
+    </div>
+  </div>
+  <div class="side" style="flex-basis:300px">
+    <div class="card slider">
+      <div class="top">model complexity (degree) <b id="dv"></b></div>
+      <input type="range" id="deg" min="0" max="11" step="1" value="1">
+    </div>
+    <div class="card">
+      <div class="verdict" id="verdict"></div>
+      <svg id="u" viewBox="0 0 270 130" style="margin-top:6px"></svg>
+      <div class="legend"><span style="color:var(--blue); font-weight:700">— error on training</span><span style="color:var(--orange); font-weight:700">— error on new</span></div>
+    </div>
+    <div class="row"><button id="newpts">↻ New unseen points</button><button id="showte" class="on">Show new</button></div>
+    <p class="hint">Push the slider to 11: the curve passes through <b>every</b> training point (error 0) and is useless on the new ones.</p>
+  </div>
+</div>
+<script src="widget.js"></script>
+<script>
+const svg = document.getElementById('svg'), us = document.getElementById('u');
+const M = { l: 40, r: 690, t: 10, b: 385 };
+const X = W.lin(-1.05, 1.05, M.l, M.r), Y = W.lin(-1.7, 1.7, M.b, M.t);
+const truth = (x) => Math.sin(2.4 * x) * 0.9 + 0.25 * x;
+const r = W.rng(5);
+const train = Array.from({ length: 12 }, (_, i) => { const x = -1 + (2 * i) / 11 + (r() - 0.5) * 0.06; return [x, truth(x) + W.gauss(r) * 0.28]; });
+let test = [], rt = W.rng(21);
+const makeTest = () => (test = Array.from({ length: 14 }, () => { const x = -1 + 2 * rt(); return [x, truth(x) + W.gauss(rt) * 0.28]; }));
+makeTest();
+
+W.svg('line', { x1: M.l, x2: M.r, y1: Y(0), y2: Y(0), class: 'gridline' }, svg);
+W.svg('line', { x1: M.l, x2: M.r, y1: M.b, y2: M.b, class: 'axis' }, svg);
+W.svg('line', { x1: M.l, x2: M.l, y1: M.t, y2: M.b, class: 'axis' }, svg);
+const clip = W.svg('clipPath', { id: 'cp' }, svg); W.svg('rect', { x: M.l, y: M.t, width: M.r - M.l, height: M.b - M.t }, clip);
+const curve = W.svg('path', { class: 'curve', 'clip-path': 'url(#cp)' }, svg);
+const gTe = W.svg('g', {}, svg), gTr = W.svg('g', {}, svg);
+train.forEach(([x, y]) => W.svg('circle', { cx: X(x), cy: Y(y), r: 7, class: 'tr' }, gTr));
+
+// Least-squares polynomial with a whisper of ridge so degree 11 on 12 points stays solvable.
+function polyfit(pts, d) {
+  const n = d + 1, A = Array.from({ length: n }, () => new Array(n).fill(0)), v = new Array(n).fill(0);
+  pts.forEach(([x, y]) => {
+    const p = Array.from({ length: n }, (_, k) => Math.pow(x, k));
+    for (let i = 0; i < n; i++) { v[i] += p[i] * y; for (let j = 0; j < n; j++) A[i][j] += p[i] * p[j]; }
+  });
+  for (let i = 0; i < n; i++) A[i][i] += 1e-10;
+  for (let i = 0; i < n; i++) {                       // Gaussian elimination with pivoting
+    let m = i; for (let k = i + 1; k < n; k++) if (Math.abs(A[k][i]) > Math.abs(A[m][i])) m = k;
+    [A[i], A[m]] = [A[m], A[i]]; [v[i], v[m]] = [v[m], v[i]];
+    for (let k = i + 1; k < n; k++) { const f = A[k][i] / A[i][i]; for (let j = i; j < n; j++) A[k][j] -= f * A[i][j]; v[k] -= f * v[i]; }
+  }
+  const c = new Array(n).fill(0);
+  for (let i = n - 1; i >= 0; i--) { let s = v[i]; for (let j = i + 1; j < n; j++) s -= A[i][j] * c[j]; c[i] = s / A[i][i]; }
+  return (x) => c.reduce((s, ck, k) => s + ck * Math.pow(x, k), 0);
+}
+const mse = (f, pts) => pts.reduce((s, [x, y]) => s + (f(x) - y) ** 2, 0) / pts.length;
+
+const UX = W.lin(0, 11, 12, 262), UY = W.lin(0, 0.6, 118, 8);
+function drawU(d) {
+  us.innerHTML = '';
+  W.svg('line', { x1: 12, x2: 262, y1: 118, y2: 118, class: 'axis' }, us);
+  const tr = [], te = [];
+  for (let k = 0; k <= 11; k++) { const f = polyfit(train, k); tr.push(mse(f, train)); te.push(mse(f, test)); }
+  const path = (arr) => arr.map((e, k) => (k ? 'L' : 'M') + UX(k) + ',' + UY(Math.min(e, 0.6))).join('');
+  W.svg('path', { d: path(tr), class: 'uline', stroke: 'var(--blue)' }, us);
+  W.svg('path', { d: path(te), class: 'uline', stroke: 'var(--orange)' }, us);
+  W.svg('line', { x1: UX(d), x2: UX(d), y1: 6, y2: 118, stroke: 'var(--navy)', 'stroke-width': 2, 'stroke-dasharray': '3 3' }, us);
+  W.svg('circle', { cx: UX(d), cy: UY(Math.min(tr[d], 0.6)), r: 5, fill: 'var(--blue)' }, us);
+  W.svg('circle', { cx: UX(d), cy: UY(Math.min(te[d], 0.6)), r: 5, fill: 'var(--orange)' }, us);
+  const best = te.indexOf(Math.min(...te));
+  W.svg('text', { x: UX(best), y: 128, 'text-anchor': 'middle', class: 'tick', style: 'font-size:10px' }, us).textContent = 'best';
+  return [tr[d], te[d], best, te[best]];
+}
+
+let deg = 1, showTe = true;
+function render() {
+  const f = polyfit(train, deg);
+  let d = '';
+  for (let x = -1.05; x <= 1.0501; x += 0.005) d += (d ? 'L' : 'M') + X(x).toFixed(1) + ',' + Y(W.clamp(f(x), -3, 3)).toFixed(1);
+  curve.setAttribute('d', d);
+  gTe.innerHTML = '';
+  test.forEach(([x, y]) => W.svg('circle', { cx: X(x), cy: Y(y), r: 6.5, class: 'te' + (showTe ? '' : ' hide') }, gTe));
+  const [etr, ete, best, teBest] = drawU(deg);
+  document.getElementById('dv').textContent = deg;
+  const v = document.getElementById('verdict');
+  const worse = ete > 1.35 * teBest + 0.01;
+  if (deg < best && worse) { v.textContent = 'Underfit: too simple'; v.style.color = 'var(--muted)'; }
+  else if (deg > best && worse) { v.textContent = 'Overfit: memorising'; v.style.color = 'var(--orange)'; }
+  else { v.textContent = 'Good fit'; v.style.color = 'var(--teal)'; }
+  v.title = `train error ${etr.toFixed(3)} · new error ${ete.toFixed(3)}`;
+}
+W.bindRange(document.getElementById('deg'), (v) => { deg = v; render(); });
+document.getElementById('newpts').addEventListener('click', () => { makeTest(); render(); });
+document.getElementById('showte').addEventListener('click', (e) => { showTe = !showTe; e.target.classList.toggle('on', showTe); render(); });
+render();
+</script>
+</body>
+</html>

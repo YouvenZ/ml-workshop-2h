@@ -1,0 +1,96 @@
+# Codabench competition bundle — Titanic · Who Survives?
+# The closing mini competition of the Python & ML Workshop (AUD, 11/11/2026).
+#
+# Upload the ZIPPED bundle (codabench/dist/titanic-who-survives_bundle.zip,
+# built by codabench/build_bundle.py) at https://www.codabench.org →
+# Benchmarks → Management → Upload. Reference for every key:
+# https://docs.codabench.org/latest/Organizers/Benchmark_Creation/Yaml-Structure/
+
+version: 2
+title: "Titanic · Who Survives? — Python & ML Workshop Challenge"
+description: >-
+  The closing challenge of the Python & ML Workshop at the American University
+  in Dubai. Train a model on 712 Titanic passengers, predict whether 179 unseen
+  passengers survived, and climb the leaderboard.
+image: logo.png
+registration_auto_approve: True
+docker_image: codalab/codalab-legacy:py312   # scoring uses only the standard library
+enable_detailed_results: True                # score.py writes detailed_results.html
+show_detailed_results_in_submission_panel: True
+show_detailed_results_in_leaderboard: True
+can_participants_make_submissions_public: True
+forum_enabled: True
+
+terms: pages/terms.html
+pages:
+  - title: Overview
+    file: pages/overview.html
+  - title: Data
+    file: pages/data.html
+  - title: Evaluation
+    file: pages/evaluation.html
+  - title: How to submit
+    file: pages/submit.html
+
+tasks:
+  - index: 0
+    name: Titanic survival
+    description: Predict Survived (0 or 1) for the 179 held-out passengers.
+    is_public: false
+    reference_data: reference_data
+    scoring_program: scoring_program
+
+solutions: []
+
+phases:
+  - index: 0
+    name: Workshop leaderboard
+    description: >-
+      Upload a zip containing predictions.csv (PassengerId,Survived). Scored on
+      all 179 test passengers. Open from the workshop morning until one week later.
+    # Times are UTC. 05:00 UTC = 09:00 in Dubai on the workshop day;
+    # the phase closes at midnight Dubai time one week later.
+    start: 2026-11-11 05:00:00
+    end: 2026-11-18 20:00:00
+    max_submissions_per_day: 10
+    max_submissions: 60
+    execution_time_limit: 300
+    accepts_only_result_submissions: True
+    tasks:
+      - 0
+    starting_kit: starting_kit
+    public_data: input_data
+
+leaderboards:
+  - index: 0
+    title: Leaderboard
+    key: main
+    submission_rule: "Force_Best"        # each participant's best accuracy is shown
+    columns:
+      - title: Accuracy
+        key: accuracy
+        index: 0
+        sorting: desc
+        precision: 4
+      - title: Balanced accuracy
+        key: balanced_accuracy
+        index: 1
+        sorting: desc
+        precision: 4
+      - title: F1 (survived)
+        key: f1
+        index: 2
+        sorting: desc
+        precision: 4
+      - title: Precision
+        key: precision
+        index: 3
+        sorting: desc
+        precision: 4
+        hidden: True
+      - title: Recall
+        key: recall
+        index: 4
+        sorting: desc
+        precision: 4
+        hidden: True

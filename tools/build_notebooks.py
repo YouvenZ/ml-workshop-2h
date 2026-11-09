@@ -81,6 +81,25 @@ def callout(kind, body, label=None):
     )
 
 
+def libwhy(lib, name, bullets):
+    """A library's logo and why it matters, shown where the library first appears.
+
+    The logo is linked from the repo (Colab will not render an SVG data URI);
+    if it ever 404s the box still reads fine without it.
+    """
+    logo = (f"https://raw.githubusercontent.com/{GH_USER}/{GH_REPO}/main/"
+            f"assets/logos/{lib}.svg")
+    items = "".join(f"<li>{b}</li>" for b in bullets)
+    return (
+        '<div style="display:flex;gap:18px;align-items:center;border:1px solid #D9DCE1;'
+        'border-radius:10px;padding:12px 16px;margin:12px 0;">\n'
+        f'<img src="{logo}" alt="{name} logo" style="height:64px;max-width:190px;object-fit:contain;">\n'
+        '<div><div style="color:#E07A2C;font-weight:700;font-size:12px;letter-spacing:.09em;">'
+        f'WHY {name.upper()} MATTERS HERE</div>\n'
+        f'<ul style="margin:6px 0 0 0;padding-left:18px;">{items}</ul></div>\n</div>'
+    )
+
+
 # --------------------------------------------------------------------------
 # notebook primitives
 # --------------------------------------------------------------------------
@@ -145,7 +164,7 @@ def write(name, cells):
 
 
 # ==========================================================================
-# NB0 — Warm-up.  ~20 min, optional, sent T-3 days.
+# NB0 — Warm-up. Optional, sent before the workshop.
 # Read-and-run only. No blanks, no exercises, nothing that can fail.
 # ==========================================================================
 def build_nb0():
@@ -155,8 +174,8 @@ def build_nb0():
 
 {badge('NB0-warmup.ipynb')}
 
-**20 minutes. Optional, but it makes Part 1 much easier — the workshop is
-only two hours, so every minute you spend here saves one on the day.**
+**Optional, but it makes Part 1 much easier: everything you do here is
+time saved on the day.**
 
 You do not need to install anything. You do not need to understand everything
 here. You need to arrive on the day having *run a cell* at least once.
@@ -287,14 +306,14 @@ def EX(sol, blanked, answer):
 
 
 # ==========================================================================
-# NB1 — Python & Data.  Parts 1-2 (0:00-0:55).
+# NB1 — Python & Data.  Parts 1-2.
 # ==========================================================================
 def build_nb1(sol=False):
     c = []
     name = "NB-SOLUTIONS" if sol else "NB1"
     c.append(md(f"""
 # {name} — Python for Data Work
-## Parts 1 and 2 · 0:00 – 0:55
+## Parts 1 and 2
 
 {badge('NB1-python-data.ipynb')}
 
@@ -336,7 +355,7 @@ certainly the network, not you.
     c.append(md("""
 ---
 ---
-# Part 1 — Python for data work · 0:05 – 0:30
+# Part 1 — Python for data work
 
 Everything below is typed live on screen. Type along in the empty cells —
 you will remember far more than by reading finished code.
@@ -445,6 +464,11 @@ A Python list of numbers is a list of *objects scattered in memory*. A NumPy
 array is **one contiguous block of numbers**. That difference is why it is
 fast, and why every data library in Python is built on it.
 """))
+    c.append(md(libwhy("numpy", "NumPy", [
+        "Looping over a million list items in Python is slow; one NumPy operation hits every element at once, in compiled code.",
+        "Every number in machine learning (features, weights, predictions) is stored in a NumPy array.",
+        "pandas, Matplotlib and scikit-learn are all built on top of it.",
+    ])))
     c.append(L(sol, "numpy arrays", "np.array, .shape, .dtype", """
 import numpy as np
 
@@ -514,6 +538,11 @@ big = np.random.rand(1_000_000)
 A **DataFrame** is a table. Each column is a **Series** — a NumPy array that
 knows its own name and dtype.
 """))
+    c.append(md(libwhy("pandas", "pandas", [
+        "Real data is a table with named columns, mixed types and missing cells; a bare array cannot hold that.",
+        "It reads a CSV or Excel file in one line, and filters, groups, counts and fills gaps in one line each.",
+        "Under every column is a NumPy array, so the speed and the boolean masks come with it.",
+    ])))
     c.append(L(sol, "first look at a dataframe", "head, shape, columns, info", """
 df.head()          # first five rows
 df.shape           # (rows, columns)
@@ -560,7 +589,7 @@ df[df['body_mass_g'] > 4500].shape[0]
     # --- Exercise 1 -------------------------------------------------------
     c.append(md("""
 ---
-# Exercise 1 — 5 minutes
+# Exercise 1
 
 Three short tasks. Fill in every `___`. Work with the person next to you.
 
@@ -649,7 +678,7 @@ df[df['body_mass_g'] > 4000].shape[0]
     c.append(md("""
 ---
 ---
-# Part 2 — Wrangling and visualisation · 0:30 – 0:55
+# Part 2 — Wrangling and visualisation
 
 Same data, harder questions. By the end of this part you will have made the
 one chart that the whole second hour depends on.
@@ -709,6 +738,11 @@ df.sort_values('body_mass_g', ascending=False).head()
 
 Three charts, in order of how much they tell you.
 """))
+    c.append(md(libwhy("matplotlib", "Matplotlib", [
+        "A table of 344 rows hides its patterns; a chart shows groups, trends, outliers and data errors in a second.",
+        "Matplotlib is Python's base plotting library. <b>seaborn</b> (<code>sns</code>) sits on top of it for statistical charts, like colouring by species in one argument.",
+        "Before you train a model, you look: the chart tells you whether a model even has a chance.",
+    ])))
     c.append(md(img("asset_09_good_chart", 860,
                     "title, axis labels with units, legend, readable ticks") +
                 "\n\n" +
@@ -763,7 +797,7 @@ plt.show()
     # --- Practice ---------------------------------------------------------
     c.append(md("""
 ---
-# Independent practice — 8 minutes
+# Independent practice
 
 Three questions. Answer each with code **and one chart where it helps**.
 Work in pairs. Question 4 is a stretch for fast finishers — or homework.
@@ -836,17 +870,17 @@ not matter if anything in this notebook is broken.
 
 
 # ==========================================================================
-# NB2 — Machine Learning.  Parts 3-4 (1:00-2:00).
+# NB2 — Machine Learning.  Parts 3-4.
 #
 # THE critical design rule: cell 1 loads and cleans its own data. A student
-# whose NB1 is broken at 0:55 still starts the ML block on time.
+# whose NB1 is broken still starts the ML block on time.
 # ==========================================================================
 def build_nb2(sol=False):
     c = []
     name = "NB-SOLUTIONS" if sol else "NB2"
     c.append(md(f"""
 # {name} — Machine Learning
-## Parts 3 and 4 · 1:00 – 2:00
+## Parts 3 and 4
 
 {badge('NB2-machine-learning.ipynb')}
 
@@ -882,7 +916,7 @@ it cost us (11 rows) and why we accepted that.
     c.append(md("""
 ---
 ---
-# Part 3 — Concepts, then your first model · 1:00 – 1:30
+# Part 3 — Concepts, then your first models
 
 ## The four ideas
 
@@ -919,6 +953,157 @@ badly on anything new. The gap between those two scores is the warning sign.
     c.append(md(img("asset_12_train_test_split", 820,
                     "one bar of data splitting 80/20")))
 
+    c.append(md(libwhy("scikit-learn", "scikit-learn", [
+        "Dozens of algorithms (linear regression, logistic regression, KNN, trees...) all used with the same verbs: <code>fit</code>, <code>predict</code>, <code>score</code>.",
+        "Learn the pattern once and swap the algorithm in one line.",
+        "The tools around the model come with it: <code>train_test_split</code>, scalers, metrics, the confusion matrix.",
+    ])))
+
+    c.append(md("""
+---
+## Classification or regression?
+
+Supervised learning asks one of two kinds of question:
+
+| | **classification** | **regression** |
+|---|---|---|
+| the answer is | a **category** from a fixed list | a **number** on a scale |
+| on our penguins | *which species?* | *how heavy, in grams?* |
+| scored by | accuracy, the confusion matrix | average error (MAE), R² |
+| today's algorithms | logistic regression, KNN | linear regression |
+
+Same table, two questions: predict `species` and it is classification;
+predict `body_mass_g` and it is regression. The **split → fit → predict →
+score** pattern is identical for both; only the model and the score change.
+"""))
+    c.append(md("""
+*Classify each task: classification (C) or regression (R)? Double-click to edit.*
+
+1. Is this email spam? —
+2. The price of an apartment —
+3. Which digit (0–9) is in this image? —
+4. Minutes until the next bus —
+"""))
+
+    # --- Algorithm 1: linear regression -------------------------------------
+    c.append(md("""
+---
+## Algorithm 1 — Linear regression (predicting a number)
+
+**Question:** can we predict a penguin's **body mass** from its **flipper length**?
+
+First, check that the two columns move together. The **correlation** `r`
+runs from −1 (perfect falling line) through 0 (no straight-line
+relationship) to +1 (perfect rising line).
+"""))
+    c.append(code("""
+df['flipper_length_mm'].corr(df['body_mass_g'])    # about 0.87: strong
+"""))
+    c.append(md("""
+A strong `r` says a straight line is worth drawing. Linear regression draws
+the **best** one:
+
+$$\\hat{y} = w\\,x + b$$
+
+- `w`, the **slope**: grams gained per extra millimetre of flipper
+- `b`, the **intercept**: where the line starts
+- the **residual** `y − ŷ` is how far each penguin is from the line
+
+`.fit()` picks the `w` and `b` that make the **mean squared error**
+(the average of the squared residuals) as small as possible. That is
+called *least squares*.
+"""))
+    c.append(L(sol, "split, fit a linear regression", "LinearRegression().fit(Xr_train, yr_train); print reg.coef_ and reg.intercept_", """
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+Xr = df[['flipper_length_mm']]     # one feature (double brackets)
+yr = df['body_mass_g']             # the number to predict
+
+Xr_train, Xr_test, yr_train, yr_test = train_test_split(
+    Xr, yr, test_size=0.2, random_state=42)
+
+reg = LinearRegression()
+reg.fit(Xr_train, yr_train)
+print("w (slope)     =", round(reg.coef_[0], 1), "g per mm")
+print("b (intercept) =", round(reg.intercept_))
+"""))
+    c.append(md(callout("info",
+                        "Read <code>w</code> as a sentence: <i>each extra "
+                        "millimetre of flipper adds about 50 g</i>. Being "
+                        "this easy to explain is linear regression's "
+                        "superpower.")))
+    c.append(L(sol, "predict and score a regression", "reg.predict(Xr_test); mean_absolute_error and r2_score", """
+from sklearn.metrics import mean_absolute_error, r2_score
+
+pred_mass = reg.predict(Xr_test)
+print("MAE:", round(mean_absolute_error(yr_test, pred_mass)), "g off on average")
+print("R² :", round(r2_score(yr_test, pred_mass), 3))
+
+# The baseline to beat: always predict the average training mass.
+baseline = [yr_train.mean()] * len(yr_test)
+print("baseline MAE:", round(mean_absolute_error(yr_test, baseline)), "g")
+"""))
+    c.append(md("""
+> There is no "accuracy" for a number: a prediction of 4 100 g for a 4 150 g
+> penguin is nearly right, not wrong. Regression is scored by **how far off**
+> it is: **MAE** (mean absolute error, in grams) and **R²** (the share of the
+> variation explained: 1 is perfect, 0 is no better than the average).
+"""))
+    c.append(L(sol, "plot the fitted line", "scatter the test penguins, then plt.plot the predictions", """
+plt.scatter(Xr_test['flipper_length_mm'], yr_test, alpha=0.6, label='real penguins (test)')
+order = Xr_test['flipper_length_mm'].argsort()
+plt.plot(Xr_test['flipper_length_mm'].iloc[order], pred_mass[order],
+         color='#E07A2C', linewidth=3, label='the fitted line')
+plt.xlabel('flipper length (mm)')
+plt.ylabel('body mass (g)')
+plt.title('Linear regression: one feature, one line')
+plt.legend()
+plt.show()
+"""))
+    c.append(md("""
+### More features, one weight each
+
+$$\\hat{y} = w_1x_1 + w_2x_2 + w_3x_3 + b$$
+
+Add the penguin's sex and whether it is a Gentoo. Does the error go down?
+"""))
+    c.append(EX(sol, """
+df['is_male']   = (df['sex'].str.upper() == 'MALE').astype(int)
+df['is_gentoo'] = (df['species'] == 'Gentoo').astype(int)
+
+Xm = df[['flipper_length_mm', ___, ___]]
+Xm_train, Xm_test, ym_train, ym_test = train_test_split(
+    Xm, yr, test_size=0.2, random_state=42)
+
+reg2 = LinearRegression().fit(Xm_train, ym_train)
+print("weights:", reg2.coef_.round(1))
+print("MAE:", round(mean_absolute_error(ym_test, reg2.predict(Xm_test))), "g")
+""", """
+df['is_male']   = (df['sex'].str.upper() == 'MALE').astype(int)
+df['is_gentoo'] = (df['species'] == 'Gentoo').astype(int)
+
+Xm = df[['flipper_length_mm', 'is_male', 'is_gentoo']]
+Xm_train, Xm_test, ym_train, ym_test = train_test_split(
+    Xm, yr, test_size=0.2, random_state=42)
+
+reg2 = LinearRegression().fit(Xm_train, ym_train)
+print("weights:", reg2.coef_.round(1))
+print("MAE:", round(mean_absolute_error(ym_test, reg2.predict(Xm_test))), "g")
+
+# about 290 g -> about 209 g: sex and species carry information that
+# flipper length alone does not.
+"""))
+
+    c.append(md("""
+---
+## Algorithm 2 — Logistic regression (predicting a category)
+
+Back to the species question. Logistic regression computes the same
+weighted sum as linear regression, then squashes it into a probability
+between 0 and 1 with the sigmoid, `p = 1 / (1 + e^(−z))`.
+"""))
+
     c.append(md("""
 ---
 ## Features and labels, on our data
@@ -933,7 +1118,7 @@ X.head()
     c.append(md("""
 > `X` uses **double** brackets (a DataFrame, many columns), `y` uses **single**
 > (a Series, one column). Get this backwards and `.fit()` fails — which is the
-> single most common error in the next twenty minutes.
+> single most common error in this notebook.
 """))
 
     c.append(md("""
@@ -1033,9 +1218,9 @@ print("test  accuracy:", round(model.score(X_test,  y_test), 4))
     c.append(md("""
 ---
 ---
-# Part 4 — A second model, and the scaling trap · 1:30 – 2:00
+# Part 4 — A third model, and the scaling trap
 
-**K-Nearest Neighbors** does not learn an equation. To classify a new
+**Algorithm 3 — K-Nearest Neighbors** does not learn an equation. To classify a new
 penguin it finds the `K` most similar penguins it has already seen, and
 takes a vote.
 
@@ -1119,7 +1304,7 @@ for k in [1, 3, 5, 15, 50]:
     c.append(md("""
 ---
 ---
-# The Titanic challenge — 12 minutes, in pairs
+# The Titanic challenge — in pairs
 
 A messier dataset, on purpose. Penguins were tidy; almost nothing real is.
 

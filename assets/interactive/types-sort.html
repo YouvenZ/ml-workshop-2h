@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sort the values by type</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .chip{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:17px}
+  .bin h4 code{font-size:18px; color:var(--blue)}
+</style>
+</head>
+<body>
+<div id="game" data-done="Notice the tricks: quotes always make a <code>str</code>, and a dot always makes a <code>float</code> — even <code>3.0</code>."></div>
+<script src="widget.js"></script>
+<script>
+W.sortGame(document.getElementById('game'), {
+  intro: 'Drag every value into its <b>type</b>. Watch out for the quotes.',
+  bins: [
+    { id: 'str',   title: '<code>str</code>',   sub: 'text, in quotes',   color: 'var(--orange)' },
+    { id: 'int',   title: '<code>int</code>',   sub: 'whole number',      color: 'var(--blue)' },
+    { id: 'float', title: '<code>float</code>', sub: 'has a decimal point', color: 'var(--teal)' },
+    { id: 'bool',  title: '<code>bool</code>',  sub: 'True or False',     color: 'var(--navy)' },
+  ],
+  items: [
+    { label: "'Adelie'", bin: 'str',   why: "<code>'Adelie'</code> is text: it sits in quotes." },
+    { label: '3750',     bin: 'int',   why: '<code>3750</code> is a whole number: an <code>int</code>.' },
+    { label: '39.1',     bin: 'float', why: '<code>39.1</code> has a decimal point: a <code>float</code>.' },
+    { label: 'True',     bin: 'bool',  why: '<code>True</code>, no quotes, capital T: a <code>bool</code>.' },
+    { label: "'3750'",   bin: 'str',   why: "<code>'3750'</code> looks like a number, but the <b>quotes win</b>: it is a <code>str</code>." },
+    { label: '3.0',      bin: 'float', why: '<code>3.0</code> is a whole value, but the <b>dot</b> makes it a <code>float</code>.' },
+    { label: "'True'",   bin: 'str',   why: "<code>'True'</code> in quotes is just four letters: a <code>str</code>." },
+    { label: '-12',      bin: 'int',   why: '<code>-12</code>: negative whole numbers are still <code>int</code>.' },
+    { label: 'False',    bin: 'bool',  why: '<code>False</code> is the other <code>bool</code>.' },
+    { label: '0.5',      bin: 'float', why: '<code>0.5</code> is a <code>float</code>.' },
+    { label: "'Gentoo'", bin: 'str',   why: "<code>'Gentoo'</code> is a <code>str</code>." },
+    { label: '181',      bin: 'int',   why: '<code>181</code> (a flipper length in mm) is an <code>int</code>.' },
+  ],
+});
+</script>
+</body>
+</html>

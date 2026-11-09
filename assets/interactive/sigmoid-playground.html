@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From a score to a probability</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .curve{fill:none; stroke:var(--navy); stroke-width:3.5}
+  .bound{stroke:var(--orange); stroke-width:2.5; stroke-dasharray:7 5}
+  .half{stroke:rgba(27,42,74,.3); stroke-width:1.2; stroke-dasharray:3 5}
+  .zone{transition:opacity .2s}
+  .dot{stroke:#fff; stroke-width:1.2}
+  .dot.miss{stroke:var(--orange); stroke-width:3}
+  .probe{fill:var(--orange); stroke:#fff; stroke-width:3; cursor:ew-resize}
+  .ptext{font:700 15px Inter,Arial,sans-serif; fill:var(--orange); paint-order:stroke; stroke:#fff; stroke-width:5px}
+  .lab{font:700 13px Inter,Arial,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot">
+    <svg id="svg" viewBox="0 0 760 470" role="img" aria-label="Sigmoid curve over penguins"></svg>
+  </div>
+  <div class="side">
+    <div class="eq" id="eq"></div>
+    <div class="card slider">
+      <div class="top">w · steepness <b id="wv"></b></div>
+      <input type="range" id="w" min="0.2" max="12" step="0.1" value="1.5">
+    </div>
+    <div class="card slider">
+      <div class="top">boundary (where p = 0.5) <b id="cv"></b></div>
+      <input type="range" id="c" min="3" max="6" step="0.05" value="3.6">
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="label">accuracy</div><div class="mid" id="acc"></div></div>
+      <div class="card"><div class="label">log-loss</div><div class="mid" id="ll"></div></div>
+    </div>
+    <div class="row"><button class="primary" id="fit">▶ Let .fit() find it</button></div>
+    <p class="hint">Question: <b>is this penguin a Gentoo?</b> Drag the orange marker to read the probability. Circled dots are mistakes; log-loss also punishes being <i>confidently</i> wrong.</p>
+  </div>
+</div>
+<script src="data/penguins.js"></script>
+<script src="widget.js"></script>
+<script>
+const svg = document.getElementById('svg');
+const M = { l: 70, r: 740, t: 24, b: 400 };
+const X = W.lin(2.6, 6.4, M.l, M.r), Y = W.lin(-0.13, 1.13, M.b, M.t);
+const rnd = W.rng(11);
+const data = PENGUINS.map((p) => ({ x: p[4] / 1000, y: p[0] === 2 ? 1 : 0, j: (rnd() - 0.5) * 0.12 }));
+
+const zoneL = W.svg('rect', { y: M.t, height: M.b - M.t, fill: 'rgba(224,122,44,.06)', class: 'zone' }, svg);
+const zoneR = W.svg('rect', { y: M.t, height: M.b - M.t, fill: 'rgba(42,157,143,.07)', class: 'zone' }, svg);
+for (let v = 0; v <= 1.001; v += 0.25) {
+  W.svg('line', { x1: M.l, x2: M.r, y1: Y(v), y2: Y(v), class: 'gridline' }, svg);
+  W.svg('text', { x: M.l - 8, y: Y(v) + 4, 'text-anchor': 'end', class: 'tick' }, svg).textContent = v.toFixed(2);
+}
+for (let v = 3; v <= 6; v += 0.5)
+  W.svg('text', { x: X(v), y: M.b + 18, 'text-anchor': 'middle', class: 'tick' }, svg).textContent = v.toFixed(1);
+W.svg('line', { x1: M.l, x2: M.r, y1: M.b, y2: M.b, class: 'axis' }, svg);
+W.svg('line', { x1: M.l, x2: M.l, y1: M.t, y2: M.b, class: 'axis' }, svg);
+W.svg('line', { x1: M.l, x2: M.r, y1: Y(0.5), y2: Y(0.5), class: 'half' }, svg);
+W.svg('text', { x: (M.l + M.r) / 2, y: M.b + 44, 'text-anchor': 'middle', class: 'axlabel' }, svg).textContent = 'body mass (kg)';
+W.svg('text', { x: 18, y: (M.t + M.b) / 2, 'text-anchor': 'middle', class: 'axlabel', transform: `rotate(-90 18 ${(M.t + M.b) / 2})` }, svg).textContent = 'p(Gentoo)';
+W.svg('text', { x: M.r - 6, y: Y(1.085), 'text-anchor': 'end', class: 'lab', fill: 'var(--gentoo)' }, svg).textContent = 'Gentoo (y = 1)';
+W.svg('text', { x: M.l + 8, y: Y(-0.1), class: 'lab', fill: 'var(--muted)' }, svg).textContent = 'Adelie / Chinstrap (y = 0)';
+
+const gDots = W.svg('g', {}, svg);
+const dots = data.map((d) => W.svg('circle', { cx: X(d.x), cy: Y(d.y + (d.y ? -1 : 1) * Math.abs(d.j)), r: 5, class: 'dot', fill: d.y ? 'var(--gentoo)' : '#9aa3b2' }, gDots));
+const bound = W.svg('line', { y1: M.t, y2: M.b, class: 'bound' }, svg);
+const curve = W.svg('path', { class: 'curve' }, svg);
+const probe = W.svg('circle', { r: 10, class: 'probe' }, svg);
+const ptext = W.svg('text', { class: 'ptext' }, svg);
+
+let w = 1.5, c = 3.6, px = 4.6;
+const sig = (z) => 1 / (1 + Math.exp(-z));
+
+function render() {
+  const b = -w * c;
+  let d = '';
+  for (let x = 2.6; x <= 6.4001; x += 0.02) d += (d ? 'L' : 'M') + X(x).toFixed(1) + ',' + Y(sig(w * x + b)).toFixed(1);
+  curve.setAttribute('d', d);
+  bound.setAttribute('x1', X(c)); bound.setAttribute('x2', X(c));
+  zoneL.setAttribute('x', M.l); zoneL.setAttribute('width', Math.max(0, X(c) - M.l));
+  zoneR.setAttribute('x', X(c)); zoneR.setAttribute('width', Math.max(0, M.r - X(c)));
+  let ok = 0, ll = 0;
+  data.forEach((p, i) => {
+    const q = sig(w * p.x + b), hit = (q >= 0.5 ? 1 : 0) === p.y;
+    ok += hit; ll -= p.y ? Math.log(Math.max(q, 1e-9)) : Math.log(Math.max(1 - q, 1e-9));
+    dots[i].classList.toggle('miss', !hit);
+  });
+  document.getElementById('acc').textContent = (ok / data.length * 100).toFixed(1) + '%';
+  document.getElementById('ll').textContent = (ll / data.length).toFixed(3);
+  document.getElementById('wv').textContent = w.toFixed(1);
+  document.getElementById('cv').textContent = c.toFixed(2) + ' kg';
+  document.getElementById('eq').innerHTML =
+    `z = <b style="color:var(--blue)">${w.toFixed(1)}</b>·x ${b < 0 ? '−' : '+'} <b style="color:var(--blue)">${Math.abs(b).toFixed(1)}</b><br>p = 1 / (1 + e<sup>−z</sup>)`;
+  const p = sig(w * px + b);
+  probe.setAttribute('cx', X(px)); probe.setAttribute('cy', Y(p));
+  ptext.setAttribute('x', X(px) + (px > 5.6 ? -150 : 14)); ptext.setAttribute('y', Y(p) - 12);
+  ptext.textContent = `${px.toFixed(2)} kg → p = ${p.toFixed(2)}`;
+}
+
+const wIn = document.getElementById('w'), cIn = document.getElementById('c');
+W.bindRange(wIn, (v) => { w = v; render(); });
+W.bindRange(cIn, (v) => { c = v; render(); });
+const sync = () => { wIn.value = w; cIn.value = c; wIn.dispatchEvent(new Event('input')); cIn.dispatchEvent(new Event('input')); };
+
+let drag = false;
+probe.addEventListener('pointerdown', (e) => { drag = true; svg.setPointerCapture(e.pointerId); });
+svg.addEventListener('pointermove', (e) => { if (drag) { px = W.clamp(X.inv(W.local(svg, e).x), 2.7, 6.3); render(); } });
+['pointerup', 'pointercancel'].forEach((ev) => svg.addEventListener(ev, () => (drag = false)));
+
+// Gradient descent on the log-loss, run once up front: the (w, c) that .fit() lands on.
+function bestFit() {
+  let ww = 1, bb = -4;
+  for (let it = 0; it < 6000; it++) {
+    let gw = 0, gb = 0;
+    data.forEach((p) => { const e = sig(ww * p.x + bb) - p.y; gw += e * p.x; gb += e; });
+    ww -= 0.25 * gw / data.length; bb -= 0.25 * gb / data.length;
+  }
+  return [W.clamp(ww, 0.2, 12), W.clamp(-bb / ww, 3, 6)];
+}
+const [WB, CB] = bestFit();
+document.getElementById('fit').addEventListener('click', () => {
+  const w0 = w, c0 = c, t0 = performance.now();
+  const step = (t) => {
+    const k = W.clamp((t - t0) / 1500, 0, 1), e = 1 - Math.pow(1 - k, 3);
+    w = w0 + (WB - w0) * e; c = c0 + (CB - c0) * e; sync();
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+});
+render();
+</script>
+</body>
+</html>

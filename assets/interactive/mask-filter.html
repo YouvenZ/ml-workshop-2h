@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A mask filters the table</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .code{font-family:"JetBrains Mono",monospace; font-size:17px; background:var(--soft); border-radius:10px;
+    border-left:4px solid var(--blue); padding:10px 14px; white-space:nowrap; overflow:hidden}
+  .code .n{color:var(--orange); font-weight:700}
+  .code .s{color:var(--teal); font-weight:700}
+  table{border-collapse:separate; border-spacing:0 5px; width:100%; font-size:15px}
+  th{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-align:left; padding:0 10px}
+  td{padding:6px 10px; background:#fff; border-top:1px solid rgba(27,42,74,.08); border-bottom:1px solid rgba(27,42,74,.08);
+     transition:opacity .35s ease, transform .35s ease, background .35s}
+  td:first-child{border-left:1px solid rgba(27,42,74,.08); border-radius:8px 0 0 8px; color:var(--muted); font-family:"JetBrains Mono",monospace}
+  td:last-child{border-right:1px solid rgba(27,42,74,.08); border-radius:0 8px 8px 0}
+  td.num{font-variant-numeric:tabular-nums; font-family:"JetBrains Mono",monospace; text-align:right}
+  tr.out td{opacity:.28; transform:translateX(26px)}
+  tr.in td{background:rgba(42,157,143,.07)}
+  .mask{font-family:"JetBrains Mono",monospace; font-weight:700; font-size:13px; padding:2px 8px; border-radius:999px; display:inline-block; min-width:58px; text-align:center}
+  .mask.t{background:rgba(42,157,143,.15); color:var(--teal)}
+  .mask.f{background:rgba(224,122,44,.13); color:var(--orange)}
+  .sp{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px}
+  .seg{display:flex; gap:6px; flex-wrap:wrap}
+  .seg button{padding:5px 11px; font-size:13px}
+  .massbar{height:8px; border-radius:4px; background:var(--gray); position:relative; width:110px; display:inline-block; vertical-align:middle; margin-left:8px}
+  .massbar i{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--blue)}
+  .thr{position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--orange)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot" style="display:flex; flex-direction:column; gap:10px">
+    <div class="code" id="code"></div>
+    <table>
+      <thead><tr><th></th><th>species</th><th style="text-align:right">body_mass_g</th><th>mask</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div class="side">
+    <div class="card slider">
+      <div class="top">threshold <b id="tv">3700 g</b></div>
+      <input type="range" id="thr" min="2800" max="6200" step="50" value="3700">
+    </div>
+    <div class="card">
+      <div class="label" style="margin-bottom:6px">and also keep only…</div>
+      <div class="seg" id="seg">
+        <button data-s="" class="on">any species</button>
+        <button data-s="Adelie">Adelie</button>
+        <button data-s="Chinstrap">Chinstrap</button>
+        <button data-s="Gentoo">Gentoo</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">mask.sum(): rows kept</div>
+      <div class="big" id="kept">0</div>
+      <div class="meter"><i id="bar"></i></div>
+    </div>
+    <p class="hint">Every row gets one <b>True</b> or <b>False</b>. The table keeps the True rows and nothing else. That is all a filter is.</p>
+  </div>
+</div>
+<script src="widget.js"></script>
+<script>
+const DATA = [
+  ['Adelie', 3750], ['Gentoo', 5400], ['Chinstrap', 3500], ['Adelie', 3250], ['Gentoo', 4650],
+  ['Chinstrap', 3950], ['Adelie', 4300], ['Gentoo', 6050], ['Adelie', 3450], ['Chinstrap', 3700],
+];
+const COL = { Adelie: 'var(--adelie)', Chinstrap: 'var(--chinstrap)', Gentoo: 'var(--gentoo)' };
+const tbody = document.getElementById('rows');
+const rows = DATA.map(([s, m], i) => {
+  const tr = W.el('tr', {}, tbody);
+  W.el('td', { text: i }, tr);
+  W.el('td', { html: `<span class="sp" style="background:${COL[s]}"></span>${s}` }, tr);
+  W.el('td', { class: 'num', html: `${m.toLocaleString('en-US')}<span class="massbar"><i style="width:${(m - 2500) / 3800 * 100}%"></i><span class="thr"></span></span>` }, tr);
+  const td = W.el('td', {}, tr);
+  return { tr, s, m, mask: W.el('span', { class: 'mask' }, td), thr: tr.querySelector('.thr') };
+});
+let threshold = 3700, species = '';
+function render() {
+  document.getElementById('tv').textContent = threshold.toLocaleString('en-US') + ' g';
+  let code = `df[<span>(df['body_mass_g'] &gt; <span class="n">${threshold}</span>)</span>`;
+  if (species) code += ` &amp; (df['species'] == <span class="s">'${species}'</span>)`;
+  document.getElementById('code').innerHTML = code + ']';
+  let k = 0;
+  rows.forEach((r) => {
+    const keep = r.m > threshold && (!species || r.s === species);
+    if (keep) k++;
+    r.tr.className = keep ? 'in' : 'out';
+    r.mask.className = 'mask ' + (keep ? 't' : 'f');
+    r.mask.textContent = keep ? 'True' : 'False';
+    r.thr.style.left = W.clamp((threshold - 2500) / 3800 * 100, 0, 100) + '%';
+  });
+  document.getElementById('kept').textContent = k;
+  document.getElementById('bar').style.width = (k / rows.length) * 100 + '%';
+}
+W.bindRange(document.getElementById('thr'), (v) => { threshold = v; render(); });
+document.querySelectorAll('#seg button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('#seg button').forEach((x) => x.classList.remove('on'));
+  b.classList.add('on'); species = b.dataset.s; render();
+}));
+render();
+</script>
+</body>
+</html>

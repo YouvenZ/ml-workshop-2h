@@ -1,0 +1,97 @@
+/* Shared look for every interactive widget embedded in the deck.
+   Palette identical to the slides, the TikZ diagrams and the Manim clips:
+   blue / orange / teal always mean the same thing across the whole system. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap");
+
+:root{
+  --navy:#1B2A4A; --blue:#2E5CA8; --orange:#E07A2C; --teal:#2A9D8F;
+  --gray:#D9DCE1; --muted:#6b7689; --bg:#FFFFFF; --soft:#F6F8FB;
+  --adelie:#E07A2C; --chinstrap:#8E5CC4; --gentoo:#2A9D8F;
+  --shadow:0 1px 2px rgba(27,42,74,.06), 0 10px 26px -14px rgba(27,42,74,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font:16px/1.45 Inter,"Helvetica Neue",Arial,sans-serif;
+  color:var(--navy); background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  -webkit-user-select:none; user-select:none; overflow:hidden;
+}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;
+  font-variant-ligatures:none; font-feature-settings:"liga" 0,"calt" 0}
+
+.wrap{display:flex; gap:22px; align-items:stretch; padding:12px 14px; width:100%; max-width:1180px}
+.plot{flex:1 1 auto; min-width:0; position:relative}
+.side{flex:0 0 280px; display:flex; flex-direction:column; gap:12px; justify-content:center}
+svg{display:block; width:100%; height:auto; touch-action:none}
+
+/* Panels and read-outs */
+.card{background:#fff; border:1px solid rgba(27,42,74,.09); border-radius:12px;
+  padding:12px 14px; box-shadow:var(--shadow)}
+.label{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.big{font-size:34px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums}
+.mid{font-size:22px; font-weight:700; font-variant-numeric:tabular-nums}
+.hint{font-size:13px; color:var(--muted); line-height:1.45}
+.row{display:flex; gap:10px; align-items:center}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.eq{font-family:"JetBrains Mono",monospace; font-size:15px; background:var(--soft);
+  border-left:4px solid var(--blue); border-radius:0 8px 8px 0; padding:8px 10px}
+
+/* Controls */
+button{
+  font:inherit; font-size:14px; font-weight:600; color:var(--navy); background:#fff;
+  border:1.5px solid var(--gray); border-radius:999px; padding:7px 14px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s, transform .1s;
+}
+button:hover{border-color:var(--blue); color:var(--blue)}
+button:active{transform:scale(.97)}
+button.primary{background:var(--teal); border-color:var(--teal); color:#fff}
+button.primary:hover{background:#23877b; color:#fff}
+button.on{background:var(--navy); border-color:var(--navy); color:#fff}
+
+.slider{display:flex; flex-direction:column; gap:4px}
+.slider .top{display:flex; justify-content:space-between; align-items:baseline; font-size:14px; font-weight:600}
+.slider .top b{font-variant-numeric:tabular-nums; color:var(--blue); font-size:16px}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:3px;
+  background:linear-gradient(90deg,var(--blue) var(--p,50%),var(--gray) var(--p,50%)); outline:none; cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:22px; height:22px; border-radius:50%;
+  background:#fff; border:3px solid var(--blue); box-shadow:0 2px 6px rgba(27,42,74,.3)}
+input[type=range]::-moz-range-thumb{width:18px; height:18px; border-radius:50%;
+  background:#fff; border:3px solid var(--blue); box-shadow:0 2px 6px rgba(27,42,74,.3)}
+
+/* Meters */
+.meter{height:9px; border-radius:5px; background:var(--gray); position:relative; overflow:hidden; margin-top:6px}
+.meter i{position:absolute; left:0; top:0; bottom:0; background:var(--teal); transition:width .25s ease, background .25s}
+
+/* SVG text */
+.axis{stroke:var(--navy); stroke-width:1.6}
+.gridline{stroke:rgba(27,42,74,.08); stroke-width:1}
+.tick{font-size:12px; fill:var(--muted); font-family:Inter,Arial,sans-serif}
+.axlabel{font-size:14px; fill:var(--navy); font-weight:600; font-family:Inter,Arial,sans-serif}
+
+/* Sorting game (drag chips into bins) */
+.game{display:flex; flex-direction:column; gap:14px; width:100%; max-width:1180px; padding:10px 14px}
+.tray{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; min-height:52px;
+  padding:10px; border-radius:12px; background:var(--soft); border:1.5px dashed rgba(27,42,74,.15)}
+.chip{padding:9px 15px; border-radius:10px; background:#fff; border:1.5px solid rgba(27,42,74,.14);
+  box-shadow:var(--shadow); cursor:grab; font-weight:600; font-size:15.5px; touch-action:none;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .2s, background .2s}
+.chip:hover{transform:translateY(-2px)}
+.chip.dragging{cursor:grabbing; position:fixed; z-index:50; transform:rotate(-2deg) scale(1.06);
+  box-shadow:0 18px 30px -12px rgba(27,42,74,.5); pointer-events:none}
+.chip.ok{border-color:var(--teal); background:rgba(42,157,143,.10)}
+.chip.bad{border-color:var(--orange); background:rgba(224,122,44,.12); animation:shake .4s}
+.chip.ok::after{content:" ✓"; color:var(--teal)}
+.chip.bad::after{content:" ✗"; color:var(--orange)}
+@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.bins{display:grid; gap:12px}
+.bin{border-radius:14px; border:2px solid var(--gray); background:#fff; padding:10px 12px; min-height:150px;
+  display:flex; flex-direction:column; gap:8px; transition:border-color .15s, background .15s, transform .15s}
+.bin.hot{border-color:var(--blue); background:rgba(46,92,168,.05); transform:scale(1.01)}
+.bin h4{margin:0; font-size:17px; display:flex; align-items:baseline; gap:8px}
+.bin h4 small{font-weight:500; color:var(--muted); font-size:13px}
+.bin .drop{display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start; flex:1}
+.status{display:flex; justify-content:space-between; align-items:center; gap:12px; min-height:34px}
+.why{font-size:14.5px; color:var(--navy); flex:1}
+.why b{color:var(--orange)}
+.score{font-weight:800; font-size:18px; font-variant-numeric:tabular-nums}

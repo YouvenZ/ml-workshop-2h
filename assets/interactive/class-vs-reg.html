@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classification or regression?</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .bin{min-height:190px}
+  .bin h4{font-size:19px}
+  .chip{font-size:15px}
+</style>
+</head>
+<body>
+<div id="game" data-done="The test is always the same: is the answer a <b style='color:var(--blue)'>category</b> from a fixed list, or a <b style='color:var(--teal)'>number</b> on a scale?"></div>
+<script src="widget.js"></script>
+<script>
+W.sortGame(document.getElementById('game'), {
+  intro: 'What does the model have to <b>predict</b>? Drag each task into its box.',
+  bins: [
+    { id: 'C', title: '🏷️ Classification', sub: 'the answer is a category', color: 'var(--blue)' },
+    { id: 'R', title: '📈 Regression',      sub: 'the answer is a number',   color: 'var(--teal)' },
+  ],
+  items: [
+    { label: '🐧 A penguin’s species, from its measurements', bin: 'C', why: 'Adelie, Chinstrap or Gentoo: one of three <b>categories</b>, so classification.' },
+    { label: '⚖️ A penguin’s body mass in grams',            bin: 'R', why: 'Grams are a <b>number</b> on a scale, so regression.' },
+    { label: '🚢 Did a Titanic passenger survive?',           bin: 'C', why: 'Yes or no: two categories, so classification (binary).' },
+    { label: '🌡️ Tomorrow’s temperature in Dubai',            bin: 'R', why: '34.5 °C is a number, so regression.' },
+    { label: '📧 Is this email spam?',                        bin: 'C', why: 'Spam or not spam: classification.' },
+    { label: '🏠 The price of an apartment',                 bin: 'R', why: 'A price is a number, so regression.' },
+    { label: '✍️ Which digit (0–9) is in this image?',        bin: 'C', why: 'The answer is a digit, but it is a <b>category</b>: guessing 8 for a 7 is not “closer” than guessing 1.' },
+    { label: '🚌 Minutes until the next bus',                 bin: 'R', why: 'Minutes are a number, and 9 is closer to 10 than 2 is: regression.' },
+    { label: '🩺 A tumour: benign or malignant?',             bin: 'C', why: 'Two categories, so classification, and the two kinds of mistake cost very different amounts.' },
+    { label: '🎓 A student’s final exam score (0–100)',       bin: 'R', why: 'A score on a scale, so regression.' },
+  ],
+});
+</script>
+</body>
+</html>

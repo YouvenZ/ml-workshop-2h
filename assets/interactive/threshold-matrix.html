@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threshold and the confusion matrix</title>
+<link rel="stylesheet" href="widget.css">
+<style>
+  .d{stroke:#fff; stroke-width:1; transition:opacity .2s}
+  .thr{stroke:var(--navy); stroke-width:3}
+  .grip{fill:var(--navy); cursor:ew-resize}
+  .zl{font:700 13px Inter,Arial,sans-serif}
+  .cm{display:grid; grid-template-columns:auto 1fr 1fr; gap:6px; font-size:13px; align-items:stretch}
+  .cm .h{color:var(--muted); font-weight:700; text-align:center; align-self:end; font-size:12px; letter-spacing:.04em}
+  .cm .rh{color:var(--muted); font-weight:700; writing-mode:horizontal-tb; align-self:center; text-align:right; font-size:12px; padding-right:4px}
+  .cell{border-radius:10px; padding:8px 6px; text-align:center; transition:background .2s}
+  .cell b{display:block; font-size:28px; font-variant-numeric:tabular-nums; line-height:1.1}
+  .cell span{font-size:11.5px; font-weight:600; letter-spacing:.03em}
+  .ok{background:rgba(42,157,143,.14); color:#1f7a70}
+  .bad{background:rgba(224,122,44,.14); color:#b85d17}
+  .metrics{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+  .metrics .card{padding:8px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="plot" style="display:flex; flex-direction:column; gap:10px">
+    <svg id="svg" viewBox="0 0 720 360" role="img" aria-label="Model probabilities with a draggable threshold"></svg>
+    <div class="card slider" style="padding:8px 14px">
+      <div class="top">threshold: predict “survived” when p ≥ <b id="tv">0.50</b></div>
+      <input type="range" id="t" min="0.02" max="0.98" step="0.01" value="0.5">
+    </div>
+  </div>
+  <div class="side" style="flex-basis:320px">
+    <div class="card">
+      <div class="label" style="margin-bottom:8px">confusion matrix · 179 unseen passengers</div>
+      <div class="cm">
+        <div></div><div class="h">said: died</div><div class="h">said: survived</div>
+        <div class="rh">really<br>died</div><div class="cell ok" id="tn"></div><div class="cell bad" id="fp"></div>
+        <div class="rh">really<br>survived</div><div class="cell bad" id="fn"></div><div class="cell ok" id="tp"></div>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="card"><div class="label">accuracy</div><div class="mid" id="acc"></div></div>
+      <div class="card"><div class="label">recall</div><div class="mid" id="rec"></div></div>
+      <div class="card"><div class="label">precision</div><div class="mid" id="pre"></div></div>
+    </div>
+    <p class="hint">Real Titanic passengers, scored by a real logistic regression. Lowering the threshold catches more survivors (recall ↑) but raises more false alarms (precision ↓). <b>You choose the trade-off.</b></p>
+  </div>
+</div>
+<script src="data/titanic-probs.js"></script>
+<script src="widget.js"></script>
+<script>
+const svg = document.getElementById('svg');
+const M = { l: 30, r: 700, t: 30, b: 320 };
+const X = W.lin(0, 1, M.l, M.r);
+const rows = { 0: 120, 1: 240 };
+const rnd = W.rng(3);
+
+W.svg('rect', { x: M.l, y: M.t, width: M.r - M.l, height: M.b - M.t, fill: 'var(--soft)', rx: 12 }, svg);
+const zR = W.svg('rect', { y: M.t, height: M.b - M.t, fill: 'rgba(42,157,143,.10)' }, svg);
+W.svg('text', { x: M.l + 12, y: rows[0] - 40, class: 'zl', fill: 'var(--muted)' }, svg).textContent = 'REALLY DIED';
+W.svg('text', { x: M.l + 12, y: rows[1] - 40, class: 'zl', fill: 'var(--teal)' }, svg).textContent = 'REALLY SURVIVED';
+for (let v = 0; v <= 1.0001; v += 0.25)
+  W.svg('text', { x: X(v), y: M.b + 22, 'text-anchor': 'middle', class: 'tick' }, svg).textContent = v.toFixed(2);
+W.svg('text', { x: (M.l + M.r) / 2, y: 18, 'text-anchor': 'middle', class: 'axlabel' }, svg).textContent = 'model’s probability that the passenger survived  →';
+
+// Beeswarm-ish jitter so 179 dots stay readable.
+const dots = TITANIC_PROBS.map(([p, y]) => {
+  const c = W.svg('circle', { cx: X(p), cy: rows[y] + (rnd() - 0.5) * 70, r: 6, class: 'd', fill: y ? 'var(--teal)' : '#8b94a6' }, svg);
+  return { p, y, c };
+});
+const line = W.svg('line', { y1: M.t - 6, y2: M.b + 6, class: 'thr' }, svg);
+const grip = W.svg('rect', { y: M.b - 4, width: 22, height: 26, rx: 6, class: 'grip' }, svg);
+const lab = W.svg('text', { y: M.t + 16, class: 'zl', fill: 'var(--teal)' }, svg);
+
+let t = 0.5;
+function render() {
+  line.setAttribute('x1', X(t)); line.setAttribute('x2', X(t));
+  grip.setAttribute('x', X(t) - 11);
+  zR.setAttribute('x', X(t)); zR.setAttribute('width', M.r - X(t));
+  lab.setAttribute('x', X(t) + 10); lab.textContent = 'predicted: survived →';
+  let tp = 0, fp = 0, tn = 0, fn = 0;
+  dots.forEach((d) => {
+    const yes = d.p >= t;
+    if (yes && d.y) tp++; else if (yes) fp++; else if (d.y) fn++; else tn++;
+    d.c.setAttribute('stroke', yes !== !!d.y ? 'var(--orange)' : '#fff');
+    d.c.setAttribute('stroke-width', yes !== !!d.y ? 2.5 : 1);
+  });
+  const set = (id, n, txt) => (document.getElementById(id).innerHTML = `<b>${n}</b><span>${txt}</span>`);
+  set('tn', tn, 'correct'); set('tp', tp, 'correct');
+  set('fp', fp, 'false alarm'); set('fn', fn, 'missed');
+  const pct = (v) => (isFinite(v) ? (v * 100).toFixed(0) + '%' : '—');
+  document.getElementById('acc').textContent = pct((tp + tn) / dots.length);
+  document.getElementById('rec').textContent = pct(tp / (tp + fn));
+  document.getElementById('pre').textContent = pct(tp / (tp + fp));
+  document.getElementById('tv').textContent = t.toFixed(2);
+}
+const tIn = document.getElementById('t');
+W.bindRange(tIn, (v) => { t = v; render(); });
+let drag = false;
+[grip, line].forEach((g) => g.addEventListener('pointerdown', (e) => { drag = true; svg.setPointerCapture(e.pointerId); }));
+svg.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  t = Math.round(W.clamp(X.inv(W.local(svg, e).x), 0.02, 0.98) * 100) / 100;
+  tIn.value = t; tIn.dispatchEvent(new Event('input'));
+});
+['pointerup', 'pointercancel'].forEach((ev) => svg.addEventListener(ev, () => (drag = false)));
+render();
+</script>
+</body>
+</html>

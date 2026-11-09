@@ -12,6 +12,7 @@ project:
     - assets/rendered/**
     - slides/katex/**
     - assets/interactive/**
+    - assets/logos/**
     - notebooks/**
     - data/**
 
