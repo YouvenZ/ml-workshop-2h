@@ -16,7 +16,6 @@ clicker forwarding to the deck) in `widget.js`. `data/*.js` is generated from
 | `features-labels.html` | drag columns into X / y / not used; leakage warning; question toggle | Part 3, features and label |
 | `split-playground.html` | test_size slider, re-roll random_state, stratify toggle | Part 3, the split |
 | `overfit-slider.html` | complexity slider, train vs new error U-curve | Part 3, overfitting |
-| `correlation-playground.html` | drag points, watch *r* | Part 3, before linear regression |
 | `linreg-playground.html` | drag the line, residuals, MAE, R², animated least-squares fit | Part 3, linear regression |
 | `sigmoid-playground.html` | steepness and boundary sliders, probability probe, animated fit | Part 3, logistic regression |
 | `threshold-matrix.html` | drag the threshold, live 2×2 confusion matrix on real Titanic predictions | Part 3, evaluation |

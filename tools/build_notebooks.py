@@ -787,14 +787,6 @@ plt.show()
 > the whole of Part 3, and you have just seen it with your own eyes.
 """))
 
-    c.append(L(sol, "correlation heatmap", "sns.heatmap(df.corr(numeric_only=True), annot=True)", """
-sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
-plt.title('How the numeric columns move together')
-plt.show()
-
-# numeric_only=True is required: corr() cannot average the word 'Adelie'.
-"""))
-
     # --- Practice ---------------------------------------------------------
     c.append(md("""
 ---
@@ -824,7 +816,7 @@ df['island'].value_counts()
 
     c.append(md("**3.** Do flipper length and body mass move together? Show it."))
     c.append(EX(sol, """
-# hint: a scatter plot, plus df[['flipper_length_mm','body_mass_g']].corr()
+# hint: a scatter plot
 
 """, """
 sns.scatterplot(data=df, x='flipper_length_mm', y='body_mass_g', hue='species')
@@ -832,9 +824,8 @@ plt.xlabel('flipper length (mm)')
 plt.ylabel('body mass (g)')
 plt.title('Flipper length vs body mass')
 plt.show()
-
-df[['flipper_length_mm', 'body_mass_g']].corr()
-# r = 0.87. Strong. But see the checkpoint below before you call it a law.
+# Yes: longer flippers go with heavier penguins. But see the checkpoint
+# below before you call it a law.
 """))
 
     c.append(md("""
@@ -857,7 +848,7 @@ plt.show()
     c.append(md("""
 ### Checkpoint
 
-> Flipper length and body mass are strongly correlated (r = 0.87).
+> Penguins with longer flippers are heavier.
 > Does having longer flippers **cause** a penguin to weigh more?
 
 ---
@@ -993,16 +984,8 @@ score** pattern is identical for both; only the model and the score change.
 
 **Question:** can we predict a penguin's **body mass** from its **flipper length**?
 
-First, check that the two columns move together. The **correlation** `r`
-runs from −1 (perfect falling line) through 0 (no straight-line
-relationship) to +1 (perfect rising line).
-"""))
-    c.append(code("""
-df['flipper_length_mm'].corr(df['body_mass_g'])    # about 0.87: strong
-"""))
-    c.append(md("""
-A strong `r` says a straight line is worth drawing. Linear regression draws
-the **best** one:
+In the scatter plot from NB1 the cloud rises: longer flippers, heavier
+penguins. Linear regression draws the **best** straight line through it:
 
 $$\\hat{y} = w\\,x + b$$
 
@@ -1504,7 +1487,7 @@ for cols in (['Pclass', 'Sex_num', 'Age', 'SibSp'],
     print(f"{len(cols)} features: {accuracy_score(ya_te, m.predict(Xa_te)):.4f}")
 
 # Usually barely moves. Fare carries much the same information as Pclass —
-# a correlated feature is not a new feature. "More columns" is not a strategy.
+# a feature that repeats another is not a new feature. "More columns" is not a strategy.
 """))
 
     c.append(md("""

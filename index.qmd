@@ -36,7 +36,6 @@ animations, and interactive widgets you can drag and slide.
   [mask filter](assets/interactive/mask-filter.html) ·
   [classification or regression?](assets/interactive/class-vs-reg.html) ·
   [overfitting](assets/interactive/overfit-slider.html) ·
-  [correlation](assets/interactive/correlation-playground.html) ·
   [fit a line](assets/interactive/linreg-playground.html) ·
   [sigmoid](assets/interactive/sigmoid-playground.html) ·
   [threshold & confusion matrix](assets/interactive/threshold-matrix.html) ·

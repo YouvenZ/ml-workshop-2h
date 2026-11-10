@@ -7,7 +7,7 @@
 | Student code | **Google Colab** — every line students type runs there |
 | Animations | **Manim CE** → 11 MP4 clips, played once per visit by `slides/video-once.html` |
 | Diagrams | **TikZ** → SVG (slides) and PNG (embedded in the notebooks) |
-| Interactive | `assets/interactive/correlation-playground.html` (plain JS, no deps) |
+| Interactive | `assets/interactive/*.html` (plain JS, no deps) |
 | Exercise timers | `quarto-countdown` extension, committed under `slides/_extensions/` |
 | Equations | KaTeX, self-hosted in `slides/katex/` (no CDN on lecture-hall wifi) |
 | Hosting | **GitHub Pages**, deployed by `.github/workflows/publish.yml` |

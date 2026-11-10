@@ -25,7 +25,6 @@
 |---|---|---|
 | Slides | 114, one idea per slide | 56, one *step* per slide |
 | Animated clips (Manim) | 11 | **all 11 kept** — each replaces the explanation slides around it |
-| Correlation playground | during the break | during the break (slide 26) |
 | In-slide live Python (Pyodide) | 3 cells | **3 cells**: change a value (7), vectorise & mask (14), **new:** pick your own K on real penguins (49) |
 | Exercise 1 | 6 min | 5 min |
 | Independent practice | 20 min, 4 questions | 8 min, questions 1–3 (Q4 is homework) |
@@ -131,8 +130,6 @@ load a CSV and filter rows.
 | 0:38 | Charts: label them | Histogram, then the plain scatter. |
 | 0:40 | **The hinge** | Add `hue='species'`. Say: *"those groups are what a classifier learns to draw a line between."* **Never cut.** |
 | 0:43 | **Practice** (8 min) | Questions 1–3, pairs. Q4 is homework. |
-| 0:51 | Correlation playground | Two students drag points; hit the *curved* preset. |
-| 0:53 | Checkpoint | Correlation is not causation — 60 seconds. |
 
 ## Break · 0:55 – 1:00
 
@@ -225,7 +222,7 @@ All 22 assets of the four-hour set are in the repo:
   | 21 KNN distance | What does "nearest" mean for KNN? | Scale your features (25 vs 250 000; 0.82 → 0.99). | 26 s |
 - **9 TikZ diagrams** on the slides (01, 04, 06, 09, 11, 12, 15, 18, 19) plus 02
   and 07 in the notebooks only. The pipeline diagram (19) is labelled Part 1–4.
-- **1 interactive**: the correlation playground.
+- **14 interactive widgets** in `assets/interactive/` (see its README).
 
 ---
 

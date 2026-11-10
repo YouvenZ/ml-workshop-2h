@@ -41,7 +41,7 @@ Everything here has bitten a live session somewhere.
 - [ ] Slides open, presenter view working (**S** key).
 - [ ] **NB-SOLUTIONS open in a second tab**, already run top to bottom.
 - [ ] NB1 and NB2 open in two more tabs, cell 1 already run.
-- [ ] Click through one clip slide and the correlation playground **on the
+- [ ] Click through one clip slide and one interactive widget **on the
       deployed site**, on the projector laptop.
 - [ ] **Warm the live Python cells.** Open slide 7 on the deployed site and
       wait for *Run Code* to turn green — the first load downloads Python into

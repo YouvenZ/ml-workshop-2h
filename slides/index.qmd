@@ -697,8 +697,7 @@ Those groups are what a classifier learns to draw a line between.
 ::: {.notes}
 The one sentence you must not skip. Say it slowly. Also point at the left
 chart: the cloud slopes upward — longer flippers, heavier penguins. Part 3
-puts a number on that slope (correlation) and then draws the line (linear
-regression).
+draws the best straight line through it (linear regression).
 :::
 
 ---
@@ -713,8 +712,8 @@ regression).
 
 ::: {.notes}
 Question 4 (the open chart) is homework. Question 3 is the setup for Part 3:
-whatever they draw, they will put a number on it (r) and a line through it
-(linear regression) after the break.
+whatever they draw, they will put a line through it (linear regression)
+after the break.
 :::
 
 ---
@@ -949,63 +948,6 @@ The test set is the only column that counts.
 
 ::: {.part-goal}
 <span>REGRESSION</span> predict a penguin's body mass (a number) from its flipper length
-:::
-
----
-
-## First: do the two columns move together? {.smaller}
-
-::: {.columns}
-::: {.column width="52%"}
-In the practice you plotted flipper length against body mass: the cloud goes **up and to the right**.
-
-**Correlation** `r` puts one number on that:
-
-- `r = +1`: a perfect rising straight line
-- `r = 0`: no straight-line relationship
-- `r = −1`: a perfect falling straight line
-:::
-::: {.column width="48%"}
-```python
-df['flipper_length_mm'].corr(
-    df['body_mass_g'])
-# 0.87
-```
-:::
-:::
-
-::: {.keypoint}
-A strong `r` says a straight line is worth drawing. Linear regression is how we draw it.
-:::
-
-::: {.notes}
-This is why correlation is here, not in Part 2: it is the question you ask
-before fitting a line. 0.87 is strong. Next slide: they feel what r measures,
-and what it misses.
-:::
-
----
-
-## What r measures, and what it misses {.widget-slide}
-
-<iframe class="widget" src="../assets/interactive/correlation-playground.html" height="480"></iframe>
-
-::: {.notes}
-Let two students drag points. The dashed orange line is already a linear
-regression — say so: "that line is what we fit next." Then hit "curved": an
-unmistakable pattern that r scores at zero. r only measures straight lines.
-:::
-
----
-
-## Checkpoint {.center}
-
-Flipper length and body mass: **r = 0.87**.
-
-Do longer flippers *cause* more mass?
-
-::: {.fragment .keypoint}
-No. Both are driven by species and overall size. A line can **predict** without explaining **why**.
 :::
 
 ---
