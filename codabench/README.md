@@ -1,5 +1,7 @@
 # Codabench mini competition: Titanic · Who Survives?
 
+**Live:** <https://www.codabench.org/competitions/18588/>
+
 ![banner](assets/banner.png)
 
 The closing challenge of the workshop: students train a model on 712 Titanic
@@ -16,7 +18,7 @@ leaderboard.
 4. Test it yourself: upload **`dist/example_submission.zip`** under *My
    Submissions*. It should score **0.7765** and show the detailed report
    (preview: [`dist/example_detailed_results.html`](dist/example_detailed_results.html)).
-5. Put the competition URL on the *mini competition* slide and in the chat.
+5. The live URL is on the *Join the leaderboard* slide (with a QR code) and in NB2.
 
 ## What's inside
 

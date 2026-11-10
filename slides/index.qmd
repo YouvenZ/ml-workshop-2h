@@ -115,6 +115,31 @@ Each library gets its own "why" slide when it first appears.
 
 ---
 
+## Sign in before we start {.qrslide}
+
+::: {.columns}
+::: {.column width="42%"}
+![](../assets/qr/attendance.svg){.qr}
+:::
+::: {.column width="58%"}
+::: {.qr-kicker}
+📋 ATTENDANCE · 1 MINUTE
+:::
+
+Scan the code with your phone camera to **register your attendance** and answer a few short questions.
+
+[forms.cloud.microsoft/r/F3yEeQD3hd](https://forms.cloud.microsoft/r/F3yEeQD3hd){.qr-link}
+
+You'll scan the same code again at the end of the session.
+:::
+:::
+
+::: {.notes}
+Leave this on screen while people settle in and open NB1. Give it a minute; latecomers can scan it again on the last slide.
+:::
+
+---
+
 ## Before anything else {.center background-color="#2A9D8F" background-gradient="linear-gradient(135deg, #2A9D8F 0%, #1F7A70 100%)"}
 
 Open **NB1**. Click **Copy to Drive**. Run cell 1.
@@ -1523,7 +1548,7 @@ the baseline. Then: the competition.
 
 ::: {.columns}
 ::: {.column width="56%"}
-**Titanic · Who Survives?** on **Codabench**, with a live leaderboard.
+**Titanic · Who Survives?** on **[Codabench](https://www.codabench.org/competitions/18588/)**, with a live leaderboard.
 
 1. Download `train.csv` (712 passengers, with the answer) and `test.csv` (179, without it)
 2. Train any model you like on `train.csv`
@@ -1551,10 +1576,35 @@ The leaderboard scores you on passengers you have never seen: the test set, for 
 :::
 
 ::: {.notes}
-Put the Codabench link on the board / in the chat. The starting kit has a
+Link: https://www.codabench.org/competitions/18588/ (QR on the next slide; paste it in the chat too). The starting kit has a
 baseline notebook that produces a valid submission in one run. Scores: accuracy
 ranks, balanced accuracy and F1 shown too. The competition stays open for a
 week after the workshop.
+:::
+
+---
+
+## Join the leaderboard {.qrslide}
+
+::: {.columns}
+::: {.column width="42%"}
+![](../assets/qr/competition.svg){.qr}
+:::
+::: {.column width="58%"}
+::: {.qr-kicker}
+🏆 TITANIC · WHO SURVIVES?
+:::
+
+Scan to open the competition on **Codabench**, sign in, register, and download the data and the starting kit.
+
+[www.codabench.org/competitions/18588/](https://www.codabench.org/competitions/18588/){.qr-link}
+
+Open until **Thursday 19/11/2026, midnight (Dubai)**. Up to 10 submissions a day; your best one counts.
+:::
+:::
+
+::: {.notes}
+Leave this up while pairs register. The starting kit's baseline.py makes a valid submission.zip in one run, so everyone can get on the board in the first minutes.
 :::
 
 ---
@@ -1599,7 +1649,7 @@ in the browser, certificate
 ::: {.column width="33%"}
 ### 🧪 Practise
 
-**The workshop competition on Codabench**
+**[The workshop competition on Codabench](https://www.codabench.org/competitions/18588/)**
 climb the leaderboard this week
 
 **[Titanic on Kaggle](https://www.kaggle.com/competitions/titanic)**
@@ -1627,6 +1677,31 @@ Your homework, if you want one: beat "only women survived" on the leaderboard.
 Three, not thirty. Then ask explicitly: "name one thing you want to learn
 next." Getting that said out loud is one of the success criteria. Release
 NB-SOLUTIONS now.
+:::
+
+---
+
+## Before you leave {.qrslide}
+
+::: {.columns}
+::: {.column width="42%"}
+![](../assets/qr/attendance.svg){.qr}
+:::
+::: {.column width="58%"}
+::: {.qr-kicker}
+📋 ONE LAST MINUTE
+:::
+
+Scan again and **answer the short questions** in the form before you go.
+
+[forms.cloud.microsoft/r/F3yEeQD3hd](https://forms.cloud.microsoft/r/F3yEeQD3hd){.qr-link}
+
+Not signed in yet? The same form registers your attendance.
+:::
+:::
+
+::: {.notes}
+Ask everyone to fill it in before they stand up. The answers shape the next edition of the workshop.
 :::
 
 ---

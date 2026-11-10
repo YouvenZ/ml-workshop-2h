@@ -13,6 +13,7 @@ project:
     - slides/katex/**
     - assets/interactive/**
     - assets/logos/**
+    - assets/qr/**
     - notebooks/**
     - data/**
 

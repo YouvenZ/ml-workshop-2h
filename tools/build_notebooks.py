@@ -1494,7 +1494,7 @@ for cols in (['Pclass', 'Sex_num', 'Age', 'SibSp'],
 ---
 ## Step 6 — enter the mini competition 🏆
 
-The competition on **Codabench** uses its own split: 712 passengers with
+The competition on **[Codabench](https://www.codabench.org/competitions/18588/)** uses its own split: 712 passengers with
 the answer (`train.csv`) and 179 without it (`test.csv`). Your job: predict
 `Survived` for the 179, save `predictions.csv`, zip it and upload the zip.
 The leaderboard scores you on passengers you have never seen.

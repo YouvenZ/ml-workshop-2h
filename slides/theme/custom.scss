@@ -422,3 +422,20 @@ body:has(#title-slide.present) .footer { display: none !important; }
 .reveal .slides section:not(.smaller) table { font-size: 0.85em; }
 .reveal .exercise-cell .cm-editor { font-size: 0.8em !important; }
 .reveal .exercise-cell .exercise-cell-output, .reveal .exercise-cell pre { font-size: 0.8em; }
+
+// QR slides: attendance form and competition link
+.reveal .slides section.qrslide .columns { align-items: center; }
+.reveal .slides section.qrslide img.qr {
+  width: 100%; max-width: 380px; max-height: 380px; display: block; margin: 0 auto;
+  padding: 18px; background: #fff; border-radius: 22px;
+  box-shadow: 0 0 0 1px rgba($navy, 0.08), 0 22px 44px -22px rgba($navy, 0.45);
+}
+.reveal .slides section.qrslide .qr-kicker {
+  color: $orange; font-weight: 800; letter-spacing: 0.16em; font-size: 0.55em; margin-bottom: 0.3em;
+}
+.reveal .slides section.qrslide p { font-size: 0.85em; line-height: 1.4; }
+.reveal .slides section.qrslide a.qr-link {
+  display: inline-block; font-family: $font-family-monospace; font-size: 0.62em; font-weight: 600;
+  background: rgba($blue, 0.08); border: 1px solid rgba($blue, 0.25); border-radius: 10px;
+  padding: 0.35em 0.7em; text-decoration: none; word-break: break-all;
+}
