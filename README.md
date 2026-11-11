@@ -38,7 +38,7 @@ regression, KNN), and a closing **Codabench mini competition**. See [what change
 ```
 ├── index.qmd               landing page for the published site
 ├── _quarto.yml             project config (root, so ../assets/ resolves)
-├── slides/index.qmd        the deck: 84 slides, 12 clips, 14 interactive widgets, 4 live Python cells
+├── slides/index.qmd        the deck: 85 slides, 12 clips, 14 interactive widgets, 4 live Python cells
 ├── slides/katex/           self-hosted KaTeX, so equations never need a CDN
 ├── notebooks/*.ipynb       BUILD OUTPUT — edit tools/build_notebooks.py
 ├── assets/

@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""
+Dummy submissions for testing the live Codabench competition.
+
+    python codabench/make_test_submissions.py
+
+Writes codabench/dist/test_submissions/*.zip: valid ones that should land on
+the leaderboard with a known score, and broken ones that should FAIL with a
+clear message in the submission log. Each is first run through the local
+scorer, so the expected outcome printed here is what Codabench should show.
+"""
+
+import json
+import pathlib
+import shutil
+import subprocess
+import sys
+import tempfile
+import zipfile
+
+import numpy as np
+import pandas as pd
+
+HERE = pathlib.Path(__file__).resolve().parent
+B = HERE / "bundle"
+OUT = HERE / "dist" / "test_submissions"
+shutil.rmtree(OUT, ignore_errors=True)
+OUT.mkdir(parents=True)
+
+test = pd.read_csv(B / "input_data" / "test.csv")
+train = pd.read_csv(B / "input_data" / "train.csv")
+ids = test["PassengerId"]
+rng = np.random.default_rng(0)
+
+
+def women(df):
+    return (df["Sex"] == "female").astype(int)
+
+
+def baseline_model():
+    from sklearn.linear_model import LogisticRegression
+
+    def prep(df, med):
+        return pd.DataFrame({"Pclass": df["Pclass"], "f": women(df), "Age": df["Age"].fillna(med),
+                             "Fare": df["Fare"].fillna(0), "fam": df["SibSp"] + df["Parch"]})
+    med = train["Age"].median()
+    m = LogisticRegression(max_iter=1000).fit(prep(train, med), train["Survived"])
+    return m.predict(prep(test, med))
+
+
+def better_model():
+    """Title from the name + class + family: a stronger, still simple model."""
+    from sklearn.ensemble import RandomForestClassifier
+
+    def prep(df):
+        title = df["Name"].str.extract(r",\s*([^\.]+)\.")[0]
+        title = title.where(title.isin(["Mr", "Mrs", "Miss", "Master"]), "Other")
+        X = pd.get_dummies(title, prefix="t").astype(int)
+        X["Pclass"] = df["Pclass"]
+        X["female"] = women(df)
+        X["fam"] = df["SibSp"] + df["Parch"]
+        return X
+    Xtr, Xte = prep(train), prep(test)
+    Xte = Xte.reindex(columns=Xtr.columns, fill_value=0)
+    m = RandomForestClassifier(n_estimators=300, max_depth=5, random_state=0).fit(Xtr, train["Survived"])
+    return m.predict(Xte)
+
+
+CASES = [
+    # name, dataframe or raw text, expected
+    ("01_valid_all_zeros", pd.DataFrame({"PassengerId": ids, "Survived": 0}), "OK"),
+    ("02_valid_random", pd.DataFrame({"PassengerId": ids, "Survived": rng.integers(0, 2, len(ids))}), "OK"),
+    ("03_valid_women_only", pd.DataFrame({"PassengerId": ids, "Survived": women(test)}), "OK"),
+    ("04_valid_baseline_model", pd.DataFrame({"PassengerId": ids, "Survived": baseline_model()}), "OK"),
+    ("05_valid_title_random_forest", pd.DataFrame({"PassengerId": ids, "Survived": better_model()}), "OK"),
+    ("06_valid_semicolon_and_true_false",
+     "PassengerId;Survived\n" + "\n".join(f"{i};{'True' if s else 'False'}" for i, s in zip(ids, women(test))) + "\n", "OK"),
+    ("07_FAIL_probabilities", pd.DataFrame({"PassengerId": ids, "Survived": rng.random(len(ids)).round(3)}), "FAIL"),
+    ("08_FAIL_missing_rows", pd.DataFrame({"PassengerId": ids[:150], "Survived": 0}), "FAIL"),
+    ("09_FAIL_wrong_columns", pd.DataFrame({"id": ids, "prediction": 0}), "FAIL"),
+    ("10_FAIL_duplicate_ids", pd.concat([pd.DataFrame({"PassengerId": ids, "Survived": 0}),
+                                         pd.DataFrame({"PassengerId": ids[:3], "Survived": 1})]), "FAIL"),
+    ("11_FAIL_no_csv_in_zip", None, "FAIL"),
+]
+
+
+def run_scorer(sub_dir):
+    with tempfile.TemporaryDirectory() as t:
+        t = pathlib.Path(t)
+        shutil.copytree(sub_dir, t / "in" / "res")
+        shutil.copytree(B / "reference_data", t / "in" / "ref")
+        r = subprocess.run([sys.executable, str(B / "scoring_program" / "score.py"), str(t / "in"), str(t / "out")],
+                           capture_output=True, text=True)
+        if r.returncode:
+            return "FAIL", r.stderr.strip().splitlines()[-1]
+        s = json.loads((t / "out" / "scores.json").read_text())
+        return "OK", f"accuracy {s['accuracy']:.4f} · balanced {s['balanced_accuracy']:.4f} · F1 {s['f1']:.4f}"
+
+
+rows, ok_all = [], True
+for name, data, expected in CASES:
+    with tempfile.TemporaryDirectory() as t:
+        t = pathlib.Path(t)
+        if data is None:
+            (t / "README.txt").write_text("I forgot to put my predictions in the zip.\n")
+        elif isinstance(data, str):
+            (t / "predictions.csv").write_text(data)
+        else:
+            data.to_csv(t / "predictions.csv", index=False)
+        with zipfile.ZipFile(OUT / f"{name}.zip", "w") as z:
+            for f in t.iterdir():
+                z.write(f, f.name)
+        got, detail = run_scorer(t)
+    mark = "✓" if got == expected else "✗ UNEXPECTED"
+    ok_all &= got == expected
+    rows.append((name, expected, detail))
+    print(f"{mark} {name:<36} {got:<4} {detail}")
+
+lines = ["# Test submissions", "",
+         "Upload these under **My Submissions** on the competition to check it end to end.",
+         "Generated by `codabench/make_test_submissions.py`; the expected result is what the",
+         "local scorer produced.", "",
+         "| file | should | Codabench should show |", "|---|---|---|"]
+lines += [f"| `{n}.zip` | {'score' if e == 'OK' else '**fail**'} | {d} |" for n, e, d in rows]
+lines += ["", "Failed submissions do not reach the leaderboard; the message is in the submission's",
+          "*scoring* log (click the submission, then *Logs*)."]
+(OUT / "README.md").write_text("\n".join(lines) + "\n")
+sys.exit(0 if ok_all else 1)

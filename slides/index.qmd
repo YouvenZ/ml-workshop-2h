@@ -1535,6 +1535,7 @@ model line and the score change.
 3. Make `Sex` numeric *(hint cell provided)*
 4. **Split, fit, predict, score**
 5. *Stretch:* does `Fare` help?
+6. **Submit to the leaderboard** *(last step in NB2)*
 
 ::: {.notes}
 Step 4 is the real assessment. At the end, ask: what does always guessing
@@ -1550,24 +1551,17 @@ the baseline. Then: the competition.
 ::: {.column width="56%"}
 **Titanic · Who Survives?** on **[Codabench](https://www.codabench.org/competitions/18588/)**, with a live leaderboard.
 
-1. Download `train.csv` (712 passengers, with the answer) and `test.csv` (179, without it)
-2. Train any model you like on `train.csv`
-3. Predict `Survived` (0 or 1) for every passenger in `test.csv`
-4. Save `predictions.csv`, zip it, **upload**
-5. Watch your rank appear
+- `train.csv`: **712** passengers, with the answer (`Survived`)
+- `test.csv`: **179** passengers, without it: you predict these
+- any model, any features: the Titanic challenge from NB2 is a good start
+- the **starting kit** makes a valid submission in one run
 :::
 ::: {.column width="44%"}
-```python
-sub = pd.DataFrame({
-    'PassengerId': test['PassengerId'],
-    'Survived': model.predict(X_test)})
-sub.to_csv('predictions.csv', index=False)
-```
-
 | to beat | accuracy |
 |---|---|
 | "nobody survived" | 0.615 |
 | "only women survived" | 0.782 |
+| starting-kit model | 0.777 |
 :::
 :::
 
@@ -1576,10 +1570,10 @@ The leaderboard scores you on passengers you have never seen: the test set, for 
 :::
 
 ::: {.notes}
-Link: https://www.codabench.org/competitions/18588/ (QR on the next slide; paste it in the chat too). The starting kit has a
-baseline notebook that produces a valid submission in one run. Scores: accuracy
-ranks, balanced accuracy and F1 shown too. The competition stays open for a
-week after the workshop.
+Link: https://www.codabench.org/competitions/18588/ (QR on the next slide; paste it in the chat too). The starting-kit
+logistic regression (0.777) loses to the one-line "only women survived" rule
+(0.782): features matter more than the algorithm. Adding the title from the
+Name column (Mr, Mrs, Miss, Master) gets a simple model past 0.83.
 :::
 
 ---
@@ -1605,6 +1599,61 @@ Open until **Thursday 19/11/2026, midnight (Dubai)**. Up to 10 submissions a day
 
 ::: {.notes}
 Leave this up while pairs register. The starting kit's baseline.py makes a valid submission.zip in one run, so everyone can get on the board in the first minutes.
+:::
+
+---
+
+## How to submit {.smaller .submit-slide}
+
+<div class="subflow">
+<div class="step"><div class="sh"><span>1</span><b>Predict</b></div>one 0 or 1 for each of the 179 passengers in <code>test.csv</code></div>
+<div class="arrow">→</div>
+<div class="step"><div class="sh"><span>2</span><b>Save</b></div><code>predictions.csv</code> with exactly two columns</div>
+<div class="arrow">→</div>
+<div class="step"><div class="sh"><span>3</span><b>Zip</b></div>put that one file in <code>submission.zip</code></div>
+<div class="arrow">→</div>
+<div class="step"><div class="sh"><span>4</span><b>Upload</b></div><em>My Submissions</em> → choose the zip → <em>Submit</em></div>
+<div class="arrow">→</div>
+<div class="step done"><div class="sh"><span>✓</span><b>Score</b></div>about a minute later: your rank and a detailed report</div>
+</div>
+
+::: {.columns}
+::: {.column width="50%"}
+```python
+sub = pd.DataFrame({
+    'PassengerId': test['PassengerId'],
+    'Survived':    model.predict(X_test)})
+sub.to_csv('predictions.csv', index=False)
+
+import zipfile
+with zipfile.ZipFile('submission.zip', 'w') as z:
+    z.write('predictions.csv')
+```
+:::
+::: {.column width="22%"}
+<div class="csvfile"><div class="fname">predictions.csv</div><pre>PassengerId,Survived
+6,0
+20,1
+30,0
+⋮
+<i>179 rows</i></pre></div>
+:::
+::: {.column width="28%"}
+<div class="fails"><div class="ftitle">Failed? Read the log</div>
+<p>✗ <code>0.73</code> instead of <code>1</code> → use <code>predict</code>, not <code>predict_proba</code></p>
+<p>✗ missing passengers → predict <b>every</b> row of <code>test.csv</code></p>
+<p>✗ wrong headers → <code>PassengerId,Survived</code></p>
+<p>✗ uploaded the CSV → upload the <b>zip</b></p>
+</div>
+:::
+:::
+
+::: {.notes}
+Walk the five steps left to right, then point at the CSV: two columns, a
+header row, one row per test passenger, 0/1 only, no index column (that is
+what index=False is for). The four failures on the right are the ones the
+scorer catches, each with a message in the submission's log. In Colab:
+Files panel → right-click submission.zip → Download, then upload it.
 :::
 
 ---

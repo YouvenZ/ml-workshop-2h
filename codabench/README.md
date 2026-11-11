@@ -20,6 +20,17 @@ leaderboard.
    (preview: [`dist/example_detailed_results.html`](dist/example_detailed_results.html)).
 5. The live URL is on the *Join the leaderboard* slide (with a QR code) and in NB2.
 
+## Test the live competition
+
+`dist/test_submissions/` holds 11 dummy submissions, each run through the
+local scorer first: 6 that should score (all zeros 0.6145, random 0.4972,
+women only 0.7821, the starting-kit model 0.7765, a title + random forest
+model 0.8324, a semicolon / True-False file 0.7821) and 5 that should
+**fail** with a readable message (probabilities, missing rows, wrong
+columns, duplicate ids, a zip without a CSV). The table with the exact
+expected output is in [`dist/test_submissions/README.md`](dist/test_submissions/README.md).
+Regenerate them with `python codabench/make_test_submissions.py`.
+
 ## What's inside
 
 ```
